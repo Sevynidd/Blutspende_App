@@ -11,10 +11,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import agb.loehne.blutspende_app.ui.theme.Blutspende_AppTheme
+import android.os.Build
+import android.view.Window
+import android.view.WindowManager
+import androidx.annotation.RequiresApi
+import androidx.compose.material3.BottomAppBarDefaults
+import androidx.core.view.WindowCompat
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
         setContent {
             Blutspende_AppTheme {
                 // A surface container using the 'background' color from the theme
