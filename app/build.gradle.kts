@@ -51,6 +51,7 @@ android {
 
 dependencies {
 
+    //Kotlin Jetpack Compose Default imports
     implementation("androidx.core:core-ktx:1.10.1")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.1")
     implementation("androidx.activity:activity-compose:1.7.2")
@@ -66,6 +67,9 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    //BottomNavigation
+    implementation("com.github.commandiron:BubbleNavigationBarCompose:1.0.2")
 
     // Splash API
     implementation("androidx.core:core-splashscreen:1.0.1")
