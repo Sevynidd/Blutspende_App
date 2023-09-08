@@ -9,28 +9,26 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.rememberNavController
 import com.commandiron.bubble_navigation_bar_compose.BubbleNavigationBar
 import com.commandiron.bubble_navigation_bar_compose.BubbleNavigationBarItem
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //Setzen eines Splashscreens
+        //Setzen eines Splashscreen
         installSplashScreen()
         //Fullscreen App
         WindowCompat.setDecorFitsSystemWindows(window, false)
@@ -48,7 +46,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavigationBarBottom() {
     Scaffold(
@@ -70,54 +67,36 @@ fun NavigationBarBottom() {
 
 @Composable
 fun BottomBar() {
-    var selectedIndex by remember { mutableStateOf(0) }
+    val navController = rememberNavController()
+    SetupNavGraph(navController = navController)
 
-    /*BubbleNavigationBar {
+    val navigationItems = listOf(
+        ScreenDefinition.Home,
+        ScreenDefinition.Ausweis,
+        ScreenDefinition.Blutwerte,
+        ScreenDefinition.Vorrat,
+        ScreenDefinition.Einstellungen
+    )
+
+    val currentRoute = currentRoute(navController = navController)
+
+    BubbleNavigationBar {
         navigationItems.forEach { navigationItem ->
             BubbleNavigationBarItem(
                 selected = currentRoute == navigationItem.route,
                 onClick = {
-                    //Navigate
+                    navController.navigate(navigationItem.route)
                 },
-                icon = navigationItem.icon,
-                title = navigationItem.title,
-                selectedColor = navigationItem.selectedColor
+                icon = navigationItem.iconId,
+                title = navigationItem.name,
+                selectedColor = androidx.compose.ui.graphics.Color.Red
             )
         }
-    }*/
-}
-
-@Composable
-fun ButtonHome() {
-    Button(onClick = { }) {
-        Text("Home")
     }
 }
 
 @Composable
-fun ButtonAusweis() {
-    Button(onClick = { }) {
-        Text("Ausweis")
-    }
-}
-
-@Composable
-fun ButtonBlutwerte() {
-    Button(onClick = { }) {
-        Text("Blutwerte")
-    }
-}
-
-@Composable
-fun ButtonVorrat() {
-    Button(onClick = { }) {
-        Text("Vorrat")
-    }
-}
-
-@Composable
-fun ButtonEinstellungen() {
-    Button(onClick = { }) {
-        Text("Einstellungen")
-    }
+private fun currentRoute(navController: NavHostController): String? {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    return navBackStackEntry?.destination?.route
 }
