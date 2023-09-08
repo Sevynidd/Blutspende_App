@@ -2,7 +2,7 @@
 <resources>
     <style name="Theme.Blutspende_App.splash" parent="Theme.SplashScreen">
         <item name="windowSplashScreenBackground">#000000</item>
-        <item name="windowSplashScreenAnimatedIcon">@drawable/blood_drop_icon</item>
+        <item name="windowSplashScreenAnimatedIcon">@drawable/logo</item>
         <item name="postSplashScreenTheme">@style/Theme.Blutspende_App</item>
     </style>
 </resources>

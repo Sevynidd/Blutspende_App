@@ -9,11 +9,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -50,28 +50,8 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavigationBarBottom() {
-    Scaffold(
-        bottomBar = {
-            Text("Test")
-            BottomBar()
-        },
-        contentWindowInsets = WindowInsets(20.dp, 30.dp, 20.dp, 0.dp)
-    ) { paddingValues ->
-        Box(
-            modifier = Modifier
-                .background(MaterialTheme.colorScheme.background)
-                .fillMaxSize()
-                .padding(paddingValues)
-        ) {
-            Text("Content")
-        }
-    }
-}
 
-@Composable
-fun BottomBar() {
     val navController = rememberNavController()
-    SetupNavGraph(navController = navController)
 
     val navigationItems = listOf(
         ScreenDefinition.Home,
@@ -81,10 +61,34 @@ fun BottomBar() {
         ScreenDefinition.Einstellungen
     )
 
-    val currentRoute = currentRoute(navController = navController)
+    Scaffold(
+        modifier = Modifier.safeDrawingPadding(),
+        contentWindowInsets = WindowInsets(20.dp, 10.dp, 20.dp, 0.dp),
+        content = { paddingValues ->
+            Box(
+                modifier = Modifier
+                    .background(MaterialTheme.colorScheme.background)
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+                SetupNavGraph(navController = navController)
+            }
+        },
+        bottomBar = {
+            BottomBar(navController, navigationItems)
+        }
+    )
+}
+
+@Composable
+fun BottomBar(
+    navController: NavHostController,
+    items: List<ScreenDefinition>
+) {
 
     BubbleNavigationBar {
-        navigationItems.forEach { navigationItem ->
+        val currentRoute = currentRoute(navController = navController)
+        items.forEach { navigationItem ->
             BubbleNavigationBarItem(
                 selected = currentRoute == navigationItem.route,
                 onClick = {
@@ -92,7 +96,7 @@ fun BottomBar() {
                 },
                 icon = navigationItem.iconId,
                 title = navigationItem.name,
-                selectedColor = androidx.compose.ui.graphics.Color.Red
+                selectedColor = MaterialTheme.colorScheme.onSurface
             )
         }
     }

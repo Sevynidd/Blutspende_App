@@ -13,7 +13,7 @@ fun Einstellungen() {
     Blutspende_AppTheme {
         Surface {
             Column(modifier = Modifier.fillMaxSize()) {
-                Text("Einstellungen")
+                Text("Settings")
             }
         }
     }
