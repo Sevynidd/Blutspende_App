@@ -11,12 +11,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
@@ -57,13 +62,15 @@ fun NavigationBarBottom() {
         ScreenDefinition.Home,
         ScreenDefinition.Ausweis,
         ScreenDefinition.Blutwerte,
-        ScreenDefinition.Vorrat,
-        ScreenDefinition.Einstellungen
+        ScreenDefinition.Vorrat
     )
 
     Scaffold(
         modifier = Modifier.safeDrawingPadding(),
-        contentWindowInsets = WindowInsets(20.dp, 10.dp, 20.dp, 0.dp),
+        contentWindowInsets = WindowInsets(30.dp, 20.dp, 30.dp, 0.dp),
+        topBar = {
+            TopBar(navController)
+        },
         content = { paddingValues ->
             Box(
                 modifier = Modifier
@@ -77,6 +84,26 @@ fun NavigationBarBottom() {
         bottomBar = {
             BottomBar(navController, navigationItems)
         }
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun TopBar(navController: NavHostController) {
+    TopAppBar(
+        title = {},
+        actions = {
+            IconButton(onClick = {
+                navController.navigate(ScreenDefinition.Einstellungen.route)
+            }) {
+                Icon(
+                    painter = painterResource(id = R.drawable.settings),
+                    "Einstellungen",
+                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                )
+            }
+        },
+        colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.background)
     )
 }
 
@@ -96,10 +123,12 @@ fun BottomBar(
                 },
                 icon = navigationItem.iconId,
                 title = navigationItem.name,
-                selectedColor = MaterialTheme.colorScheme.onSurface
+                selectedColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                unSelectedIconColor = MaterialTheme.colorScheme.onPrimary
             )
         }
     }
+
 }
 
 @Composable
