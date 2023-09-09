@@ -90,11 +90,14 @@ fun NavigationBarBottom() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(navController: NavHostController) {
+    val currentRoute = currentRoute(navController = navController)
     TopAppBar(
         title = {},
         actions = {
             IconButton(onClick = {
-                navController.navigate(ScreenDefinition.Einstellungen.route)
+                if (currentRoute != ScreenDefinition.Einstellungen.route) {
+                    navController.navigate(ScreenDefinition.Einstellungen.route)
+                }
             }) {
                 Icon(
                     painter = painterResource(id = R.drawable.settings),
@@ -119,7 +122,9 @@ fun BottomBar(
             BubbleNavigationBarItem(
                 selected = currentRoute == navigationItem.route,
                 onClick = {
-                    navController.navigate(navigationItem.route)
+                    if (currentRoute != navigationItem.route) {
+                        navController.navigate(navigationItem.route)
+                    }
                 },
                 icon = navigationItem.iconId,
                 title = navigationItem.name,
