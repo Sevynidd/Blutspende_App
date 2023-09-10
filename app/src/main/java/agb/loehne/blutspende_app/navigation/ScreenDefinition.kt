@@ -1,4 +1,6 @@
-package agb.loehne.blutspende_app
+package agb.loehne.blutspende_app.navigation
+
+import agb.loehne.blutspende_app.R
 
 sealed class ScreenDefinition(val route: String, val name: String, val iconId: Int) {
     object Home : ScreenDefinition(route = "Home", "Home", R.drawable.home)

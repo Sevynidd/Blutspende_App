@@ -1,4 +1,4 @@
-package agb.loehne.blutspende_app.screen
+package agb.loehne.blutspende_app.screens
 
 import agb.loehne.blutspende_app.ui.theme.Blutspende_AppTheme
 import androidx.compose.foundation.background

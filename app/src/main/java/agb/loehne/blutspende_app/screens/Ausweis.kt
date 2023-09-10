@@ -1,4 +1,4 @@
-package agb.loehne.blutspende_app.screen
+package agb.loehne.blutspende_app.screens
 
 import agb.loehne.blutspende_app.ui.theme.Blutspende_AppTheme
 import androidx.compose.foundation.background
@@ -11,15 +11,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun Home() {
+fun Ausweis() {
     Blutspende_AppTheme {
         Surface {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)
-            ) {
-                Text("Home")
+            Column(modifier = Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.background)) {
+                Text("Ausweis")
             }
         }
     }

@@ -1,10 +1,10 @@
-package agb.loehne.blutspende_app
+package agb.loehne.blutspende_app.navigation
 
-import agb.loehne.blutspende_app.screen.Ausweis
-import agb.loehne.blutspende_app.screen.Blutwerte
-import agb.loehne.blutspende_app.screen.Einstellungen
-import agb.loehne.blutspende_app.screen.Home
-import agb.loehne.blutspende_app.screen.Vorrat
+import agb.loehne.blutspende_app.screens.Ausweis
+import agb.loehne.blutspende_app.screens.Blutwerte
+import agb.loehne.blutspende_app.screens.Einstellungen
+import agb.loehne.blutspende_app.screens.Home
+import agb.loehne.blutspende_app.screens.Vorrat
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost

@@ -1,4 +1,4 @@
-package agb.loehne.blutspende_app.screen
+package agb.loehne.blutspende_app.screens
 
 import agb.loehne.blutspende_app.ui.theme.Blutspende_AppTheme
 import androidx.compose.foundation.background
@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun Blutwerte() {
+fun Vorrat() {
     Blutspende_AppTheme {
         Surface {
             Column(
@@ -19,7 +19,7 @@ fun Blutwerte() {
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)
             ) {
-                Text("Blutwerte")
+                Text("Vorrat")
             }
         }
     }
