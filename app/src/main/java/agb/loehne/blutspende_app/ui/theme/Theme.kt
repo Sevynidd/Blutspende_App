@@ -1,17 +1,20 @@
 package agb.loehne.blutspende_app.ui.theme
 
 
+import agb.loehne.blutspende_app.datastore.StoreSettingsViewModel
 import android.app.Activity
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 
 private val LightColors = lightColorScheme(
@@ -81,12 +84,14 @@ private val DarkColors = darkColorScheme(
 
 @Composable
 fun Blutspende_AppTheme(
-    useDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable() () -> Unit
 ) {
+    val viewModel: StoreSettingsViewModel = viewModel()
+    //isSystemInDarkTheme()
+    val uiMode by viewModel.getUIMode.collectAsState(null)
 
-    val colors = when {
-        isSystemInDarkTheme() -> DarkColors
+    val colors = when (uiMode) {
+        true -> DarkColors
         else -> LightColors
     }
 
@@ -97,9 +102,15 @@ fun Blutspende_AppTheme(
             window.statusBarColor = Color.Transparent.toArgb()
             window.navigationBarColor = Color.Transparent.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars =
-                !useDarkTheme
+                when (colors) {
+                    DarkColors -> false
+                    else -> true
+                }
             WindowCompat.getInsetsController(window, view).isAppearanceLightNavigationBars =
-                !useDarkTheme
+                when (colors) {
+                    DarkColors -> false
+                    else -> true
+                }
         }
     }
 

@@ -1,5 +1,6 @@
 package agb.loehne.blutspende_app.screens
 
+import agb.loehne.blutspende_app.datastore.StoreSettingsViewModel
 import agb.loehne.blutspende_app.ui.theme.Blutspende_AppTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -19,6 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
 fun Einstellungen() {
@@ -43,6 +45,7 @@ fun ExposedDropdownMenuBoxDarkMode() {
     val items = arrayOf("System Default", "Light Mode", "Dark Mode")
     var expanded by remember { mutableStateOf(false) }
     var selectedText by remember { mutableStateOf(items[0]) }
+    val viewModel: StoreSettingsViewModel = viewModel()
 
     ExposedDropdownMenuBox(
         expanded = expanded,
@@ -68,6 +71,10 @@ fun ExposedDropdownMenuBoxDarkMode() {
                     onClick = {
                         selectedText = item
                         expanded = false
+                        when (selectedText) {
+                            "Light Mode" -> viewModel.saveToDataStore(false)
+                            else -> viewModel.saveToDataStore(true)
+                        }
                         //Toast.makeText(context, item, Toast.LENGTH_SHORT).show()
                     }
                 )
