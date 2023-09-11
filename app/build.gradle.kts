@@ -1,5 +1,3 @@
-import org.apache.tools.ant.util.JavaEnvUtils.VERSION_11
-
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
@@ -69,6 +67,9 @@ dependencies {
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+
+    // Mehr Icons
+    implementation("androidx.compose.material:material-icons-extended:1.4.3")
 
     //BottomNavigation
     implementation("com.github.commandiron:BubbleNavigationBarCompose:1.0.2")

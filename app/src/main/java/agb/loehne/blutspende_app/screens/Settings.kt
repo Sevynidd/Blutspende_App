@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.FormatPaint
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -66,7 +68,7 @@ fun DarstellungDialog() {
 
         Column {
             Icon(
-                painter = painterResource(id = R.drawable.paint_brush),
+                Icons.Default.FormatPaint,
                 "Einstellungen",
                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier
