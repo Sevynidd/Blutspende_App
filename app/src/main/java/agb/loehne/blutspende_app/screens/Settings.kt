@@ -3,6 +3,7 @@ package agb.loehne.blutspende_app.screens
 import agb.loehne.blutspende_app.R
 import agb.loehne.blutspende_app.datastore.StoreSettingsViewModel
 import agb.loehne.blutspende_app.ui.theme.Blutspende_AppTheme
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -14,28 +15,24 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
+import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
@@ -63,6 +60,7 @@ fun Einstellungen() {
 @Composable
 fun DarstellungDialog() {
     var showDialog by remember { mutableStateOf(false) }
+    val viewModel: StoreSettingsViewModel = viewModel()
 
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = CenterVertically) {
 
@@ -85,39 +83,50 @@ fun DarstellungDialog() {
                     showDialog = showDialog.not()
                 })
 
+            val radioOptions = listOf("System", "Hell", "Dunkel")
+            val uiImages =
+                listOf(R.drawable.ui_system, R.drawable.ui_hell, R.drawable.ui_dunkel)
+            val (selectedOption, onOptionSelected) = remember {
+                mutableStateOf(
+                    radioOptions[0]
+                )
+            }
             if (showDialog) {
                 AlertDialog(
                     onDismissRequest = { showDialog = false },
                     title = { Text("Darstellung") },
                     text = {
-                        val radioOptions = listOf("System", "Hell", "Dunkel")
-                        val (selectedOption, onOptionSelected) = remember {
-                            mutableStateOf(
-                                radioOptions[0]
-                            )
-                        }
-                        Column {
+                        Row {
                             radioOptions.forEach { text ->
-                                Row(
+                                Column(
                                     Modifier
                                         .fillMaxWidth()
+                                        .weight(1f)
                                         .selectable(
                                             selected = (text == selectedOption),
                                             onClick = {
                                                 onOptionSelected(text)
                                             }
-                                        )
-                                        .padding(horizontal = 16.dp),
-                                    verticalAlignment = CenterVertically
+                                        ),
+                                    horizontalAlignment = CenterHorizontally
                                 ) {
-                                    RadioButton(
-                                        selected = (text == selectedOption),
-                                        onClick = { onOptionSelected(text) }
+                                    Image(
+                                        painter = painterResource(
+                                            id = uiImages[radioOptions.indexOf(
+                                                text
+                                            )]
+                                        ),
+                                        contentDescription = text
                                     )
                                     Text(
                                         text = text,
                                         style = TextStyle(MaterialTheme.colorScheme.primary),
-                                        modifier = Modifier.padding(start = 16.dp)
+                                        modifier = Modifier.fillMaxWidth(),
+                                        textAlign = TextAlign.Center
+                                    )
+                                    RadioButton(
+                                        selected = (text == selectedOption),
+                                        onClick = { onOptionSelected(text) }
                                     )
                                 }
                             }
@@ -125,8 +134,11 @@ fun DarstellungDialog() {
 
                     },
                     confirmButton = {
-                        TextButton(onClick = { /* TODO */ }) {
-                            Text("Delete it".uppercase())
+                        TextButton(onClick = {
+                            viewModel.saveToDataStore(radioOptions.indexOf(selectedOption))
+                            showDialog = false
+                        }) {
+                            Text("ok".uppercase())
                         }
                     },
                     dismissButton = {
@@ -135,50 +147,6 @@ fun DarstellungDialog() {
                         }
                     },
                 )
-            }
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun ExposedDropdownMenuBoxDarkMode() {
-    val items = arrayOf("System", "Hell", "Dunkel")
-    var expanded by remember { mutableStateOf(false) }
-    var selectedText by remember { mutableStateOf(items[0]) }
-    val viewModel: StoreSettingsViewModel = viewModel()
-
-    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = CenterVertically) {
-        Text(text = "Darstellung: ")
-
-        ExposedDropdownMenuBox(
-            expanded = expanded,
-            onExpandedChange = {
-                expanded = !expanded
-            }
-        ) {
-            TextField(
-                value = selectedText,
-                onValueChange = {},
-                readOnly = true,
-                trailingIcon = { ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded) },
-                modifier = Modifier.menuAnchor()
-            )
-
-            ExposedDropdownMenu(
-                expanded = expanded,
-                onDismissRequest = { expanded = false }
-            ) {
-                items.forEach { item ->
-                    DropdownMenuItem(
-                        text = { Text(text = item) },
-                        onClick = {
-                            selectedText = item
-                            expanded = false
-                            viewModel.saveToDataStore(items.indexOf(item))
-                        }
-                    )
-                }
             }
         }
     }
