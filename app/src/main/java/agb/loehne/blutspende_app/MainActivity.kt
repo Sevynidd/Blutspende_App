@@ -61,7 +61,7 @@ fun NavigationBarBottom() {
     val navController = rememberNavController()
 
     val navigationItems = listOf(
-        ScreenDefinition.Home,
+        ScreenDefinition.Dashboard,
         ScreenDefinition.Ausweis,
         ScreenDefinition.Blutwerte,
         ScreenDefinition.Vorrat

@@ -14,8 +14,8 @@ import androidx.navigation.compose.composable
 fun SetupNavGraph(
     navController: NavHostController
 ) {
-    NavHost(navController = navController, startDestination = ScreenDefinition.Home.route) {
-        composable(route = ScreenDefinition.Home.route) {
+    NavHost(navController = navController, startDestination = ScreenDefinition.Dashboard.route) {
+        composable(route = ScreenDefinition.Dashboard.route) {
             Home()
         }
         composable(route = ScreenDefinition.Ausweis.route) {
