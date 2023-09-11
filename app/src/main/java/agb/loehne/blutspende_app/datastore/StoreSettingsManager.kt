@@ -1,8 +1,8 @@
 package agb.loehne.blutspende_app.datastore
 
 import android.content.Context
-import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
+import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -11,19 +11,23 @@ private val Context.dataStore by preferencesDataStore("settings")
 class StoreSettingsManager(context: Context) {
 
     private val dataStore = context.dataStore
-    suspend fun saveToDataStore(isNightMode: Boolean) {
+
+    /**
+     * @param themeMode 0 = System Default; 1 = Light Mode; 2 = Dark Mode
+     */
+    suspend fun saveToDataStore(themeMode: Int) {
         dataStore.edit { preferences ->
-            preferences[UI_MODE_KEY] = isNightMode
+            preferences[THEME_MODE_KEY] = themeMode
         }
     }
 
-    val uiMode: Flow<Boolean> = dataStore.data
+    val dataStoreMap: Flow<Any> = dataStore.data
         .map { preferences ->
-            val uiMode = preferences[UI_MODE_KEY] ?: false
-            uiMode
+            val themeMode = preferences[THEME_MODE_KEY] ?: 0
+            themeMode
         }
 
     companion object {
-        private val UI_MODE_KEY = booleanPreferencesKey("ui_mode")
+        private val THEME_MODE_KEY = intPreferencesKey("theme_mode")
     }
 }

@@ -8,13 +8,18 @@ import kotlinx.coroutines.launch
 
 class StoreSettingsViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val uiDataStore = StoreSettingsManager(application)
+    private val dataStore = StoreSettingsManager(application)
 
-    val getUIMode = uiDataStore.uiMode
+    /**
+     * 0 = System Default
+     * 1 = Light Mode
+     * 2 = Dark Mode
+     */
+    val getThemeMode = dataStore.dataStoreMap
 
-    fun saveToDataStore(isNightMode: Boolean) {
+    fun saveToDataStore(themeMode: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            uiDataStore.saveToDataStore(isNightMode)
+            dataStore.saveToDataStore(themeMode)
         }
     }
 }

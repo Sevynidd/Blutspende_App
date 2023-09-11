@@ -71,10 +71,7 @@ fun ExposedDropdownMenuBoxDarkMode() {
                     onClick = {
                         selectedText = item
                         expanded = false
-                        when (selectedText) {
-                            "Light Mode" -> viewModel.saveToDataStore(false)
-                            else -> viewModel.saveToDataStore(true)
-                        }
+                        viewModel.saveToDataStore(items.indexOf(item))
                         //Toast.makeText(context, item, Toast.LENGTH_SHORT).show()
                     }
                 )
