@@ -1,7 +1,7 @@
 package agb.loehne.blutspende_app
 
 import agb.loehne.blutspende_app.navigation.ScreenDefinition
-import agb.loehne.blutspende_app.navigation.SetupNavGraph
+import agb.loehne.blutspende_app.navigation.SetupNavbarGraph
 import agb.loehne.blutspende_app.ui.theme.Blutspende_AppTheme
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -80,7 +80,7 @@ fun NavigationBarBottom() {
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                SetupNavGraph(navController = navController)
+                SetupNavbarGraph(navController = navController)
             }
         },
         bottomBar = {
@@ -97,8 +97,8 @@ fun TopBar(navController: NavHostController) {
         title = {},
         actions = {
             IconButton(onClick = {
-                if (currentRoute != ScreenDefinition.Einstellungen.route) {
-                    navController.navigate(ScreenDefinition.Einstellungen.route)
+                if (currentRoute != ScreenDefinition.Settings.route) {
+                    navController.navigate(ScreenDefinition.Settings.route)
                 }
             }) {
                 Icon(

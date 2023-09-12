@@ -2,7 +2,7 @@ package agb.loehne.blutspende_app.navigation
 
 import agb.loehne.blutspende_app.screens.Ausweis
 import agb.loehne.blutspende_app.screens.Blutwerte
-import agb.loehne.blutspende_app.screens.Einstellungen
+import agb.loehne.blutspende_app.screens.Settings
 import agb.loehne.blutspende_app.screens.Home
 import agb.loehne.blutspende_app.screens.Vorrat
 import androidx.compose.runtime.Composable
@@ -11,7 +11,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 
 @Composable
-fun SetupNavGraph(
+fun SetupNavbarGraph(
     navController: NavHostController
 ) {
     NavHost(navController = navController, startDestination = ScreenDefinition.Dashboard.route) {
@@ -27,8 +27,8 @@ fun SetupNavGraph(
         composable(route = ScreenDefinition.Vorrat.route) {
             Vorrat()
         }
-        composable(route = ScreenDefinition.Einstellungen.route) {
-            Einstellungen()
+        composable(route = ScreenDefinition.Settings.route) {
+            Settings()
         }
     }
 }

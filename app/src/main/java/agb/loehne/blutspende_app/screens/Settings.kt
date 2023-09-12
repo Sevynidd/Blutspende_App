@@ -39,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 
 @Composable
-fun Einstellungen() {
+fun Settings() {
     Blutspende_AppTheme {
         Surface {
             Column(
@@ -69,10 +69,10 @@ fun DialogDarstellung() {
         Column {
             Icon(
                 Icons.Default.FormatPaint,
-                "Einstellungen",
+                "DarstellungIcon",
                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier
-                    .size(46.dp)
+                    .size(54.dp)
                     .padding(end = 20.dp)
             )
         }
@@ -140,7 +140,7 @@ fun DialogDarstellung() {
                     },
                     confirmButton = {
                         TextButton(onClick = {
-                            viewModel.saveToDataStore(radioOptions.indexOf(selectedOption))
+                            viewModel.saveThemeToDataStore(radioOptions.indexOf(selectedOption))
                             showDialogDarstellung = false
                         }) {
                             Text("ok".uppercase())
@@ -160,16 +160,16 @@ fun DialogDarstellung() {
 @Composable
 fun DialogBlutgruppe() {
     var showDialogBlutgruppe by remember { mutableStateOf(false) }
-    //val viewModel: StoreSettingsViewModel = viewModel()
+    val viewModel: StoreSettingsViewModel = viewModel()
 
     Row(Modifier.fillMaxWidth()) {
         Column {
             Icon(
                 painter = painterResource(id = R.drawable.blood_drop),
-                "Einstellungen",
+                "BlutgruppeIcon",
                 tint = MaterialTheme.colorScheme.onPrimaryContainer,
                 modifier = Modifier
-                    .size(46.dp)
+                    .size(54.dp)
                     .padding(end = 20.dp)
             )
         }
@@ -184,12 +184,17 @@ fun DialogBlutgruppe() {
                 modifier = Modifier.fillMaxWidth()
             )
 
-            val radioOptionsBlutgruppe = listOf("O", "A", "B", "AB")
-            val uiImagesBlutgruppe =
-                listOf(R.drawable.man1, R.drawable.man2, R.drawable.woman1, R.drawable.woman2)
+            val radioOptions = listOf("O", "A", "B", "AB")
+            val uiImages =
+                listOf(
+                    R.drawable.blood_0,
+                    R.drawable.blood_a,
+                    R.drawable.blood_b,
+                    R.drawable.blood_ab
+                )
             val (selectedOption, onOptionSelected) = remember {
                 mutableStateOf(
-                    radioOptionsBlutgruppe[0]
+                    radioOptions[0]
                 )
             }
             if (showDialogBlutgruppe) {
@@ -198,7 +203,7 @@ fun DialogBlutgruppe() {
                     title = { Text("Blutgruppe") },
                     text = {
                         Row {
-                            radioOptionsBlutgruppe.forEach { text ->
+                            radioOptions.forEach { text ->
                                 Column(
                                     Modifier
                                         .fillMaxWidth()
@@ -211,20 +216,14 @@ fun DialogBlutgruppe() {
                                         ),
                                     horizontalAlignment = CenterHorizontally
                                 ) {
-                                    Image(
+                                    Icon(
                                         painter = painterResource(
-                                            id = uiImagesBlutgruppe[radioOptionsBlutgruppe.indexOf(
+                                            id = uiImages[radioOptions.indexOf(
                                                 text
                                             )]
                                         ),
-                                        contentDescription = text
-                                    )
-
-                                    Text(
-                                        text = text,
-                                        style = TextStyle(MaterialTheme.colorScheme.primary),
-                                        modifier = Modifier.fillMaxWidth(),
-                                        textAlign = TextAlign.Center
+                                        contentDescription = text,
+                                        tint = MaterialTheme.colorScheme.onPrimaryContainer
                                     )
                                     RadioButton(
                                         selected = (text == selectedOption),
@@ -237,7 +236,7 @@ fun DialogBlutgruppe() {
                     },
                     confirmButton = {
                         TextButton(onClick = {
-                            //viewModel.saveToDataStore(radioOptions.indexOf(selectedOption))
+                            viewModel.saveBlutgruppeToDataStore(radioOptions.indexOf(selectedOption))
                             showDialogBlutgruppe = false
                         }) {
                             Text("ok".uppercase())

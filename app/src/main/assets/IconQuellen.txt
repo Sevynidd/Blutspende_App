@@ -17,3 +17,9 @@ SETTINGS ICONS
 
 paint_brush - https://www.svgrepo.com/svg/513735/paint-brush
 Hell/Dunkel/System - Selbstgemacht in Figma mit Anlehnung an Outlook
+blood_rhesus_negative - https://www.svgrepo.com/svg/326391/blood-rh-n
+blood_rhesus_positive - https://www.svgrepo.com/svg/326391/blood-rh-p
+blood_0 (Angepasst) - https://www.svgrepo.com/svg/326389/blood-o-p
+blood_a (Angepasst) - https://www.svgrepo.com/svg/326384/blood-a-p
+blood_b (Angepasst) - https://www.svgrepo.com/svg/326384/blood-b-p
+blood_ab (Angepasst) - https://www.svgrepo.com/svg/326384/blood-ab-p
