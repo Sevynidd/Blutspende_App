@@ -1,0 +1,19 @@
+NAVIGATION BAR
+
+blood_drop - https://www.svgrepo.com/svg/464104/blood
+id_card - https://www.svgrepo.com/svg/510013/id-card
+home - https://www.svgrepo.com/svg/512352/home-1393
+settings - https://www.svgrepo.com/svg/526221/settings
+blood_bag_default (edited) - https://www.svgrepo.com/svg/326389/blood-o-p
+
+AVATARS
+
+woman1 - https://www.svgrepo.com/svg/446531/avatar
+woman2 - https://www.svgrepo.com/show/446530/avatar
+man1 - https://www.svgrepo.com/svg/446525/avatar
+man2 - https://www.svgrepo.com/svg/446523/avatar
+
+SETTINGS ICONS
+
+paint_brush - https://www.svgrepo.com/svg/513735/paint-brush
+Hell/Dunkel/System - Selbstgemacht in Figma mit Anlehnung an Outlook
