@@ -1,4 +1,4 @@
-package agb.loehne.blutspende_app.datastore
+package agb.loehne.blutspende_app.model
 
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey
@@ -11,7 +11,7 @@ import kotlinx.coroutines.flow.map
 
 private val Context.dataStore by preferencesDataStore("settings")
 
-class StoreSettingsManager(context: Context) {
+class DatastoreSettingsManager(context: Context) {
 
     private val dataStore = context.dataStore
 

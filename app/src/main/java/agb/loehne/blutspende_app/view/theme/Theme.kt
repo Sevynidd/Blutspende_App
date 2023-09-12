@@ -1,7 +1,7 @@
-package agb.loehne.blutspende_app.ui.theme
+package agb.loehne.blutspende_app.view.theme
 
 
-import agb.loehne.blutspende_app.datastore.StoreSettingsViewModel
+import agb.loehne.blutspende_app.viewmodel.DatastoreSettingsViewModel
 import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -87,7 +87,7 @@ private val DarkColors = darkColorScheme(
 fun Blutspende_AppTheme(
     content: @Composable() () -> Unit
 ) {
-    val viewModel: StoreSettingsViewModel = viewModel()
+    val viewModel: DatastoreSettingsViewModel = viewModel()
     val themeMode by viewModel.getThemeMode.collectAsState(null)
 
     val colors = when (themeMode) {

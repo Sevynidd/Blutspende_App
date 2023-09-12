@@ -1,8 +1,8 @@
-package agb.loehne.blutspende_app
+package agb.loehne.blutspende_app.view
 
-import agb.loehne.blutspende_app.navigation.ScreenDefinition
-import agb.loehne.blutspende_app.navigation.SetupNavbarGraph
-import agb.loehne.blutspende_app.ui.theme.Blutspende_AppTheme
+import agb.loehne.blutspende_app.R
+import agb.loehne.blutspende_app.model.ScreenDefinition
+import agb.loehne.blutspende_app.view.theme.Blutspende_AppTheme
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent

@@ -1,4 +1,4 @@
-package agb.loehne.blutspende_app.ui.theme
+package agb.loehne.blutspende_app.view.theme
 import androidx.compose.ui.graphics.Color
 
 val md_theme_light_primary = Color(0xFFB40F0F)

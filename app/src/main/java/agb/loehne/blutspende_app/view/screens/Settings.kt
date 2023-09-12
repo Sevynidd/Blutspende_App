@@ -1,8 +1,8 @@
-package agb.loehne.blutspende_app.screens
+package agb.loehne.blutspende_app.view.screens
 
 import agb.loehne.blutspende_app.R
-import agb.loehne.blutspende_app.datastore.StoreSettingsViewModel
-import agb.loehne.blutspende_app.ui.theme.Blutspende_AppTheme
+import agb.loehne.blutspende_app.viewmodel.DatastoreSettingsViewModel
+import agb.loehne.blutspende_app.view.theme.Blutspende_AppTheme
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -63,7 +63,7 @@ fun Settings() {
 @Composable
 fun DialogDarstellung() {
     var showDialogDarstellung by remember { mutableStateOf(false) }
-    val viewModel: StoreSettingsViewModel = viewModel()
+    val viewModel: DatastoreSettingsViewModel = viewModel()
 
     Row(Modifier.fillMaxWidth()) {
         Column {
@@ -160,7 +160,7 @@ fun DialogDarstellung() {
 @Composable
 fun DialogBlutgruppe() {
     var showDialogBlutgruppe by remember { mutableStateOf(false) }
-    val viewModel: StoreSettingsViewModel = viewModel()
+    val viewModel: DatastoreSettingsViewModel = viewModel()
 
     Row(Modifier.fillMaxWidth()) {
         Column {
