@@ -7,6 +7,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -29,7 +30,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
-import androidx.compose.ui.Alignment.Companion.CenterVertically
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
@@ -48,11 +48,12 @@ fun Einstellungen() {
                     .background(MaterialTheme.colorScheme.background)
                     .safeDrawingPadding()
             ) {
-                Row(
+                Column(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    //ExposedDropdownMenuBoxDarkMode()
-                    DarstellungDialog()
+                    DialogDarstellung()
+                    Spacer(modifier = Modifier.size(20.dp))
+                    DialogBlutgruppe()
                 }
             }
         }
@@ -60,12 +61,11 @@ fun Einstellungen() {
 }
 
 @Composable
-fun DarstellungDialog() {
-    var showDialog by remember { mutableStateOf(false) }
+fun DialogDarstellung() {
+    var showDialogDarstellung by remember { mutableStateOf(false) }
     val viewModel: StoreSettingsViewModel = viewModel()
 
-    Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = CenterVertically) {
-
+    Row(Modifier.fillMaxWidth()) {
         Column {
             Icon(
                 Icons.Default.FormatPaint,
@@ -77,13 +77,16 @@ fun DarstellungDialog() {
             )
         }
 
-        Column {
+        Column(Modifier.fillMaxWidth()) {
             ClickableText(
                 text = AnnotatedString("Darstellung\nSystem / Hell / Dunkel"),
-                style = TextStyle(MaterialTheme.colorScheme.primary),
+
                 onClick = {
-                    showDialog = showDialog.not()
-                })
+                    showDialogDarstellung = showDialogDarstellung.not()
+                },
+                style = TextStyle(MaterialTheme.colorScheme.primary),
+                modifier = Modifier.fillMaxWidth()
+            )
 
             val radioOptions = listOf("System", "Hell", "Dunkel")
             val uiImages =
@@ -93,9 +96,9 @@ fun DarstellungDialog() {
                     radioOptions[0]
                 )
             }
-            if (showDialog) {
+            if (showDialogDarstellung) {
                 AlertDialog(
-                    onDismissRequest = { showDialog = false },
+                    onDismissRequest = { showDialogDarstellung = false },
                     title = { Text("Darstellung") },
                     text = {
                         Row {
@@ -138,13 +141,110 @@ fun DarstellungDialog() {
                     confirmButton = {
                         TextButton(onClick = {
                             viewModel.saveToDataStore(radioOptions.indexOf(selectedOption))
-                            showDialog = false
+                            showDialogDarstellung = false
                         }) {
                             Text("ok".uppercase())
                         }
                     },
                     dismissButton = {
-                        TextButton(onClick = { showDialog = false }) {
+                        TextButton(onClick = { showDialogDarstellung = false }) {
+                            Text("Cancel".uppercase())
+                        }
+                    },
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun DialogBlutgruppe() {
+    var showDialogBlutgruppe by remember { mutableStateOf(false) }
+    //val viewModel: StoreSettingsViewModel = viewModel()
+
+    Row(Modifier.fillMaxWidth()) {
+        Column {
+            Icon(
+                painter = painterResource(id = R.drawable.blood_drop),
+                "Einstellungen",
+                tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                modifier = Modifier
+                    .size(46.dp)
+                    .padding(end = 20.dp)
+            )
+        }
+
+        Column(Modifier.fillMaxWidth()) {
+            ClickableText(
+                text = AnnotatedString("Blutgruppe\nAB0, Rhesus, Rhesuskomplex & Kell"),
+                onClick = {
+                    showDialogBlutgruppe = showDialogBlutgruppe.not()
+                },
+                style = TextStyle(MaterialTheme.colorScheme.primary),
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            val radioOptionsBlutgruppe = listOf("O", "A", "B", "AB")
+            val uiImagesBlutgruppe =
+                listOf(R.drawable.man1, R.drawable.man2, R.drawable.woman1, R.drawable.woman2)
+            val (selectedOption, onOptionSelected) = remember {
+                mutableStateOf(
+                    radioOptionsBlutgruppe[0]
+                )
+            }
+            if (showDialogBlutgruppe) {
+                AlertDialog(
+                    onDismissRequest = { showDialogBlutgruppe = false },
+                    title = { Text("Blutgruppe") },
+                    text = {
+                        Row {
+                            radioOptionsBlutgruppe.forEach { text ->
+                                Column(
+                                    Modifier
+                                        .fillMaxWidth()
+                                        .weight(1f)
+                                        .selectable(
+                                            selected = (text == selectedOption),
+                                            onClick = {
+                                                onOptionSelected(text)
+                                            }
+                                        ),
+                                    horizontalAlignment = CenterHorizontally
+                                ) {
+                                    Image(
+                                        painter = painterResource(
+                                            id = uiImagesBlutgruppe[radioOptionsBlutgruppe.indexOf(
+                                                text
+                                            )]
+                                        ),
+                                        contentDescription = text
+                                    )
+
+                                    Text(
+                                        text = text,
+                                        style = TextStyle(MaterialTheme.colorScheme.primary),
+                                        modifier = Modifier.fillMaxWidth(),
+                                        textAlign = TextAlign.Center
+                                    )
+                                    RadioButton(
+                                        selected = (text == selectedOption),
+                                        onClick = { onOptionSelected(text) }
+                                    )
+                                }
+                            }
+                        }
+
+                    },
+                    confirmButton = {
+                        TextButton(onClick = {
+                            //viewModel.saveToDataStore(radioOptions.indexOf(selectedOption))
+                            showDialogBlutgruppe = false
+                        }) {
+                            Text("ok".uppercase())
+                        }
+                    },
+                    dismissButton = {
+                        TextButton(onClick = { showDialogBlutgruppe = false }) {
                             Text("Cancel".uppercase())
                         }
                     },
