@@ -1,6 +1,6 @@
-package agb.loehne.blutspende_app.viewmodel
+package agb.loehne.blutspende_app.viewmodels
 
-import agb.loehne.blutspende_app.model.DatastoreSettingsManager
+import agb.loehne.blutspende_app.repository.DatastoreSettingsManager
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope

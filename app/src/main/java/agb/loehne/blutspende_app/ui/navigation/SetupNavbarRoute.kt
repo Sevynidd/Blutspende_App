@@ -1,11 +1,12 @@
-package agb.loehne.blutspende_app.view
+package agb.loehne.blutspende_app.ui.navigation
 
-import agb.loehne.blutspende_app.model.ScreenDefinition
-import agb.loehne.blutspende_app.view.screens.Ausweis
-import agb.loehne.blutspende_app.view.screens.Blutwerte
-import agb.loehne.blutspende_app.view.screens.Settings
-import agb.loehne.blutspende_app.view.screens.Home
-import agb.loehne.blutspende_app.view.screens.Vorrat
+import agb.loehne.blutspende_app.models.ScreenDefinition
+import agb.loehne.blutspende_app.ui.screens.Ausweis
+import agb.loehne.blutspende_app.ui.screens.Blutwerte
+import agb.loehne.blutspende_app.ui.screens.Settings
+import agb.loehne.blutspende_app.ui.screens.Home
+import agb.loehne.blutspende_app.ui.screens.SettingsBlutgruppe
+import agb.loehne.blutspende_app.ui.screens.Vorrat
 import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -29,7 +30,10 @@ fun SetupNavbarGraph(
             Vorrat()
         }
         composable(route = ScreenDefinition.Settings.route) {
-            Settings()
+            Settings(navController)
+        }
+        composable(route = ScreenDefinition.SettingsBlutgruppe.route) {
+            SettingsBlutgruppe()
         }
     }
 }

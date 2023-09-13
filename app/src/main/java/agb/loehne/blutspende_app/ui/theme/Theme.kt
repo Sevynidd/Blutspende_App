@@ -1,7 +1,7 @@
-package agb.loehne.blutspende_app.view.theme
+package agb.loehne.blutspende_app.ui.theme
 
 
-import agb.loehne.blutspende_app.viewmodel.DatastoreSettingsViewModel
+import agb.loehne.blutspende_app.viewmodels.DatastoreSettingsViewModel
 import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme

@@ -23,3 +23,5 @@ blood_0 (Angepasst) - https://www.svgrepo.com/svg/326389/blood-o-p
 blood_a (Angepasst) - https://www.svgrepo.com/svg/326384/blood-a-p
 blood_b (Angepasst) - https://www.svgrepo.com/svg/326384/blood-b-p
 blood_ab (Angepasst) - https://www.svgrepo.com/svg/326384/blood-ab-p
+add - https://www.svgrepo.com/svg/513803/add
+minus - https://www.svgrepo.com/svg/513838/minus

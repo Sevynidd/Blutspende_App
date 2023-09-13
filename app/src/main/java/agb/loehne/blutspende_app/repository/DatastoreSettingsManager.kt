@@ -1,4 +1,4 @@
-package agb.loehne.blutspende_app.model
+package agb.loehne.blutspende_app.repository
 
 import android.content.Context
 import androidx.datastore.preferences.core.booleanPreferencesKey

@@ -1,12 +1,12 @@
-package agb.loehne.blutspende_app.view
+package agb.loehne.blutspende_app.ui
 
 import agb.loehne.blutspende_app.R
-import agb.loehne.blutspende_app.model.ScreenDefinition
-import agb.loehne.blutspende_app.view.theme.Blutspende_AppTheme
+import agb.loehne.blutspende_app.models.ScreenDefinition
+import agb.loehne.blutspende_app.ui.navigation.SetupNavbarGraph
+import agb.loehne.blutspende_app.ui.theme.Blutspende_AppTheme
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,7 +19,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -76,7 +75,6 @@ fun NavigationBarBottom() {
         content = { paddingValues ->
             Box(
                 modifier = Modifier
-                    .background(MaterialTheme.colorScheme.background)
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
@@ -103,12 +101,10 @@ fun TopBar(navController: NavHostController) {
             }) {
                 Icon(
                     painter = painterResource(id = R.drawable.settings),
-                    "Einstellungen",
-                    tint = MaterialTheme.colorScheme.onPrimaryContainer
+                    "Einstellungen"
                 )
             }
-        },
-        colors = TopAppBarDefaults.smallTopAppBarColors(containerColor = MaterialTheme.colorScheme.background)
+        }
     )
 }
 

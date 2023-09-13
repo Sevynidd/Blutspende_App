@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Blutspende_App">
         <activity
-            android:name=".view.MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.Blutspende_App.splash">
             <intent-filter>
