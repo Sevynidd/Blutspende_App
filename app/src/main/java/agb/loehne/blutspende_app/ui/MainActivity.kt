@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeContentPadding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -70,7 +70,7 @@ fun NavigationBar() {
     )
 
     Scaffold(
-        modifier = Modifier.safeContentPadding(),
+        modifier = Modifier.safeDrawingPadding(),
         contentWindowInsets = WindowInsets(30.dp, 20.dp, 30.dp, 0.dp),
         topBar = {
             TopBar(navController)
