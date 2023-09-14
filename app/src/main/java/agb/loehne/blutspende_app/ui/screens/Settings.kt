@@ -14,7 +14,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.icons.Icons
@@ -56,7 +56,7 @@ fun Settings(navController: NavHostController) {
             Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .safeDrawingPadding()
+                    .safeContentPadding()
             ) {
                 Column(
                     modifier = Modifier.fillMaxSize()
@@ -67,7 +67,7 @@ fun Settings(navController: NavHostController) {
 
                     Spacer(modifier = Modifier.size(20.dp))
 
-                    DialogBlutgruppe(navController)
+                    ButtonBlutgruppe(navController)
                 }
             }
         }
@@ -100,7 +100,7 @@ fun DialogDarstellung(
                 painter = painterResource(id = R.drawable.paint_brush),
                 "DarstellungIcon",
                 modifier = Modifier
-                    .size(54.dp)
+                    .size(50.dp)
                     .padding(end = 20.dp)
             )
         }
@@ -183,7 +183,7 @@ fun DialogDarstellung(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DialogBlutgruppe(navController: NavHostController) {
+fun ButtonBlutgruppe(navController: NavHostController) {
 
     var showDialogBlutgruppe by remember { mutableStateOf(false) }
     val viewModel: DatastoreViewModel = viewModel()
@@ -201,7 +201,7 @@ fun DialogBlutgruppe(navController: NavHostController) {
                 painter = painterResource(id = R.drawable.blood_drop),
                 "BlutgruppeIcon",
                 modifier = Modifier
-                    .size(54.dp)
+                    .size(56.dp)
                     .padding(end = 20.dp)
             )
         }

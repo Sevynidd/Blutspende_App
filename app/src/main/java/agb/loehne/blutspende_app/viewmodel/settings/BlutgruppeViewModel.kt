@@ -13,9 +13,6 @@ class BlutgruppeViewModel : ViewModel() {
 
     // Getter
     val getShowDialog: Boolean get() = _showDialog.value
-    val getRadioOptions: List<String> get() = _radioOptions
-    val getImageIds: List<Int> get() = _imageIds
-
     // Setter
     fun setShowDialog(value: Boolean) {
         _showDialog.value = value

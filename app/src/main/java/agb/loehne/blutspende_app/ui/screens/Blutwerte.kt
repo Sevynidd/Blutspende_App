@@ -1,14 +1,32 @@
 package agb.loehne.blutspende_app.ui.screens
 
 import agb.loehne.blutspende_app.ui.theme.Blutspende_AppTheme
+import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CornerSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.unit.dp
 
 @Composable
 fun Blutwerte() {
@@ -20,6 +38,34 @@ fun Blutwerte() {
                     .background(MaterialTheme.colorScheme.background)
             ) {
                 Text("Blutwerte")
+
+                var menuOpen by remember {
+                    mutableStateOf(false)
+                }
+                val currentMenuIcon: ImageVector by rememberUpdatedState(
+                    if (menuOpen) Icons.Filled.Close else Icons.Filled.Menu
+                )
+
+                Box(Modifier.fillMaxSize()) {
+                    FloatingActionButton(
+                        shape = MaterialTheme.shapes.medium.copy(CornerSize(percent = 50)),
+                        modifier = Modifier
+                            .padding(bottom = 30.dp)
+                            .align(alignment = Alignment.BottomEnd),
+                        onClick = { menuOpen = !menuOpen }
+                    ) {
+                        Crossfade(
+                            targetState = currentMenuIcon,
+                            label = "CrossfadeMenuIcon"
+                        ) { icon ->
+                            Icon(
+                                icon,
+                                contentDescription = null
+                            )
+                        }
+                    }
+                }
+
             }
         }
     }

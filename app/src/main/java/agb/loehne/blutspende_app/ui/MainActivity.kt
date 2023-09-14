@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -69,7 +69,7 @@ fun NavigationBar() {
     )
 
     Scaffold(
-        modifier = Modifier.safeDrawingPadding(),
+        modifier = Modifier.safeContentPadding(),
         contentWindowInsets = WindowInsets(30.dp, 20.dp, 30.dp, 0.dp),
         topBar = {
             TopBar(navController)
@@ -93,6 +93,7 @@ fun NavigationBar() {
 @Composable
 fun TopBar(navController: NavHostController) {
     val currentRoute = currentRoute(navController = navController)
+
     TopAppBar(
         title = {},
         navigationIcon = {
@@ -118,7 +119,7 @@ fun TopBar(navController: NavHostController) {
             }) {
                 Icon(
                     painter = painterResource(id = R.drawable.settings),
-                    "Einstellungen"
+                    contentDescription = "Einstellungen"
                 )
             }
         }
@@ -130,7 +131,6 @@ fun BottomBar(
     navController: NavHostController,
     items: List<ScreenDefinition>
 ) {
-
     BubbleNavigationBar {
         val currentRoute = currentRoute(navController = navController)
         items.forEach { navigationItem ->
@@ -148,7 +148,6 @@ fun BottomBar(
             )
         }
     }
-
 }
 
 @Composable
