@@ -19,7 +19,7 @@ fun Vorrat() {
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)
             ) {
-                Text("Vorrat")
+                //Text("Vorrat")
             }
         }
     }

@@ -19,7 +19,7 @@ fun Home() {
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)
             ) {
-                Text("Dashboard")
+                //Text("Dashboard")
             }
         }
     }

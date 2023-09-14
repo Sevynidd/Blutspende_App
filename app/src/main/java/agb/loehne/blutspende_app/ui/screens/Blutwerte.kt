@@ -37,7 +37,6 @@ fun Blutwerte() {
                     .fillMaxSize()
                     .background(MaterialTheme.colorScheme.background)
             ) {
-                Text("Blutwerte")
 
                 var menuOpen by remember {
                     mutableStateOf(false)

@@ -20,6 +20,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -95,7 +96,18 @@ fun TopBar(navController: NavHostController) {
     val currentRoute = currentRoute(navController = navController)
 
     TopAppBar(
-        title = {},
+        title = {
+            Text(
+                when (currentRoute) {
+                    ScreenDefinition.Dashboard.route -> ScreenDefinition.Dashboard.name
+                    ScreenDefinition.Ausweis.route -> ScreenDefinition.Ausweis.name
+                    ScreenDefinition.Blutwerte.route -> ScreenDefinition.Blutwerte.name
+                    ScreenDefinition.Vorrat.route -> ScreenDefinition.Vorrat.name
+                    ScreenDefinition.Settings.route -> ScreenDefinition.Settings.name
+                    else -> ""
+                }
+            )
+        },
         navigationIcon = {
             if (currentRoute == ScreenDefinition.SettingsBlutgruppe.route) {
                 IconButton(
