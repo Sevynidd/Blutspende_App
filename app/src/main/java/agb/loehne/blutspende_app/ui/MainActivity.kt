@@ -1,7 +1,7 @@
 package agb.loehne.blutspende_app.ui
 
 import agb.loehne.blutspende_app.R
-import agb.loehne.blutspende_app.models.ScreenDefinition
+import agb.loehne.blutspende_app.model.ScreenDefinition
 import agb.loehne.blutspende_app.ui.navigation.SetupNavbarGraph
 import agb.loehne.blutspende_app.ui.theme.Blutspende_AppTheme
 import android.os.Bundle

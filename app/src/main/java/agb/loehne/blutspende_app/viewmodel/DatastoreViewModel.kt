@@ -1,15 +1,15 @@
-package agb.loehne.blutspende_app.viewmodels
+package agb.loehne.blutspende_app.viewmodel
 
-import agb.loehne.blutspende_app.repository.DatastoreSettingsManager
+import agb.loehne.blutspende_app.repository.DatastoreManager
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class DatastoreSettingsViewModel(application: Application) : AndroidViewModel(application) {
+class DatastoreViewModel(application: Application) : AndroidViewModel(application) {
 
-    private val dataStore = DatastoreSettingsManager(application)
+    private val dataStore = DatastoreManager(application)
 
     /**
      * 0 = System Default; 1 = Light Mode; 2 = Dark Mode

@@ -1,9 +1,10 @@
 package agb.loehne.blutspende_app.ui.screens
 
 import agb.loehne.blutspende_app.R
-import agb.loehne.blutspende_app.models.ScreenDefinition
+import agb.loehne.blutspende_app.model.ScreenDefinition
 import agb.loehne.blutspende_app.ui.theme.Blutspende_AppTheme
-import agb.loehne.blutspende_app.viewmodels.DatastoreSettingsViewModel
+import agb.loehne.blutspende_app.viewmodel.DatastoreViewModel
+import agb.loehne.blutspende_app.viewmodel.settings.DarstellungViewModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,6 +33,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -59,8 +61,12 @@ fun Settings(navController: NavHostController) {
                 Column(
                     modifier = Modifier.fillMaxSize()
                 ) {
-                    DialogDarstellung()
+                    val datastoreViewModel: DatastoreViewModel = viewModel()
+
+                    DialogDarstellung(datastoreViewModel)
+
                     Spacer(modifier = Modifier.size(20.dp))
+
                     DialogBlutgruppe(navController)
                 }
             }
@@ -69,23 +75,21 @@ fun Settings(navController: NavHostController) {
 }
 
 @Composable
-fun DialogDarstellung() {
-    var showDialogDarstellung by remember { mutableStateOf(false) }
-    val viewModel: DatastoreSettingsViewModel = viewModel()
-    val radioOptions = listOf("System", "Hell", "Dunkel")
-    val uiImages =
-        listOf(R.drawable.ui_system, R.drawable.ui_hell, R.drawable.ui_dunkel)
-    val (selectedOption, onOptionSelected) = remember {
-        mutableStateOf(
-            radioOptions[0]
-        )
-    }
+fun DialogDarstellung(
+    datastoreViewModel: DatastoreViewModel
+) {
+    val darstellungViewModel: DarstellungViewModel = viewModel()
+
+    val showDialogDarstellung = darstellungViewModel.getShowDialog
+    val selectedOption by datastoreViewModel.getThemeMode.collectAsState(0)
+    val radioOptions = darstellungViewModel.getRadioOptions
+    val images = darstellungViewModel.getImageIds
 
     Row(
         Modifier
             .fillMaxWidth()
             .clickable {
-                showDialogDarstellung = showDialogDarstellung.not()
+                darstellungViewModel.setShowDialog(showDialogDarstellung.not())
             }, verticalAlignment = Alignment.CenterVertically
     ) {
         Column(
@@ -117,26 +121,30 @@ fun DialogDarstellung() {
 
             if (showDialogDarstellung) {
                 AlertDialog(
-                    onDismissRequest = { showDialogDarstellung = false },
+                    onDismissRequest = { darstellungViewModel.setShowDialog(false) },
                     title = { Text("Darstellung") },
                     text = {
                         Row {
-                            radioOptions.forEach { text ->
+                            darstellungViewModel.getRadioOptions.forEach { text ->
                                 Column(
                                     Modifier
                                         .fillMaxWidth()
                                         .weight(1f)
                                         .selectable(
-                                            selected = (text == selectedOption),
+                                            selected = (text == radioOptions[selectedOption]),
                                             onClick = {
-                                                onOptionSelected(text)
+                                                datastoreViewModel.saveThemeToDataStore(
+                                                    radioOptions.indexOf(
+                                                        text
+                                                    )
+                                                )
                                             }
                                         ),
                                     horizontalAlignment = CenterHorizontally
                                 ) {
                                     Image(
                                         painter = painterResource(
-                                            id = uiImages[radioOptions.indexOf(
+                                            id = images[radioOptions.indexOf(
                                                 text
                                             )]
                                         ),
@@ -148,8 +156,12 @@ fun DialogDarstellung() {
                                         textAlign = TextAlign.Center
                                     )
                                     RadioButton(
-                                        selected = (text == selectedOption),
-                                        onClick = { onOptionSelected(text) }
+                                        selected = (text == radioOptions[selectedOption]),
+                                        onClick = {
+                                            datastoreViewModel.saveThemeToDataStore(
+                                                radioOptions.indexOf(text)
+                                            )
+                                        }
                                     )
                                 }
                             }
@@ -158,15 +170,9 @@ fun DialogDarstellung() {
                     },
                     confirmButton = {
                         TextButton(onClick = {
-                            viewModel.saveThemeToDataStore(radioOptions.indexOf(selectedOption))
-                            showDialogDarstellung = false
+                            darstellungViewModel.setShowDialog(false)
                         }) {
                             Text("ok".uppercase())
-                        }
-                    },
-                    dismissButton = {
-                        TextButton(onClick = { showDialogDarstellung = false }) {
-                            Text("Cancel".uppercase())
                         }
                     },
                 )
@@ -178,8 +184,9 @@ fun DialogDarstellung() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DialogBlutgruppe(navController: NavHostController) {
+
     var showDialogBlutgruppe by remember { mutableStateOf(false) }
-    val viewModel: DatastoreSettingsViewModel = viewModel()
+    val viewModel: DatastoreViewModel = viewModel()
 
     Row(
         Modifier
