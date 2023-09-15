@@ -1,4 +1,4 @@
-package agb.loehne.blutspende_app.model
+package agb.loehne.blutspende_app.repository
 
 import agb.loehne.blutspende_app.R
 import androidx.compose.ui.unit.Dp

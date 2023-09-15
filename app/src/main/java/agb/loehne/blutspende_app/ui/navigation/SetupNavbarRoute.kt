@@ -1,6 +1,6 @@
 package agb.loehne.blutspende_app.ui.navigation
 
-import agb.loehne.blutspende_app.model.ScreenDefinition
+import agb.loehne.blutspende_app.repository.ScreenDefinition
 import agb.loehne.blutspende_app.ui.screens.Ausweis
 import agb.loehne.blutspende_app.ui.screens.Blutwerte
 import agb.loehne.blutspende_app.ui.screens.Home

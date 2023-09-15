@@ -1,7 +1,7 @@
 package agb.loehne.blutspende_app.ui.screens
 
 import agb.loehne.blutspende_app.R
-import agb.loehne.blutspende_app.model.BlutwerteFABDefinition
+import agb.loehne.blutspende_app.repository.BlutwerteFABDefinition
 import agb.loehne.blutspende_app.ui.theme.Blutspende_AppTheme
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CornerSize
 import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.FloatingActionButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -71,6 +72,7 @@ fun Blutwerte() {
                                     percent = 50
                                 )
                             ),
+                                elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(2.dp),
                                 modifier = Modifier
                                     .padding(bottom = fab.bottompadding)
                                     .size(fab.size),
@@ -90,6 +92,7 @@ fun Blutwerte() {
                             percent = 50
                         )
                     ),
+                        elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(2.dp),
                         modifier = Modifier
                             .padding(bottom = 30.dp)
                             .size(56.dp),
