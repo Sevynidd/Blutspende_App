@@ -4,7 +4,7 @@ import agb.loehne.blutspende_app.R
 import agb.loehne.blutspende_app.ui.theme.Blutspende_AppTheme
 import agb.loehne.blutspende_app.viewmodel.DatastoreViewModel
 import agb.loehne.blutspende_app.viewmodel.settings.BlutgruppeViewModel
-import android.widget.Toast
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,9 +27,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.res.colorResource
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
@@ -74,7 +74,6 @@ fun Blutgruppe(datastoreViewModel: DatastoreViewModel, blutgruppeViewModel: Blut
         if (showDialog) {
             val configuration = LocalConfiguration.current
             val screenHeight = configuration.screenHeightDp.dp
-            val screenWidth = configuration.screenWidthDp.dp
 
             AlertDialog(modifier = Modifier.heightIn(250.dp, screenHeight - 150.dp),
                 onDismissRequest = { blutgruppeViewModel.setShowDialogBlutgruppe(false) },
@@ -89,10 +88,14 @@ fun Blutgruppe(datastoreViewModel: DatastoreViewModel, blutgruppeViewModel: Blut
                                     "Blutgruppe B: Es ist nur das Antigen B vorhanden.\n" + "Blutgruppe 0: Es sind keine Antigene vorhanden.\n" +
                                     "Blutgruppe AB: Es befinden sich beide Antigene A und B auf den roten Blutkörperchen."
                         )
+                        Image(
+                            painter = painterResource(id = R.drawable.unterscheidung_der_blutgruppen),
+                            contentDescription = "Blutgruppen"
+                        )
 
                         AddHyperlinkToText(
-                            fullText = "Quelle",
-                            linkText = listOf("Quelle"),
+                            fullText = "Quelle: blutspenden.de",
+                            linkText = listOf("blutspenden.de"),
                             hyperlinks = listOf("https://www.blutspenden.de/rund-ums-blut/blutgruppen/")
                         )
                     }
@@ -119,6 +122,14 @@ fun AddHyperlinkToText(fullText: String, linkText: List<String>, hyperlinks: Lis
 
     val annotatedText = buildAnnotatedString {
         append(fullText)
+        addStyle(
+            style = SpanStyle(
+                color = MaterialTheme.colorScheme.onPrimaryContainer,
+            ),
+            start = 0,
+            end = fullText.length
+        )
+
         linkText.forEachIndexed { index, link ->
             val startIndex = fullText.indexOf(link)
             val endIndex = startIndex + link.length
@@ -139,9 +150,6 @@ fun AddHyperlinkToText(fullText: String, linkText: List<String>, hyperlinks: Lis
             )
         }
     }
-
-    val cont = LocalContext.current
-    Toast.makeText(cont, annotatedText, Toast.LENGTH_SHORT).show()
 
     val uriHandler = LocalUriHandler.current
 
