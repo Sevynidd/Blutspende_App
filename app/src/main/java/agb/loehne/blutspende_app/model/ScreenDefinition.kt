@@ -1,4 +1,4 @@
-package agb.loehne.blutspende_app.repository
+package agb.loehne.blutspende_app.model
 
 import agb.loehne.blutspende_app.R
 

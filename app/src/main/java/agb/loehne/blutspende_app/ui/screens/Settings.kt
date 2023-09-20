@@ -1,7 +1,7 @@
 package agb.loehne.blutspende_app.ui.screens
 
 import agb.loehne.blutspende_app.R
-import agb.loehne.blutspende_app.repository.ScreenDefinition
+import agb.loehne.blutspende_app.model.ScreenDefinition
 import agb.loehne.blutspende_app.ui.theme.Blutspende_AppTheme
 import agb.loehne.blutspende_app.viewmodel.DatastoreViewModel
 import agb.loehne.blutspende_app.viewmodel.settings.DarstellungViewModel
