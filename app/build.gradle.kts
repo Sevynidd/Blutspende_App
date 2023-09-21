@@ -62,7 +62,7 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics:1.5.1")
     implementation("androidx.compose.ui:ui-tooling-preview:1.5.1")
     implementation("androidx.compose.animation:animation:1.5.1")
-    implementation("androidx.compose.material3:material3:1.1.1")
+    implementation("androidx.compose.material3:material3:1.1.2")
 
     // Testing
     testImplementation("junit:junit:4.13.2")
@@ -79,7 +79,7 @@ dependencies {
     implementation("com.github.commandiron:BubbleNavigationBarCompose:1.0.2")
 
     //Navigation
-    implementation("androidx.navigation:navigation-compose:2.7.2")
+    implementation("androidx.navigation:navigation-compose:2.7.3")
 
     // Splash API
     implementation("androidx.core:core-splashscreen:1.0.1")
