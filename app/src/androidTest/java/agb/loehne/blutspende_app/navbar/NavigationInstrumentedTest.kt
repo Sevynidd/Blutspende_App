@@ -2,13 +2,13 @@ package agb.loehne.blutspende_app.navbar
 
 import agb.loehne.blutspende_app.ui.NavigationBar
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertTextEquals
 import androidx.compose.ui.test.filter
 import androidx.compose.ui.test.hasAnySibling
 import androidx.compose.ui.test.hasClickAction
 import androidx.compose.ui.test.hasNoClickAction
 import androidx.compose.ui.test.hasText
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import org.junit.Rule
@@ -31,11 +31,11 @@ class NavigationInstrumentedTest {
                     hasClickAction()
         ).performClick()
 
-       rule.onNode(
-           hasText("Dashboard")
-           and
-           hasNoClickAction()
-       ).assertIsDisplayed()
+        rule.onNode(
+            hasText("Dashboard")
+                    and
+                    hasNoClickAction()
+        ).assertIsDisplayed()
     }
 
     @Test
@@ -96,5 +96,28 @@ class NavigationInstrumentedTest {
                     and
                     hasNoClickAction()
         ).assertIsDisplayed()
+    }
+
+    @Test
+    fun testNavigationSettings() {
+
+        rule.setContent {
+            NavigationBar()
+        }
+
+        rule.onNodeWithContentDescription("Einstellungen").performClick()
+
+        rule.onNodeWithText("Settings").assertIsDisplayed()
+
+    }
+
+    @Test
+    fun testNavigationSettingsBlutgruppe() {
+
+        testNavigationSettings()
+
+        rule.onNodeWithText("Blutgruppe").performClick()
+
+        rule.onNodeWithText("ABO-System").assertIsDisplayed()
     }
 }
