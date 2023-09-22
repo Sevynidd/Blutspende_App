@@ -1,9 +1,5 @@
 package de.agb.blutspende_app.ui
 
-import de.agb.blutspende_app.R
-import de.agb.blutspende_app.model.ScreenDefinition
-import de.agb.blutspende_app.ui.navigation.SetupNavbarGraph
-import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,6 +8,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -27,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.navigation.NavHostController
@@ -34,6 +32,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.commandiron.bubble_navigation_bar_compose.BubbleNavigationBar
 import com.commandiron.bubble_navigation_bar_compose.BubbleNavigationBarItem
+import de.agb.blutspende_app.R
+import de.agb.blutspende_app.model.ScreenDefinition
+import de.agb.blutspende_app.ui.navigation.SetupNavbarGraph
+import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -98,6 +100,7 @@ fun TopBar(navController: NavHostController) {
     TopAppBar(
         title = {
             Text(
+                text =
                 when (currentRoute) {
                     ScreenDefinition.Dashboard.route -> ScreenDefinition.Dashboard.name
                     ScreenDefinition.Ausweis.route -> ScreenDefinition.Ausweis.name
@@ -105,7 +108,8 @@ fun TopBar(navController: NavHostController) {
                     ScreenDefinition.Vorrat.route -> ScreenDefinition.Vorrat.name
                     ScreenDefinition.Settings.route -> ScreenDefinition.Settings.name
                     else -> ""
-                }
+                },
+                fontSize = 20.sp
             )
         },
         navigationIcon = {
@@ -128,7 +132,7 @@ fun TopBar(navController: NavHostController) {
                 if (currentRoute != ScreenDefinition.Settings.route) {
                     navController.navigate(ScreenDefinition.Settings.route)
                 }
-            }) {
+            }, modifier = Modifier.size(35.dp)) {
                 Icon(
                     painter = painterResource(id = R.drawable.settings),
                     contentDescription = "Einstellungen"
