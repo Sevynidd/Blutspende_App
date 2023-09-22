@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "agb.loehne.blutspende_app"
+    namespace = "de.agb.blutspende_app"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "agb.loehne.blutspende_app"
+        applicationId = "de.agb.blutspende_app"
         minSdk = 29
         targetSdk = 34
         versionCode = 1
