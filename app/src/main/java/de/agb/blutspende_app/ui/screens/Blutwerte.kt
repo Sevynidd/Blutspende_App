@@ -95,7 +95,7 @@ fun Blutwerte() {
                         elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(2.dp),
                         modifier = Modifier
                             .padding(bottom = 30.dp)
-                            .size(56.dp),
+                            .size(50.dp),
                         onClick = { menuOpen = menuOpen.not() }) {
                         Crossfade(
                             targetState = currentMenuIcon,
@@ -104,7 +104,7 @@ fun Blutwerte() {
                             Icon(
                                 painter = painterResource(id = icon),
                                 contentDescription = "Menu",
-                                modifier = Modifier.size(25.dp)
+                                modifier = Modifier.size(22.dp)
                             )
                         }
                     }
