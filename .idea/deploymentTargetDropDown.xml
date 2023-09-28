@@ -10,12 +10,12 @@
               <deviceKey>
                 <Key>
                   <type value="VIRTUAL_DEVICE_PATH" />
-                  <value value="C:\Users\Karina\.android\avd\S21_Plus_x86_64.avd" />
+                  <value value="$USER_HOME$/.android/avd/Samsung_S21Plus_API_29.avd" />
                 </Key>
               </deviceKey>
             </Target>
           </targetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2023-09-21T17:44:19.445408400Z" />
+          <timeTargetWasSelectedWithDropDown value="2023-09-28T08:05:41.264401446Z" />
         </State>
       </entry>
     </value>

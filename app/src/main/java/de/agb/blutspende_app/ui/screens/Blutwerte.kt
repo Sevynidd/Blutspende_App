@@ -1,5 +1,6 @@
 package de.agb.blutspende_app.ui.screens
 
+import android.widget.Toast
 import de.agb.blutspende_app.R
 import de.agb.blutspende_app.model.BlutwerteFABDefinition
 import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
@@ -26,6 +27,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
@@ -52,6 +54,7 @@ fun Blutwerte() {
                     BlutwerteFABDefinition.Plus
                 )
                 val density = LocalDensity.current
+                val context = LocalContext.current
 
                 Column(
                     Modifier
@@ -76,7 +79,10 @@ fun Blutwerte() {
                                 modifier = Modifier
                                     .padding(bottom = fab.bottompadding)
                                     .size(fab.size),
-                                onClick = { /*TODO*/ }) {
+                                onClick = {
+                                    Toast.makeText(context, fab.contentDescription, Toast.LENGTH_SHORT).show()
+                                    menuOpen = menuOpen.not()
+                                }) {
                                 Icon(
                                     painter = painterResource(id = fab.iconId),
                                     contentDescription = fab.contentDescription,

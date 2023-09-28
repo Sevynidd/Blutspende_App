@@ -32,10 +32,10 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.commandiron.bubble_navigation_bar_compose.BubbleNavigationBar
 import com.commandiron.bubble_navigation_bar_compose.BubbleNavigationBarItem
+import de.agb.blutspende_app.R
 import de.agb.blutspende_app.model.ScreenDefinition
 import de.agb.blutspende_app.ui.navigation.SetupNavbarGraph
 import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
-import de.agb.blutspende_app.R
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -58,18 +58,10 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun NavigationBar() {
 
     val navController = rememberNavController()
-
-    val navigationItems = listOf(
-        ScreenDefinition.Dashboard,
-        ScreenDefinition.Ausweis,
-        ScreenDefinition.Blutwerte,
-        ScreenDefinition.Vorrat
-    )
 
     Scaffold(
         modifier = Modifier.safeDrawingPadding(),
@@ -87,7 +79,7 @@ fun NavigationBar() {
             }
         },
         bottomBar = {
-            BottomBar(navController, navigationItems)
+            BottomBar(navController)
         }
     )
 }
@@ -144,21 +136,28 @@ fun TopBar(navController: NavHostController) {
 
 @Composable
 fun BottomBar(
-    navController: NavHostController,
-    items: List<ScreenDefinition>
+    navController: NavHostController
 ) {
+
+    val navigationItems = listOf(
+        ScreenDefinition.Dashboard,
+        ScreenDefinition.Ausweis,
+        ScreenDefinition.Blutwerte,
+        ScreenDefinition.Vorrat
+    )
+
     BubbleNavigationBar {
         val currentRoute = currentRoute(navController = navController)
-        items.forEach { navigationItem ->
+        navigationItems.forEach { item ->
             BubbleNavigationBarItem(
-                selected = currentRoute == navigationItem.route,
+                selected = currentRoute == item.route,
                 onClick = {
-                    if (currentRoute != navigationItem.route) {
-                        navController.navigate(navigationItem.route)
+                    if (currentRoute != item.route) {
+                        navController.navigate(item.route)
                     }
                 },
-                icon = navigationItem.iconId,
-                title = navigationItem.name,
+                icon = item.iconId,
+                title = item.name,
                 selectedColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 unSelectedIconColor = MaterialTheme.colorScheme.onPrimary
             )
