@@ -1,3 +1,7 @@
+------------------------------
+ICONS
+------------------------------
+
 NAVIGATION BAR
 
 blood_drop - https://www.svgrepo.com/svg/464104/blood
@@ -28,3 +32,10 @@ minus - https://www.svgrepo.com/svg/513838/minus
 edit - https://www.svgrepo.com/svg/513824/edit
 menu - https://www.svgrepo.com/svg/532195/menu
 close - https://www.svgrepo.com/svg/521564/close
+
+------------------------------
+IMAGES
+------------------------------
+
+compose-testing-cheatsheet - https://developer.android.com/jetpack/compose/testing-cheatsheet
+
