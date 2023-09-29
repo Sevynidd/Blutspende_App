@@ -33,6 +33,10 @@ edit - https://www.svgrepo.com/svg/513824/edit
 menu - https://www.svgrepo.com/svg/532195/menu
 close - https://www.svgrepo.com/svg/521564/close
 
+APP ICON
+
+blutspendedienst owl - https://www.blutspendedienst-owl.de/typo3conf/ext/tue_sitetemplate/Resources/Public/Media/hdz-nrw.svg
+
 ------------------------------
 IMAGES
 ------------------------------
