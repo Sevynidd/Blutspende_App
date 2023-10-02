@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
@@ -36,6 +37,7 @@ import de.agb.blutspende_app.R
 import de.agb.blutspende_app.model.ScreenDefinition
 import de.agb.blutspende_app.ui.navigation.SetupNavbarGraph
 import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
+import de.agb.blutspende_app.viewmodel.MainActivityViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -89,18 +91,13 @@ fun NavigationBar() {
 fun TopBar(navController: NavHostController) {
     val currentRoute = currentRoute(navController = navController)
 
+    val viewModel: MainActivityViewModel = viewModel()
+
     TopAppBar(
         title = {
             Text(
                 text =
-                when (currentRoute) {
-                    ScreenDefinition.Dashboard.route -> ScreenDefinition.Dashboard.name
-                    ScreenDefinition.Ausweis.route -> ScreenDefinition.Ausweis.name
-                    ScreenDefinition.Blutwerte.route -> ScreenDefinition.Blutwerte.name
-                    ScreenDefinition.Vorrat.route -> ScreenDefinition.Vorrat.name
-                    ScreenDefinition.Settings.route -> ScreenDefinition.Settings.name
-                    else -> ""
-                },
+                viewModel.topAppBarTitle(currentRoute),
                 fontSize = 20.sp
             )
         },
@@ -157,7 +154,7 @@ fun BottomBar(
                     }
                 },
                 icon = item.iconId,
-                title = item.name,
+                title = item.route,
                 selectedColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 unSelectedIconColor = MaterialTheme.colorScheme.onPrimary
             )
