@@ -102,10 +102,10 @@ fun TopBar(navController: NavHostController) {
             )
         },
         navigationIcon = {
-            if (currentRoute == ScreenDefinition.SettingsBlutgruppe.route) {
+            if (currentRoute == viewModel.getSettingsRoute) {
                 IconButton(
                     onClick = {
-                        navController.navigate(ScreenDefinition.Settings.route)
+                        navController.navigate(viewModel.getSettingsRoute)
                     },
                     enabled = true
                 ) {
@@ -118,8 +118,8 @@ fun TopBar(navController: NavHostController) {
         },
         actions = {
             IconButton(onClick = {
-                if (currentRoute != ScreenDefinition.Settings.route) {
-                    navController.navigate(ScreenDefinition.Settings.route)
+                if (currentRoute != viewModel.getSettingsRoute) {
+                    navController.navigate(viewModel.getSettingsRoute)
                 }
             }, modifier = Modifier.size(35.dp)) {
                 Icon(
@@ -135,17 +135,11 @@ fun TopBar(navController: NavHostController) {
 fun BottomBar(
     navController: NavHostController
 ) {
-
-    val navigationItems = listOf(
-        ScreenDefinition.Dashboard,
-        ScreenDefinition.Ausweis,
-        ScreenDefinition.Blutwerte,
-        ScreenDefinition.Vorrat
-    )
+    val viewModel: MainActivityViewModel = viewModel()
 
     BubbleNavigationBar {
         val currentRoute = currentRoute(navController = navController)
-        navigationItems.forEach { item ->
+        viewModel.getNavigationItems.forEach { item ->
             BubbleNavigationBarItem(
                 selected = currentRoute == item.route,
                 onClick = {
