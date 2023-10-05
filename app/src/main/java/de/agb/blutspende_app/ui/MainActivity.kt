@@ -102,7 +102,7 @@ fun TopBar(navController: NavHostController) {
             )
         },
         navigationIcon = {
-            if (currentRoute == viewModel.getSettingsRoute) {
+            if (currentRoute == viewModel.getSettingsBlutgruppeRoute) {
                 IconButton(
                     onClick = {
                         navController.navigate(viewModel.getSettingsRoute)

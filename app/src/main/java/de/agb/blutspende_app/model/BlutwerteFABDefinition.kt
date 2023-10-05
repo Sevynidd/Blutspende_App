@@ -35,5 +35,4 @@ sealed class BlutwerteFABDefinition(
         contentDescription = "EditFAB"
     )
 
-
 }
