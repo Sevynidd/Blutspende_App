@@ -32,4 +32,16 @@ class SettingsViewModel : ViewModel() {
     val getSettingsBlutgruppeRoute: String
         get() = _getSettingsBlutgruppeRoute
 
+
+    // GENDER
+
+    private var _showDialogGender = mutableStateOf(false)
+
+    val getShowDialogGender: Boolean
+        get() = _showDialogGender.value
+
+    fun setShowDialogGender(value: Boolean) {
+        _showDialogGender.value = value
+    }
+
 }

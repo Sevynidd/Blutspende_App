@@ -36,7 +36,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import de.agb.blutspende_app.R
 import de.agb.blutspende_app.model.InterfaceSettingsItem
-import de.agb.blutspende_app.model.ScreenDefinition
 import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
 import de.agb.blutspende_app.viewmodel.DatastoreViewModel
 import de.agb.blutspende_app.viewmodel.settings.SettingsViewModel
@@ -195,7 +194,7 @@ fun DarstellungItem() {
 
 @Composable
 fun BlutgruppeItem(navController: NavHostController) {
-    val settingsViewModel: SettingsViewModel = viewModel()
+    val viewModel: SettingsViewModel = viewModel()
 
     DefinitionSettingsItem(
         object : InterfaceSettingsItem {
@@ -203,7 +202,7 @@ fun BlutgruppeItem(navController: NavHostController) {
             override val subTitle = "ABO, Rhesus, Rhesuskomplex & Kell"
             override val icon = R.drawable.blood_drop
             override val onClick = {
-                navController.navigate(settingsViewModel.getSettingsBlutgruppeRoute)
+                navController.navigate(viewModel.getSettingsBlutgruppeRoute)
             }
             override val rightArrowButtonVisible = true
         }
@@ -212,14 +211,33 @@ fun BlutgruppeItem(navController: NavHostController) {
 
 @Composable
 fun GeschlechtItem() {
+    val viewModel: SettingsViewModel = viewModel()
+
     DefinitionSettingsItem(
         object : InterfaceSettingsItem {
             override val title = "Geschlecht"
-            override val icon = R.drawable.blutspendedienst_owl_icon
+            override val icon = R.drawable.gender
             override val onClick = {
-                //darstellungViewModel.setShowDialog(darstellungViewModel.getShowDialog.not())
+                viewModel.setShowDialogGender(viewModel.getShowDialogGender.not())
             }
 
         }
     )
+
+    if (viewModel.getShowDialogGender) {
+        AlertDialog(
+            onDismissRequest = { viewModel.setShowDialogGender(false) },
+            title = { Text("Geschlecht") },
+            text = {
+                Text("Test")
+            },
+            confirmButton = {
+                TextButton(onClick = {
+                    viewModel.setShowDialogGender(false)
+                }) {
+                    Text("ok".uppercase())
+                }
+            },
+        )
+    }
 }

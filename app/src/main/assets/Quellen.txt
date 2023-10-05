@@ -36,7 +36,7 @@ minus - https://www.svgrepo.com/svg/513838/minus
 edit - https://www.svgrepo.com/svg/513824/edit
 menu - https://www.svgrepo.com/svg/532195/menu
 close - https://www.svgrepo.com/svg/521564/close
-
+gender - https://www.svgrepo.com/svg/478641/gender-mark-1
 
 ------------------------------
 IMAGES
