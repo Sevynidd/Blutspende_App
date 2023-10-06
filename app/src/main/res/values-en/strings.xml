@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Blood Donor Service OWL</string>
+    <string name="biological_gender">Biological Gender</string>
+    <string name="settings_general">General</string>
+    <string name="blood_donation">Blood Donation</string>
+    <string name="theme">Theme</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="bloodgroup">Blood group</string>
+    <string name="rhesuskomplex">Rhesuscomplex</string>
+    <string name="AB0System_Help_Title">What is the ABO system?</string>
+    <string name="AB0System_Help_Text">All red blood cells (erythrocytes) are surrounded by a sheath. On this envelope there are characteristic structures (antigens) that distinguish red blood cells of one person from those of another. In the AB0 blood group system, the antigens on the red blood cell sheath are divided into four groups: A, B, AB and 0. Blood group A: There is only antigen A on the sheath of red blood cells. Blood group B: Only antigen B is present. Blood group 0: No antigens are present. Blood group AB: Both antigens A and B are present on the red blood cells.</string>
+    <string name="source">Source</string>
+</resources>

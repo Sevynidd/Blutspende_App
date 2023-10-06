@@ -16,12 +16,18 @@ class DatastoreManager(context: Context) {
     private val dataStore = context.dataStore
 
     companion object {
+        // SETTINGS
         private val THEME_MODE_KEY = intPreferencesKey("theme_mode")
+        private val GENDER_KEY = booleanPreferencesKey("gender")
+
+        // BLUT
         private val BLUTGRUPPE_KEY = intPreferencesKey("blutgruppe")
         private val RHESUS_KEY = booleanPreferencesKey("rhesus")
         private val RHESUS_KOMPLEX_KEY = stringPreferencesKey("rhesus_komplex")
         private val KELL_KEY = booleanPreferencesKey("kell")
     }
+
+    // SETTINGS
 
     /**
      * @param themeMode 0 = System Default; 1 = Light Mode; 2 = Dark Mode
@@ -36,6 +42,22 @@ class DatastoreManager(context: Context) {
         .map { preferences ->
             preferences[THEME_MODE_KEY] ?: 0
         }
+
+    /**
+     * @param gender false (0) = Männlich; true (1) = Weiblich
+     */
+    suspend fun saveGenderToDataStore(gender: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[GENDER_KEY] = gender
+        }
+    }
+
+    val getGender: Flow<Boolean> = dataStore.data
+        .map { preferences ->
+            preferences[GENDER_KEY] ?: false
+        }
+
+    // BLUT
 
     /**
      * @param blutgruppe 0 = 0; 1 = A; 2 = B; 3 = AB

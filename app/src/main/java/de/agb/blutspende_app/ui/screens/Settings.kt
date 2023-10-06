@@ -15,6 +15,7 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.AlertDialog
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
@@ -28,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -53,16 +55,27 @@ fun Settings(navController: NavHostController) {
                     modifier = Modifier.fillMaxSize()
                 ) {
 
-                    DarstellungItem()
+                    Text(text = stringResource(id = R.string.settings_general), fontSize = 18.sp)
 
                     Spacer(Modifier.size(10.dp))
 
-                    BlutgruppeItem(navController)
+                    DarstellungItem()
 
                     Spacer(Modifier.size(10.dp))
 
                     GeschlechtItem()
 
+
+                    Spacer(Modifier.size(10.dp))
+                    Divider()
+                    Spacer(Modifier.size(10.dp))
+
+
+                    Text(text = stringResource(id = R.string.blood_donation), fontSize = 18.sp)
+
+                    Spacer(Modifier.size(10.dp))
+
+                    BlutgruppeItem(navController)
                 }
             }
         }
@@ -120,8 +133,11 @@ fun DarstellungItem() {
 
     DefinitionSettingsItem(
         object : InterfaceSettingsItem {
-            override val title = "Darstellung"
-            override val subTitle = "System / Hell / Dunkel"
+            override val title = stringResource(id = R.string.theme)
+            override val subTitle =
+                stringResource(id = R.string.theme_system) + " / " +
+                        stringResource(id = R.string.theme_light) + " / " +
+                        stringResource(id = R.string.theme_dark)
             override val icon = R.drawable.paint_brush
 
             override val onClick = {
@@ -131,50 +147,44 @@ fun DarstellungItem() {
     )
 
     if (settingsViewModel.getShowDialogDarstellung) {
+        val radioOptions = listOf(
+            stringResource(id = R.string.theme_system),
+            stringResource(id = R.string.theme_light),
+            stringResource(id = R.string.theme_dark)
+        )
         AlertDialog(
             onDismissRequest = { settingsViewModel.setShowDialogDarstellung(false) },
-            title = { Text("Darstellung") },
+            title = { Text(stringResource(id = R.string.theme)) },
             text = {
                 Row {
-                    settingsViewModel.getRadioOptionsDarstellung.forEach { text ->
+                    for (i in 0..2) {
                         Column(
                             Modifier
                                 .fillMaxWidth()
                                 .weight(1f)
                                 .selectable(
-                                    selected = (text == settingsViewModel.getRadioOptionsDarstellung[selectedOption]),
+                                    selected = (i == selectedOption),
                                     onClick = {
-                                        datastoreViewModel.saveThemeToDataStore(
-                                            settingsViewModel.getRadioOptionsDarstellung.indexOf(
-                                                text
-                                            )
-                                        )
+                                        datastoreViewModel.saveThemeToDataStore(i)
                                     }
                                 ),
                             horizontalAlignment = CenterHorizontally
                         ) {
                             Image(
                                 painter = painterResource(
-                                    id = settingsViewModel.getImageIdsDarstellung[
-                                        settingsViewModel.getRadioOptionsDarstellung.indexOf(
-                                            text
-                                        )]
+                                    id = settingsViewModel.getImageIdsDarstellung[i]
                                 ),
-                                contentDescription = text
+                                contentDescription = radioOptions[i]
                             )
                             Text(
-                                text = text,
+                                text = radioOptions[i],
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.Center
                             )
                             RadioButton(
-                                selected = (text == settingsViewModel.getRadioOptionsDarstellung[selectedOption]),
+                                selected = (i == selectedOption),
                                 onClick = {
-                                    datastoreViewModel.saveThemeToDataStore(
-                                        settingsViewModel.getRadioOptionsDarstellung.indexOf(
-                                            text
-                                        )
-                                    )
+                                    datastoreViewModel.saveThemeToDataStore(i)
                                 }
                             )
                         }
@@ -198,8 +208,9 @@ fun BlutgruppeItem(navController: NavHostController) {
 
     DefinitionSettingsItem(
         object : InterfaceSettingsItem {
-            override val title = "Blutgruppe"
-            override val subTitle = "ABO, Rhesus, Rhesuskomplex & Kell"
+            override val title = stringResource(id = R.string.bloodgroup)
+            override val subTitle =
+                "ABO, Rhesus, " + stringResource(id = R.string.rhesuskomplex) + " & Kell"
             override val icon = R.drawable.blood_drop
             override val onClick = {
                 navController.navigate(viewModel.getSettingsBlutgruppeRoute)
@@ -215,19 +226,18 @@ fun GeschlechtItem() {
 
     DefinitionSettingsItem(
         object : InterfaceSettingsItem {
-            override val title = "Geschlecht"
+            override val title = stringResource(id = R.string.biological_gender)
             override val icon = R.drawable.gender
             override val onClick = {
                 viewModel.setShowDialogGender(viewModel.getShowDialogGender.not())
             }
-
         }
     )
 
     if (viewModel.getShowDialogGender) {
         AlertDialog(
             onDismissRequest = { viewModel.setShowDialogGender(false) },
-            title = { Text("Geschlecht") },
+            title = { Text(stringResource(id = R.string.biological_gender)) },
             text = {
                 Text("Test")
             },

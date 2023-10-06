@@ -27,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -72,17 +73,10 @@ fun Blutgruppe(datastoreViewModel: DatastoreViewModel) {
 
             AlertDialog(modifier = Modifier.heightIn(250.dp, screenHeight - 150.dp),
                 onDismissRequest = { viewModel.setShowDialog(false) },
-                title = { Text("Was ist das AB0-System?") },
+                title = { Text(stringResource(id = R.string.AB0System_Help_Title)) },
                 text = {
                     Column(Modifier.verticalScroll(rememberScrollState())) {
-                        Text(
-                            "Alle roten Blutkörperchen (Erythrozyten) sind von einer Hülle umgeben. \n" +
-                                    "Auf dieser Hülle befinden sich charakteristische Strukturen (Antigene), die die roten Blutkörperchen eines Menschen von denen eines anderen unterscheiden.\n" +
-                                    "Im AB0-Blutgruppensystem werden die Antigene auf der Hülle der roten Blutkörperchen in vier Gruppen unterteilt: A, B, AB und 0 stellen die vier Blutgruppen dar.\n" +
-                                    "\n" + "Blutgruppe A: Es befindet sich nur das Antigen A auf der Hülle der roten Blutkörperchen.\n" +
-                                    "Blutgruppe B: Es ist nur das Antigen B vorhanden.\n" + "Blutgruppe 0: Es sind keine Antigene vorhanden.\n" +
-                                    "Blutgruppe AB: Es befinden sich beide Antigene A und B auf den roten Blutkörperchen."
-                        )
+                        Text(stringResource(id = R.string.AB0System_Help_Text))
                         Image(
                             painter = painterResource(id = R.drawable.unterscheidung_der_blutgruppen),
                             contentDescription = "Blutgruppen"
@@ -91,7 +85,7 @@ fun Blutgruppe(datastoreViewModel: DatastoreViewModel) {
                         val globalFunctions: GlobalFunctions = viewModel()
 
                         globalFunctions.AddHyperlinkToText(
-                            fullText = "Quelle: blutspenden.de",
+                            fullText = stringResource(id = R.string.source) + ": blutspenden.de",
                             linkText = listOf("blutspenden.de"),
                             hyperlinks = listOf("https://www.blutspenden.de/rund-ums-blut/blutgruppen/")
                         )

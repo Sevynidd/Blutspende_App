@@ -1,9 +1,6 @@
 package de.agb.blutspende_app.ui.screens
 
 import android.widget.Toast
-import de.agb.blutspende_app.R
-import de.agb.blutspende_app.model.BlutwerteFABDefinition
-import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.slideInVertically
@@ -31,6 +28,8 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import de.agb.blutspende_app.R
+import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
 
 @Composable
 fun Blutwerte() {
@@ -48,11 +47,7 @@ fun Blutwerte() {
                 val currentMenuIcon: Int by rememberUpdatedState(
                     if (menuOpen) R.drawable.close else R.drawable.menu
                 )
-                val fabs = listOf(
-                    BlutwerteFABDefinition.Edit,
-                    BlutwerteFABDefinition.Minus,
-                    BlutwerteFABDefinition.Plus
-                )
+
                 val density = LocalDensity.current
                 val context = LocalContext.current
 
@@ -63,7 +58,7 @@ fun Blutwerte() {
                     horizontalAlignment = Alignment.End
                 ) {
 
-                    fabs.forEach { fab ->
+                    for (i in 0..2) {
                         AnimatedVisibility(menuOpen,
                             enter = slideInVertically {
                                 with(density) {
@@ -77,20 +72,36 @@ fun Blutwerte() {
                             ),
                                 elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(2.dp),
                                 modifier = Modifier
-                                    .padding(bottom = fab.bottompadding)
-                                    .size(fab.size),
+                                    .padding(bottom = 15.dp)
+                                    .size(40.dp),
                                 onClick = {
-                                    Toast.makeText(context, fab.contentDescription, Toast.LENGTH_SHORT).show()
+                                    Toast.makeText(
+                                        context,
+                                        when (i) {
+                                            0 -> "FABPlus"
+                                            1 -> "FABMinus"
+                                            else -> "FabEdit"
+                                        }, Toast.LENGTH_SHORT
+                                    ).show()
                                     menuOpen = menuOpen.not()
                                 }) {
                                 Icon(
-                                    painter = painterResource(id = fab.iconId),
-                                    contentDescription = fab.contentDescription,
-                                    modifier = Modifier.size(fab.iconSize)
+                                    painter = painterResource(
+                                        id = when (i) {
+                                            0 -> R.drawable.plus
+                                            1 -> R.drawable.minus
+                                            else -> R.drawable.edit
+                                        }
+                                    ),
+                                    contentDescription = when (i) {
+                                        0 -> "FABPlus"
+                                        1 -> "FABMinus"
+                                        else -> "FabEdit"
+                                    },
+                                    modifier = Modifier.size(18.dp)
                                 )
                             }
                         }
-
                     }
 
                     FloatingActionButton(shape = MaterialTheme.shapes.medium.copy(
@@ -115,7 +126,6 @@ fun Blutwerte() {
                         }
                     }
                 }
-
             }
         }
     }
