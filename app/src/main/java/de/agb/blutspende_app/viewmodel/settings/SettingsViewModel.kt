@@ -33,6 +33,8 @@ class SettingsViewModel : ViewModel() {
     // GENDER
 
     private var _showDialogGender = mutableStateOf(false)
+    private val _imageIdsGender =
+        listOf(R.drawable.gender_male, R.drawable.gender_female)
 
     val getShowDialogGender: Boolean
         get() = _showDialogGender.value
@@ -41,15 +43,7 @@ class SettingsViewModel : ViewModel() {
         _showDialogGender.value = value
     }
 
-    // SPRACHE
-
-    private var _showDialogSprache = mutableStateOf(false)
-
-    val getShowDialogSprache: Boolean
-        get() = _showDialogSprache.value
-
-    fun setShowDialogSprache(value: Boolean) {
-        _showDialogSprache.value = value
-    }
+    val getImageIdsGender: List<Int>
+        get() = _imageIdsGender
 
 }

@@ -10,6 +10,7 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.lifecycle.ViewModel
 import de.agb.blutspende_app.R
+import de.agb.blutspende_app.model.ScreenDefinition
 
 class GlobalFunctions: ViewModel() {
 
@@ -64,5 +65,20 @@ class GlobalFunctions: ViewModel() {
             }
         )
     }
+
+    val getScreenRouteDashboard: String
+        get() = ScreenDefinition.Dashboard.route
+
+    val getScreenRouteBlutwerte: String
+        get() = ScreenDefinition.Blutwerte.route
+
+    val getScreenRouteVorrat: String
+        get() = ScreenDefinition.Vorrat.route
+
+    val getScreenRouteSettings: String
+        get() = ScreenDefinition.Settings.route
+
+    val getScreenRouteSettingsBlutgruppe: String
+        get() = ScreenDefinition.SettingsBlutgruppe.route
 
 }

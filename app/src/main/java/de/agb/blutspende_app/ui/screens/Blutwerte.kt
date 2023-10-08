@@ -78,9 +78,9 @@ fun Blutwerte() {
                                     Toast.makeText(
                                         context,
                                         when (i) {
-                                            0 -> "FABPlus"
-                                            1 -> "FABMinus"
-                                            else -> "FabEdit"
+                                            0 -> "FABEdit"
+                                            1 -> "FABPlus"
+                                            else -> "FABMinus"
                                         }, Toast.LENGTH_SHORT
                                     ).show()
                                     menuOpen = menuOpen.not()
@@ -88,15 +88,15 @@ fun Blutwerte() {
                                 Icon(
                                     painter = painterResource(
                                         id = when (i) {
-                                            0 -> R.drawable.plus
-                                            1 -> R.drawable.minus
-                                            else -> R.drawable.edit
+                                            0 -> R.drawable.edit
+                                            1 -> R.drawable.plus
+                                            else -> R.drawable.minus
                                         }
                                     ),
                                     contentDescription = when (i) {
-                                        0 -> "FABPlus"
-                                        1 -> "FABMinus"
-                                        else -> "FabEdit"
+                                        0 -> "FABEdit"
+                                        1 -> "FABPlus"
+                                        else -> "FABMinus"
                                     },
                                     modifier = Modifier.size(18.dp)
                                 )

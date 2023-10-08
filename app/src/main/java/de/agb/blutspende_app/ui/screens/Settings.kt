@@ -223,10 +223,13 @@ fun BlutgruppeItem(navController: NavHostController) {
 @Composable
 fun GeschlechtItem() {
     val viewModel: SettingsViewModel = viewModel()
+    val datastoreViewModel: DatastoreViewModel = viewModel()
+
+    val selectedOption by datastoreViewModel.getGender.collectAsState(false)
 
     DefinitionSettingsItem(
         object : InterfaceSettingsItem {
-            override val title = stringResource(id = R.string.biological_gender)
+            override val title = stringResource(id = R.string.gender)
             override val icon = R.drawable.gender
             override val onClick = {
                 viewModel.setShowDialogGender(viewModel.getShowDialogGender.not())
@@ -235,11 +238,53 @@ fun GeschlechtItem() {
     )
 
     if (viewModel.getShowDialogGender) {
+        val radioOptions = listOf(
+            stringResource(id = R.string.male),
+            stringResource(id = R.string.female)
+        )
         AlertDialog(
             onDismissRequest = { viewModel.setShowDialogGender(false) },
-            title = { Text(stringResource(id = R.string.biological_gender)) },
+            title = { Text(stringResource(id = R.string.gender)) },
             text = {
-                Text("Test")
+                Row(Modifier.fillMaxWidth()) {
+
+                    //Text(stringResource(id = R.string.gender_subtitle))
+
+                    for (i in 0..1) {
+                        Column(
+                            Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                                .selectable(
+                                    selected = ((i != 0) == selectedOption),
+                                    onClick = {
+                                        datastoreViewModel.saveGenderToDataStore(i != 0)
+                                    }
+                                ),
+                            horizontalAlignment = CenterHorizontally
+                        ) {
+                            Image(
+                                painter = painterResource(
+                                    id = viewModel.getImageIdsGender[i]
+                                ),
+                                contentDescription = radioOptions[i],
+                                modifier = Modifier.size(60.dp)
+                            )
+                            Spacer(modifier = Modifier.size(12.dp))
+                            Text(
+                                text = radioOptions[i],
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center
+                            )
+                            RadioButton(
+                                selected = ((i != 0) == selectedOption),
+                                onClick = {
+                                    datastoreViewModel.saveGenderToDataStore(i != 0)
+                                }
+                            )
+                        }
+                    }
+                }
             },
             confirmButton = {
                 TextButton(onClick = {

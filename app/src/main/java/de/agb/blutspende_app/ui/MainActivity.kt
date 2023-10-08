@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -37,6 +38,7 @@ import de.agb.blutspende_app.R
 import de.agb.blutspende_app.model.ScreenDefinition
 import de.agb.blutspende_app.ui.navigation.SetupNavbarGraph
 import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
+import de.agb.blutspende_app.viewmodel.GlobalFunctions
 import de.agb.blutspende_app.viewmodel.MainActivityViewModel
 
 class MainActivity : ComponentActivity() {
@@ -89,23 +91,28 @@ fun NavigationBar() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TopBar(navController: NavHostController) {
-    val currentRoute = currentRoute(navController = navController)
 
-    val viewModel: MainActivityViewModel = viewModel()
+    val currentRoute = currentRoute(navController = navController)
+    val globalFunctions: GlobalFunctions = viewModel()
 
     TopAppBar(
         title = {
             Text(
                 text =
-                viewModel.topAppBarTitle(currentRoute),
+                when (currentRoute) {
+                    globalFunctions.getScreenRouteDashboard -> stringResource(id = R.string.screenDashboard)
+                    globalFunctions.getScreenRouteBlutwerte -> stringResource(id = R.string.screenBloodLevels)
+                    globalFunctions.getScreenRouteVorrat -> stringResource(id = R.string.screenSupply)
+                    else -> stringResource(id = R.string.settings)
+                },
                 fontSize = 20.sp
             )
         },
         navigationIcon = {
-            if (currentRoute == viewModel.getSettingsBlutgruppeRoute) {
+            if (currentRoute == globalFunctions.getScreenRouteSettingsBlutgruppe) {
                 IconButton(
                     onClick = {
-                        navController.navigate(viewModel.getSettingsRoute)
+                        navController.navigate(globalFunctions.getScreenRouteSettings)
                     },
                     enabled = true
                 ) {
@@ -118,8 +125,8 @@ fun TopBar(navController: NavHostController) {
         },
         actions = {
             IconButton(onClick = {
-                if (currentRoute != viewModel.getSettingsRoute) {
-                    navController.navigate(viewModel.getSettingsRoute)
+                if (currentRoute != globalFunctions.getScreenRouteSettings) {
+                    navController.navigate(globalFunctions.getScreenRouteSettings)
                 }
             }, modifier = Modifier.size(35.dp)) {
                 Icon(
@@ -136,6 +143,7 @@ fun BottomBar(
     navController: NavHostController
 ) {
     val viewModel: MainActivityViewModel = viewModel()
+    val globalFunctions: GlobalFunctions = viewModel()
 
     BubbleNavigationBar {
         val currentRoute = currentRoute(navController = navController)
@@ -148,7 +156,13 @@ fun BottomBar(
                     }
                 },
                 icon = item.iconId,
-                title = item.route,
+                title =
+                when (item.route) {
+                    globalFunctions.getScreenRouteDashboard -> stringResource(id = R.string.screenDashboard)
+                    globalFunctions.getScreenRouteBlutwerte -> stringResource(id = R.string.screenBloodLevels)
+                    globalFunctions.getScreenRouteVorrat -> stringResource(id = R.string.screenSupply)
+                    else -> stringResource(id = R.string.settings)
+                },
                 selectedColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 unSelectedIconColor = MaterialTheme.colorScheme.onPrimary
             )

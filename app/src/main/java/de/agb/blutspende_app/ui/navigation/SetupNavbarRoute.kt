@@ -40,9 +40,6 @@ fun SetupNavbarGraph(
         composable(route = ScreenDefinition.Dashboard.route) {
             Home()
         }
-        composable(route = ScreenDefinition.Ausweis.route) {
-            Ausweis()
-        }
         composable(route = ScreenDefinition.Blutwerte.route) {
             Blutwerte()
         }

@@ -26,6 +26,20 @@ class DatastoreViewModel(application: Application) : AndroidViewModel(applicatio
     }
 
     /**
+     * false (0) = Männlich; true (1) = Weiblich
+     */
+    val getGender = dataStore.getGender
+
+    /**
+     * false (0) = Männlich; true (1) = Weiblich
+     */
+    fun saveGenderToDataStore(gender: Boolean) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStore.saveGenderToDataStore(gender)
+        }
+    }
+
+    /**
      * 0 = 0; 1 = A; 2 = B; 3 = AB
      */
     val getBlutgruppe = dataStore.getBlutgruppe
