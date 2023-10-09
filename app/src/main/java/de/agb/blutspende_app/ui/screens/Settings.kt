@@ -2,35 +2,43 @@ package de.agb.blutspende_app.ui.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Divider
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -40,6 +48,7 @@ import de.agb.blutspende_app.R
 import de.agb.blutspende_app.model.InterfaceSettingsItem
 import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
 import de.agb.blutspende_app.viewmodel.DatastoreViewModel
+import de.agb.blutspende_app.viewmodel.GlobalFunctions
 import de.agb.blutspende_app.viewmodel.settings.SettingsViewModel
 
 @Composable
@@ -124,12 +133,17 @@ fun DefinitionSettingsItem(item: InterfaceSettingsItem) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DarstellungItem() {
     val datastoreViewModel: DatastoreViewModel = viewModel()
     val settingsViewModel: SettingsViewModel = viewModel()
 
     val selectedOption by datastoreViewModel.getThemeMode.collectAsState(0)
+
+    var isSheetOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
 
     DefinitionSettingsItem(
         object : InterfaceSettingsItem {
@@ -141,35 +155,51 @@ fun DarstellungItem() {
             override val icon = R.drawable.paint_brush
 
             override val onClick = {
-                settingsViewModel.setShowDialogDarstellung(settingsViewModel.getShowDialogDarstellung.not())
+                isSheetOpen = true
             }
         }
     )
 
-    if (settingsViewModel.getShowDialogDarstellung) {
+    val sheetState = rememberModalBottomSheetState()
+
+    if (isSheetOpen) {
         val radioOptions = listOf(
             stringResource(id = R.string.theme_system),
             stringResource(id = R.string.theme_light),
             stringResource(id = R.string.theme_dark)
         )
-        AlertDialog(
-            onDismissRequest = { settingsViewModel.setShowDialogDarstellung(false) },
-            title = { Text(stringResource(id = R.string.theme)) },
-            text = {
-                Row {
+
+        ModalBottomSheet(
+            sheetState = sheetState,
+            onDismissRequest = { isSheetOpen = isSheetOpen.not() }
+        ) {
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 18.dp)
+            ) {
+
+                Text(
+                    text = stringResource(id = R.string.theme),
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = Modifier.size(20.dp))
+
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
                     for (i in 0..2) {
-                        Column(
-                            Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
-                                .selectable(
-                                    selected = (i == selectedOption),
-                                    onClick = {
-                                        datastoreViewModel.saveThemeToDataStore(i)
-                                    }
-                                ),
-                            horizontalAlignment = CenterHorizontally
-                        ) {
+                        Column(Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .selectable(
+                                selected = (i == selectedOption),
+                                onClick = {
+                                    datastoreViewModel.saveThemeToDataStore(i)
+                                }
+                            ),
+                            horizontalAlignment = CenterHorizontally) {
                             Image(
                                 painter = painterResource(
                                     id = settingsViewModel.getImageIdsDarstellung[i]
@@ -190,21 +220,14 @@ fun DarstellungItem() {
                         }
                     }
                 }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    settingsViewModel.setShowDialogDarstellung(false)
-                }) {
-                    Text("ok".uppercase())
-                }
-            },
-        )
+            }
+        }
     }
 }
 
 @Composable
 fun BlutgruppeItem(navController: NavHostController) {
-    val viewModel: SettingsViewModel = viewModel()
+    val globalFunctions: GlobalFunctions = viewModel()
 
     DefinitionSettingsItem(
         object : InterfaceSettingsItem {
@@ -213,13 +236,14 @@ fun BlutgruppeItem(navController: NavHostController) {
                 "ABO, Rhesus, " + stringResource(id = R.string.rhesuskomplex) + " & Kell"
             override val icon = R.drawable.blood_drop
             override val onClick = {
-                navController.navigate(viewModel.getSettingsBlutgruppeRoute)
+                navController.navigate(globalFunctions.getScreenRouteSettingsBlutgruppe)
             }
             override val rightArrowButtonVisible = true
         }
     )
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GeschlechtItem() {
     val viewModel: SettingsViewModel = viewModel()
@@ -227,54 +251,77 @@ fun GeschlechtItem() {
 
     val selectedOption by datastoreViewModel.getGender.collectAsState(false)
 
+    var isSheetOpen by rememberSaveable {
+        mutableStateOf(false)
+    }
+
     DefinitionSettingsItem(
         object : InterfaceSettingsItem {
             override val title = stringResource(id = R.string.gender)
             override val icon = R.drawable.gender
             override val onClick = {
-                viewModel.setShowDialogGender(viewModel.getShowDialogGender.not())
+                isSheetOpen = true
             }
         }
     )
 
-    if (viewModel.getShowDialogGender) {
+    val sheetState = rememberModalBottomSheetState()
+
+    if (isSheetOpen) {
         val radioOptions = listOf(
             stringResource(id = R.string.male),
             stringResource(id = R.string.female)
         )
-        AlertDialog(
-            onDismissRequest = { viewModel.setShowDialogGender(false) },
-            title = { Text(stringResource(id = R.string.gender)) },
-            text = {
-                Row(Modifier.fillMaxWidth()) {
 
-                    //Text(stringResource(id = R.string.gender_subtitle))
+        ModalBottomSheet(
+            sheetState = sheetState,
+            onDismissRequest = { isSheetOpen = isSheetOpen.not() }
+        ) {
+            Column(
+                Modifier
+                    .fillMaxSize()
+                    .padding(horizontal = 18.dp)
+            ) {
 
+                Text(
+                    text = stringResource(id = R.string.gender),
+                    fontWeight = FontWeight.Bold
+                )
+
+                Spacer(modifier = Modifier.size(14.dp))
+
+                Text(
+                    text = stringResource(id = R.string.gender_subtitle),
+                    fontSize = 14.sp
+                )
+
+                Spacer(modifier = Modifier.size(20.dp))
+
+                Row(
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
                     for (i in 0..1) {
-                        Column(
-                            Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
-                                .selectable(
-                                    selected = ((i != 0) == selectedOption),
-                                    onClick = {
-                                        datastoreViewModel.saveGenderToDataStore(i != 0)
-                                    }
-                                ),
-                            horizontalAlignment = CenterHorizontally
-                        ) {
+                        Column(Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .selectable(
+                                selected = ((i != 0) == selectedOption),
+                                onClick = {
+                                    datastoreViewModel.saveGenderToDataStore(i != 0)
+                                }
+                            ),
+                            horizontalAlignment = CenterHorizontally) {
                             Image(
                                 painter = painterResource(
                                     id = viewModel.getImageIdsGender[i]
                                 ),
                                 contentDescription = radioOptions[i],
-                                modifier = Modifier.size(60.dp)
+                                modifier = Modifier.size(50.dp)
                             )
                             Spacer(modifier = Modifier.size(12.dp))
                             Text(
                                 text = radioOptions[i],
-                                modifier = Modifier.fillMaxWidth(),
-                                textAlign = TextAlign.Center
+                                textAlign = TextAlign.Left
                             )
                             RadioButton(
                                 selected = ((i != 0) == selectedOption),
@@ -285,14 +332,7 @@ fun GeschlechtItem() {
                         }
                     }
                 }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    viewModel.setShowDialogGender(false)
-                }) {
-                    Text("ok".uppercase())
-                }
-            },
-        )
+            }
+        }
     }
 }

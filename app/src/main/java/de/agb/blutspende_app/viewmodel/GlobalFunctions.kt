@@ -4,23 +4,26 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalUriHandler
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.lifecycle.ViewModel
-import de.agb.blutspende_app.R
 import de.agb.blutspende_app.model.ScreenDefinition
 
-class GlobalFunctions: ViewModel() {
+class GlobalFunctions : ViewModel() {
 
     /**
      * @param fullText Der komplette Text, welcher hinzugefügt werden soll
      * @param linkText Die Textabschnitte, welche einen Hyperlink bekommen sollen
      * @param hyperlinks Die Hyperlinks, welche hinzugefügt werden sollen
+     * @param style Der Style, wie der Hyperlink aussehen soll
      */
     @Composable
-    fun AddHyperlinkToText(fullText: String, linkText: List<String>, hyperlinks: List<String>) {
+    fun AddHyperlinkToText(
+        fullText: String,
+        linkText: List<String>,
+        hyperlinks: List<String>,
+        style: SpanStyle
+    ) {
 
         val annotatedText = buildAnnotatedString {
             append(fullText)
@@ -37,10 +40,7 @@ class GlobalFunctions: ViewModel() {
                 val endIndex = startIndex + link.length
 
                 addStyle(
-                    style = SpanStyle(
-                        color = colorResource(id = R.color.blue),
-                        textDecoration = TextDecoration.Underline
-                    ),
+                    style = style,
                     start = startIndex,
                     end = endIndex
                 )

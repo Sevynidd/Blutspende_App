@@ -17,5 +17,5 @@
     <string name="settings">Settings</string>
     <string name="female">Female</string>
     <string name="male">Male</string>
-    <string name="gender_subtitle">These options do not refer to the gender but to the sex with which you were born. (I.e. biological attributes such as external characteristics, chromosomes, hormones, etc.)</string>
+    <string name="gender_subtitle">These options do not refer to the gender but to the sex with which you were born. (I.e. biological attributes such as external characteristics, chromosomes, hormones, etc.) These are used to determine the next time to donate blood.</string>
 </resources>

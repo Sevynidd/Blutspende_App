@@ -1,9 +1,5 @@
 package de.agb.blutspende_app.ui.screens
 
-import de.agb.blutspende_app.R
-import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
-import de.agb.blutspende_app.viewmodel.DatastoreViewModel
-import de.agb.blutspende_app.viewmodel.settings.SettingsBlutgruppeViewModel
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -26,12 +22,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import de.agb.blutspende_app.R
+import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
+import de.agb.blutspende_app.viewmodel.DatastoreViewModel
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
+import de.agb.blutspende_app.viewmodel.settings.SettingsBlutgruppeViewModel
 
 @Composable
 fun SettingsBlutgruppe() {
@@ -87,7 +90,11 @@ fun Blutgruppe(datastoreViewModel: DatastoreViewModel) {
                         globalFunctions.AddHyperlinkToText(
                             fullText = stringResource(id = R.string.source) + ": blutspenden.de",
                             linkText = listOf("blutspenden.de"),
-                            hyperlinks = listOf("https://www.blutspenden.de/rund-ums-blut/blutgruppen/")
+                            hyperlinks = listOf("https://www.blutspenden.de/rund-ums-blut/blutgruppen/"),
+                            style = SpanStyle(
+                                color = colorResource(id = R.color.blue),
+                                textDecoration = TextDecoration.Underline
+                            )
                         )
                     }
                 },
