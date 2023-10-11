@@ -6,15 +6,15 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeContentPadding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.KeyboardArrowRight
 import androidx.compose.material3.Divider
@@ -59,6 +59,7 @@ fun Settings(navController: NavHostController) {
                 modifier = Modifier
                     .fillMaxSize()
                     .safeContentPadding()
+                    .verticalScroll(rememberScrollState())
             ) {
                 Column(
                     modifier = Modifier.fillMaxSize()
@@ -175,7 +176,7 @@ fun DarstellungItem() {
         ) {
             Column(
                 Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
                     .padding(horizontal = 18.dp)
             ) {
 
@@ -191,7 +192,6 @@ fun DarstellungItem() {
                 ) {
                     for (i in 0..2) {
                         Column(Modifier
-                            .fillMaxWidth()
                             .weight(1f)
                             .selectable(
                                 selected = (i == selectedOption),
@@ -220,6 +220,8 @@ fun DarstellungItem() {
                         }
                     }
                 }
+
+                Spacer(Modifier.size(30.dp))
             }
         }
     }
@@ -279,7 +281,7 @@ fun GeschlechtItem() {
         ) {
             Column(
                 Modifier
-                    .fillMaxSize()
+                    .fillMaxWidth()
                     .padding(horizontal = 18.dp)
             ) {
 
@@ -302,7 +304,6 @@ fun GeschlechtItem() {
                 ) {
                     for (i in 0..1) {
                         Column(Modifier
-                            .fillMaxWidth()
                             .weight(1f)
                             .selectable(
                                 selected = ((i != 0) == selectedOption),
@@ -332,6 +333,8 @@ fun GeschlechtItem() {
                         }
                     }
                 }
+
+                Spacer(Modifier.size(30.dp))
             }
         }
     }

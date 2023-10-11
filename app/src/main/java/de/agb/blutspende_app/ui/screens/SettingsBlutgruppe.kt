@@ -46,17 +46,15 @@ fun SettingsBlutgruppe() {
                     .background(MaterialTheme.colorScheme.background)
                     .verticalScroll(rememberScrollState())
             ) {
-                val datastoreViewModel: DatastoreViewModel = viewModel()
-
-                Blutgruppe(datastoreViewModel)
+                Blutgruppe()
             }
         }
     }
 }
 
 @Composable
-fun Blutgruppe(datastoreViewModel: DatastoreViewModel) {
-
+fun Blutgruppe() {
+    val datastoreViewModel: DatastoreViewModel = viewModel()
     val viewModel: SettingsBlutgruppeViewModel = viewModel()
 
     val showDialog = viewModel.getShowDialog
