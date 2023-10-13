@@ -81,4 +81,34 @@ class GlobalFunctions : ViewModel() {
     val getScreenRouteSettingsBlutgruppe: String
         get() = ScreenDefinition.SettingsBlutgruppe.route
 
+    /**
+     * @param value Id, welche man aus dataStore.getBlutgruppe erhält
+     */
+    fun getBlutgruppeAsString(value: Int): String {
+        return when (value) {
+            0 -> "0"
+            1 -> "A"
+            2 -> "B"
+            3 -> "AB"
+            else -> ""
+        }
+    }
+
+    /**
+     * @param value Boolean, welchen man aus dataStore.getRhesus erhält
+     */
+    fun getRhesusAsString(value: Boolean): String {
+        return when (value) {
+            false -> "Negativ"
+            true -> "Positiv"
+        }
+    }
+
+    /**
+     * @param value Boolean, welchen man aus dataStore.getKell erhält
+     */
+    fun getKellAsString(value: Boolean): String {
+        return getRhesusAsString(value)
+    }
+
 }

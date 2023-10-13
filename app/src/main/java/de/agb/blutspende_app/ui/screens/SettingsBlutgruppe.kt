@@ -34,7 +34,7 @@ import de.agb.blutspende_app.R
 import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
 import de.agb.blutspende_app.viewmodel.DatastoreViewModel
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
-import de.agb.blutspende_app.viewmodel.settings.SettingsBlutgruppeViewModel
+import de.agb.blutspende_app.viewmodel.screens.settings.SettingsBlutgruppeViewModel
 
 @Composable
 fun SettingsBlutgruppe() {

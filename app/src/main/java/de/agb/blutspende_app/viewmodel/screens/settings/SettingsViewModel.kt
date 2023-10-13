@@ -1,4 +1,4 @@
-package de.agb.blutspende_app.viewmodel.settings
+package de.agb.blutspende_app.viewmodel.screens.settings
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf

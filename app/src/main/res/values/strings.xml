@@ -19,4 +19,16 @@
     <string name="female">Weiblich</string>
     <string name="male">Männlich</string>
     <string name="gender_subtitle">Diese Optionen beziehen sich nicht auf das Geschlecht, mit welchem man sich identifiziert sondern auf das Geschlecht, mit welchem man geboren wurde. (D.h. biologische Attribute wie bspw. äußerliche Merkmale, Chromosome, Hormone etc.) Diese dienen zur Bestimmung des nächsten Blutspendezeitpunkts.</string>
+    <string name="youCanDonate">Du darfst wieder %1$s spenden!</string>
+    <string name="wholeBlood">Vollblut</string>
+    <string name="plasma" translatable="false">Plasma</string>
+    <string name="thrombozyten">Thrombozyten</string>
+    <string name="supplyTitle">Unser aktueller Blutvorrat</string>
+    <string name="supplySubtitle">Hilf uns den Blutvorrat am Uni.Blutspendedienst OWL immer auf einem ausreichenden Niveau zu halten, um die Versorgung unserer Patienten zu gewährleisten.</string>
+    <string name="statusWithDate">Stand: %1$s</string>
+    <string name="dateFormat">dd.MM.yyyy</string>
+    <string name="yourBloodgroupAvailable">Deine Blutgruppe: %1$s %2$s ist %3$s vorhanden.</string>
+    <string name="moderately">mäßig</string>
+    <string name="yourBloodgroup">Deine Blutgruppe: %1$s %2$s ist %3$s.</string>
+    <string name="low">wenig</string>
 </resources>

@@ -18,4 +18,15 @@
     <string name="female">Female</string>
     <string name="male">Male</string>
     <string name="gender_subtitle">These options do not refer to the gender but to the sex with which you were born. (I.e. biological attributes such as external characteristics, chromosomes, hormones, etc.) These are used to determine the next time to donate blood.</string>
+    <string name="youCanDonate">You can donate %1$s again!</string>
+    <string name="wholeBlood">whole Blood</string>
+    <string name="thrombozyten">Platelets</string>
+    <string name="supplyTitle">Our current blood supply</string>
+    <string name="supplySubtitle">Help us to keep the blood supply at the Uni.Blutspendedinest OWL always at a sufficient level to ensure the supply of our patients.</string>
+    <string name="statusWithDate">Status: %1$s</string>
+    <string name="dateFormat">MM/dd/yyyy</string>
+    <string name="yourBloodgroupAvailable">Your blood type: %1$s %2$s is %3$s available.</string>
+    <string name="moderately">moderately</string>
+    <string name="yourBloodgroup">Your blood type: %1$s %2$s is %3$s.</string>
+    <string name="low">low</string>
 </resources>

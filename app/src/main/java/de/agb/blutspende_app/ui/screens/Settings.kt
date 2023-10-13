@@ -49,7 +49,7 @@ import de.agb.blutspende_app.model.InterfaceSettingsItem
 import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
 import de.agb.blutspende_app.viewmodel.DatastoreViewModel
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
-import de.agb.blutspende_app.viewmodel.settings.SettingsViewModel
+import de.agb.blutspende_app.viewmodel.screens.settings.SettingsViewModel
 
 @Composable
 fun Settings(navController: NavHostController) {

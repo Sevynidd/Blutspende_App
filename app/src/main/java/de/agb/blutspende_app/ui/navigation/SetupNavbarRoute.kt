@@ -1,7 +1,6 @@
 package de.agb.blutspende_app.ui.navigation
 
 import de.agb.blutspende_app.model.ScreenDefinition
-import de.agb.blutspende_app.ui.screens.Ausweis
 import de.agb.blutspende_app.ui.screens.Blutwerte
 import de.agb.blutspende_app.ui.screens.Home
 import de.agb.blutspende_app.ui.screens.Settings
