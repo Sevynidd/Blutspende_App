@@ -1,18 +1,32 @@
 package de.agb.blutspende_app.ui.screens
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
+import androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells
+import androidx.compose.foundation.lazy.staggeredgrid.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.Divider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -21,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import de.agb.blutspende_app.R
+import de.agb.blutspende_app.model.VorratItem
 import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
 import de.agb.blutspende_app.viewmodel.DatastoreViewModel
 import java.time.LocalDate
@@ -103,9 +118,67 @@ fun Vorrat() {
                             textAlign = TextAlign.Center
                         )
 
+
+                        val blutgruppenNamen = listOf(
+                            "pos", "neg"
+                        )
+                        val blutgruppenIcons = listOf(
+                            R.drawable.blood_0,
+                            R.drawable.blood_0,
+                            R.drawable.blood_a,
+                            R.drawable.blood_a,
+                            R.drawable.blood_b,
+                            R.drawable.blood_b,
+                            R.drawable.blood_ab,
+                            R.drawable.blood_ab
+                        )
+
+                        val vorratItems = (0..7).map {
+                            VorratItem(
+                                height = 80.dp,
+                                icon = blutgruppenIcons[it],
+                                name = when ((it % 2)) {
+                                    0 -> blutgruppenNamen[0]
+                                    else -> blutgruppenNamen[1]
+                                }
+                            )
+                        }
+
+                        LazyVerticalStaggeredGrid(
+                            columns = StaggeredGridCells.Fixed(4),
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .wrapContentHeight(),
+                            contentPadding = PaddingValues(12.dp),
+                            horizontalArrangement = Arrangement.spacedBy(16.dp),
+                            verticalItemSpacing = 16.dp
+                        ) {
+                            items(vorratItems) { item ->
+                                VorratItemsBox(item = item)
+                            }
+                        }
                     }
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun VorratItemsBox(item: VorratItem) {
+    Box(
+        contentAlignment = Alignment.Center, modifier = Modifier
+            .fillMaxWidth()
+            .height(item.height + 6.dp)
+            .clip(RoundedCornerShape(6.dp))
+    ) {
+        Column(
+            Modifier
+                .wrapContentWidth()
+                .height(item.height + 6.dp)
+        ) {
+            Icon(painter = painterResource(id = item.icon), contentDescription = item.name)
+            Text(text = item.name, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
         }
     }
 }
