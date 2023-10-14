@@ -1,6 +1,6 @@
 package de.agb.blutspende_app.model
 
-interface InterfaceSettingsItem {
+interface ISettingsItem {
     val title: String
     val subTitle: String?
         get() = null

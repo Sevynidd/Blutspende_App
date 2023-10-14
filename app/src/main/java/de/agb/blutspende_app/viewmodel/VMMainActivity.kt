@@ -3,7 +3,7 @@ package de.agb.blutspende_app.viewmodel
 import androidx.lifecycle.ViewModel
 import de.agb.blutspende_app.model.ScreenDefinition
 
-class MainActivityViewModel : ViewModel() {
+class VMMainActivity : ViewModel() {
 
     private val _navigationItems = listOf(
         ScreenDefinition.Dashboard,

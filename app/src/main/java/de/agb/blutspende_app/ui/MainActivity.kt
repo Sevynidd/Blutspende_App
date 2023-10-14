@@ -35,11 +35,10 @@ import androidx.navigation.compose.rememberNavController
 import com.commandiron.bubble_navigation_bar_compose.BubbleNavigationBar
 import com.commandiron.bubble_navigation_bar_compose.BubbleNavigationBarItem
 import de.agb.blutspende_app.R
-import de.agb.blutspende_app.model.ScreenDefinition
 import de.agb.blutspende_app.ui.navigation.SetupNavbarGraph
 import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
-import de.agb.blutspende_app.viewmodel.MainActivityViewModel
+import de.agb.blutspende_app.viewmodel.VMMainActivity
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -142,7 +141,7 @@ fun TopBar(navController: NavHostController) {
 fun BottomBar(
     navController: NavHostController
 ) {
-    val viewModel: MainActivityViewModel = viewModel()
+    val viewModel: VMMainActivity = viewModel()
     val globalFunctions: GlobalFunctions = viewModel()
 
     BubbleNavigationBar {

@@ -32,9 +32,9 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import de.agb.blutspende_app.R
 import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
-import de.agb.blutspende_app.viewmodel.DatastoreViewModel
+import de.agb.blutspende_app.viewmodel.VMDatastore
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
-import de.agb.blutspende_app.viewmodel.screens.DashboardViewModel
+import de.agb.blutspende_app.viewmodel.screens.VMDashboard
 
 @Composable
 fun Home() {
@@ -46,8 +46,8 @@ fun Home() {
                     .background(MaterialTheme.colorScheme.background)
                     .verticalScroll(rememberScrollState())
             ) {
-                val dataStore: DatastoreViewModel = viewModel()
-                val viewModel: DashboardViewModel = viewModel()
+                val dataStore: VMDatastore = viewModel()
+                val viewModel: VMDashboard = viewModel()
                 val globalFunctions: GlobalFunctions = viewModel()
 
                 ConstraintLayout(modifier = Modifier.fillMaxSize()) {

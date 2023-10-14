@@ -32,9 +32,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import de.agb.blutspende_app.R
 import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
-import de.agb.blutspende_app.viewmodel.DatastoreViewModel
+import de.agb.blutspende_app.viewmodel.VMDatastore
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
-import de.agb.blutspende_app.viewmodel.screens.settings.SettingsBlutgruppeViewModel
+import de.agb.blutspende_app.viewmodel.screens.settings.VMSettingsBlutgruppe
 
 @Composable
 fun SettingsBlutgruppe() {
@@ -54,8 +54,8 @@ fun SettingsBlutgruppe() {
 
 @Composable
 fun Blutgruppe() {
-    val datastoreViewModel: DatastoreViewModel = viewModel()
-    val viewModel: SettingsBlutgruppeViewModel = viewModel()
+    val VMDatastore: VMDatastore = viewModel()
+    val viewModel: VMSettingsBlutgruppe = viewModel()
 
     val showDialog = viewModel.getShowDialog
 

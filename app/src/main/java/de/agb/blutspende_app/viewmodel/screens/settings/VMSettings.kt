@@ -1,12 +1,9 @@
 package de.agb.blutspende_app.viewmodel.screens.settings
 
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import de.agb.blutspende_app.R
-import de.agb.blutspende_app.model.ScreenDefinition
 
-class SettingsViewModel : ViewModel() {
+class VMSettings : ViewModel() {
     // DARSTELLUNG
 
     private val _imageIdsDarstellung =

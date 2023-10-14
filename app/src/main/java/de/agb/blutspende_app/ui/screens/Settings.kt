@@ -45,11 +45,11 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import de.agb.blutspende_app.R
-import de.agb.blutspende_app.model.InterfaceSettingsItem
+import de.agb.blutspende_app.model.ISettingsItem
 import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
-import de.agb.blutspende_app.viewmodel.DatastoreViewModel
+import de.agb.blutspende_app.viewmodel.VMDatastore
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
-import de.agb.blutspende_app.viewmodel.screens.settings.SettingsViewModel
+import de.agb.blutspende_app.viewmodel.screens.settings.VMSettings
 
 @Composable
 fun Settings(navController: NavHostController) {
@@ -93,7 +93,7 @@ fun Settings(navController: NavHostController) {
 }
 
 @Composable
-fun DefinitionSettingsItem(item: InterfaceSettingsItem) {
+fun DefinitionSettingsItem(item: ISettingsItem) {
     Row(
         Modifier
             .fillMaxWidth()
@@ -137,17 +137,17 @@ fun DefinitionSettingsItem(item: InterfaceSettingsItem) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DarstellungItem() {
-    val datastoreViewModel: DatastoreViewModel = viewModel()
-    val settingsViewModel: SettingsViewModel = viewModel()
+    val VMDatastore: VMDatastore = viewModel()
+    val VMSettings: VMSettings = viewModel()
 
-    val selectedOption by datastoreViewModel.getThemeMode.collectAsState(0)
+    val selectedOption by VMDatastore.getThemeMode.collectAsState(0)
 
     var isSheetOpen by rememberSaveable {
         mutableStateOf(false)
     }
 
     DefinitionSettingsItem(
-        object : InterfaceSettingsItem {
+        object : ISettingsItem {
             override val title = stringResource(id = R.string.theme)
             override val subTitle =
                 stringResource(id = R.string.theme_system) + " / " +
@@ -196,13 +196,13 @@ fun DarstellungItem() {
                             .selectable(
                                 selected = (i == selectedOption),
                                 onClick = {
-                                    datastoreViewModel.saveThemeToDataStore(i)
+                                    VMDatastore.saveThemeToDataStore(i)
                                 }
                             ),
                             horizontalAlignment = CenterHorizontally) {
                             Image(
                                 painter = painterResource(
-                                    id = settingsViewModel.getImageIdsDarstellung[i]
+                                    id = VMSettings.getImageIdsDarstellung[i]
                                 ),
                                 contentDescription = radioOptions[i]
                             )
@@ -214,7 +214,7 @@ fun DarstellungItem() {
                             RadioButton(
                                 selected = (i == selectedOption),
                                 onClick = {
-                                    datastoreViewModel.saveThemeToDataStore(i)
+                                    VMDatastore.saveThemeToDataStore(i)
                                 }
                             )
                         }
@@ -232,7 +232,7 @@ fun BlutgruppeItem(navController: NavHostController) {
     val globalFunctions: GlobalFunctions = viewModel()
 
     DefinitionSettingsItem(
-        object : InterfaceSettingsItem {
+        object : ISettingsItem {
             override val title = stringResource(id = R.string.bloodgroup)
             override val subTitle =
                 "ABO, Rhesus, " + stringResource(id = R.string.rhesuskomplex) + " & Kell"
@@ -248,17 +248,17 @@ fun BlutgruppeItem(navController: NavHostController) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun GeschlechtItem() {
-    val viewModel: SettingsViewModel = viewModel()
-    val datastoreViewModel: DatastoreViewModel = viewModel()
+    val viewModel: VMSettings = viewModel()
+    val VMDatastore: VMDatastore = viewModel()
 
-    val selectedOption by datastoreViewModel.getGender.collectAsState(false)
+    val selectedOption by VMDatastore.getGender.collectAsState(false)
 
     var isSheetOpen by rememberSaveable {
         mutableStateOf(false)
     }
 
     DefinitionSettingsItem(
-        object : InterfaceSettingsItem {
+        object : ISettingsItem {
             override val title = stringResource(id = R.string.gender)
             override val icon = R.drawable.gender
             override val onClick = {
@@ -308,7 +308,7 @@ fun GeschlechtItem() {
                             .selectable(
                                 selected = ((i != 0) == selectedOption),
                                 onClick = {
-                                    datastoreViewModel.saveGenderToDataStore(i != 0)
+                                    VMDatastore.saveGenderToDataStore(i != 0)
                                 }
                             ),
                             horizontalAlignment = CenterHorizontally) {
@@ -327,7 +327,7 @@ fun GeschlechtItem() {
                             RadioButton(
                                 selected = ((i != 0) == selectedOption),
                                 onClick = {
-                                    datastoreViewModel.saveGenderToDataStore(i != 0)
+                                    VMDatastore.saveGenderToDataStore(i != 0)
                                 }
                             )
                         }

@@ -7,7 +7,7 @@ import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class DatastoreViewModel(application: Application) : AndroidViewModel(application) {
+class VMDatastore(application: Application) : AndroidViewModel(application) {
 
     private val dataStore = DatastoreManager(application)
 
