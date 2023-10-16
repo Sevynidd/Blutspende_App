@@ -10,7 +10,12 @@
     <string name="bloodgroup">Blood group</string>
     <string name="rhesuskomplex">Rhesuscomplex</string>
     <string name="AB0System_Help_Title">What is the ABO system?</string>
-    <string name="AB0System_Help_Text">All red blood cells (erythrocytes) are surrounded by a sheath. On this envelope there are characteristic structures (antigens) that distinguish red blood cells of one person from those of another. In the AB0 blood group system, the antigens on the red blood cell sheath are divided into four groups: A, B, AB and 0. Blood group A: There is only antigen A on the sheath of red blood cells. Blood group B: Only antigen B is present. Blood group 0: No antigens are present. Blood group AB: Both antigens A and B are present on the red blood cells.</string>
+    <string name="AB0System_Help_Text1">All red blood cells (erythrocytes) are surrounded by a sheath.
+        On this envelope there are characteristic structures (antigens) that distinguish red blood cells of one person from those of another.
+        In the AB0 blood group system, the antigens on the red blood cell sheath are divided into four groups: A, B, AB and 0. \n
+        Blood group A: There is only antigen A on the sheath of red blood cells. \n
+        Blood group B: Only antigen B is present. \nBlood group 0: No antigens are present. \n
+        Blood group AB: Both antigens A and B are present on the red blood cells.</string>
     <string name="source">Source</string>
     <string name="screenBloodLevels">Blood values</string>
     <string name="screenSupply">Supply</string>

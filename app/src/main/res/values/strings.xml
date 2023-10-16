@@ -10,7 +10,12 @@
     <string name="bloodgroup">Blutgruppe</string>
     <string name="rhesuskomplex">Rhesuskomplex</string>
     <string name="AB0System_Help_Title">Was ist das ABO-System?</string>
-    <string name="AB0System_Help_Text">" Alle roten Blutkörperchen (Erythrozyten) sind von einer Hülle umgeben. Auf dieser Hülle befinden sich charakteristische Strukturen (Antigene), die roten Blutkörperchen eines Menschen von denen eines anderen unterscheiden. Im AB0-Blutgruppensystem werden die Antigene auf der Hülle der roten Blutkörperchen in vier Gruppen unterteilt: A, B, AB und 0. Blutgruppe A: Es befindet sich nur das Antigen A auf der Hülle der roten Blutkörperchen. Blutgruppe B: Es ist nur das Antigen B vorhanden. Blutgruppe 0: Es sind keine Antigene vorhanden. Blutgruppe AB: Es befinden sich beide Antigene A und B auf den roten Blutkörperchen."</string>
+    <string name="AB0System_Help_Text1">" Alle roten Blutkörperchen (Erythrozyten) sind von einer Hülle umgeben.
+        Auf dieser Hülle befinden sich charakteristische Strukturen (Antigene), die roten Blutkörperchen eines Menschen von denen eines anderen unterscheiden.
+        Im AB0-Blutgruppensystem werden die Antigene auf der Hülle der roten Blutkörperchen in vier Gruppen unterteilt: A, B, AB und 0. \n
+        Blutgruppe A: Es befindet sich nur das Antigen A auf der Hülle der roten Blutkörperchen. \n
+        Blutgruppe B: Es ist nur das Antigen B vorhanden. \nBlutgruppe 0: Es sind keine Antigene vorhanden. \n
+        Blutgruppe AB: Es befinden sich beide Antigene A und B auf den roten Blutkörperchen."</string>
     <string name="source">Quelle</string>
     <string name="screenDashboard" translatable="false">Dashboard</string>
     <string name="screenBloodLevels">Blutwerte</string>

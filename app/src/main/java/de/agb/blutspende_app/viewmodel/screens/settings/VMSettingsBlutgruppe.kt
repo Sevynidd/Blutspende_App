@@ -4,13 +4,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 
 class VMSettingsBlutgruppe : ViewModel() {
-    private var _showDialog = mutableStateOf(false)
+    private var _isVisibleAB0System = mutableStateOf(false)
 
-    val getShowDialog: Boolean
-        get() = _showDialog.value
+    val getIsVisibleAB0System: Boolean
+        get() = _isVisibleAB0System.value
 
-    fun setShowDialog(value: Boolean) {
-        _showDialog.value = value
+    fun setIsVisibleAB0System(value: Boolean) {
+        _isVisibleAB0System.value = value
     }
 
 }

@@ -137,10 +137,10 @@ fun DefinitionSettingsItem(item: ISettingsItem) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DarstellungItem() {
-    val VMDatastore: VMDatastore = viewModel()
-    val VMSettings: VMSettings = viewModel()
+    val vmDatastore: VMDatastore = viewModel()
+    val vmSettings: VMSettings = viewModel()
 
-    val selectedOption by VMDatastore.getThemeMode.collectAsState(0)
+    val selectedOption by vmDatastore.getThemeMode.collectAsState(0)
 
     var isSheetOpen by rememberSaveable {
         mutableStateOf(false)
@@ -196,13 +196,13 @@ fun DarstellungItem() {
                             .selectable(
                                 selected = (i == selectedOption),
                                 onClick = {
-                                    VMDatastore.saveThemeToDataStore(i)
+                                    vmDatastore.saveThemeToDataStore(i)
                                 }
                             ),
                             horizontalAlignment = CenterHorizontally) {
                             Image(
                                 painter = painterResource(
-                                    id = VMSettings.getImageIdsDarstellung[i]
+                                    id = vmSettings.getImageIdsDarstellung[i]
                                 ),
                                 contentDescription = radioOptions[i]
                             )
@@ -214,7 +214,7 @@ fun DarstellungItem() {
                             RadioButton(
                                 selected = (i == selectedOption),
                                 onClick = {
-                                    VMDatastore.saveThemeToDataStore(i)
+                                    vmDatastore.saveThemeToDataStore(i)
                                 }
                             )
                         }
@@ -249,9 +249,9 @@ fun BlutgruppeItem(navController: NavHostController) {
 @Composable
 fun GeschlechtItem() {
     val viewModel: VMSettings = viewModel()
-    val VMDatastore: VMDatastore = viewModel()
+    val vmDatastore: VMDatastore = viewModel()
 
-    val selectedOption by VMDatastore.getGender.collectAsState(false)
+    val selectedOption by vmDatastore.getGender.collectAsState(false)
 
     var isSheetOpen by rememberSaveable {
         mutableStateOf(false)
@@ -308,7 +308,7 @@ fun GeschlechtItem() {
                             .selectable(
                                 selected = ((i != 0) == selectedOption),
                                 onClick = {
-                                    VMDatastore.saveGenderToDataStore(i != 0)
+                                    vmDatastore.saveGenderToDataStore(i != 0)
                                 }
                             ),
                             horizontalAlignment = CenterHorizontally) {
@@ -327,7 +327,7 @@ fun GeschlechtItem() {
                             RadioButton(
                                 selected = ((i != 0) == selectedOption),
                                 onClick = {
-                                    VMDatastore.saveGenderToDataStore(i != 0)
+                                    vmDatastore.saveGenderToDataStore(i != 0)
                                 }
                             )
                         }
