@@ -7,6 +7,7 @@ import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.lifecycle.ViewModel
+import de.agb.blutspende_app.R
 import de.agb.blutspende_app.model.ScreenDefinition
 
 class GlobalFunctions : ViewModel() {
@@ -109,6 +110,16 @@ class GlobalFunctions : ViewModel() {
      */
     fun getKellAsString(value: Boolean): String {
         return getRhesusAsString(value)
+    }
+
+    fun getBloodbagIconFromBlutgruppeID(id: Int): Int {
+        return when (id) {
+            0 -> R.drawable.blood_0
+            1 -> R.drawable.blood_a
+            2 -> R.drawable.blood_b
+            3 -> R.drawable.blood_ab
+            else -> R.drawable.blood_bag_default
+        }
     }
 
 }

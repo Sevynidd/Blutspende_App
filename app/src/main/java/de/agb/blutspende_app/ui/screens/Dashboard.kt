@@ -32,8 +32,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import de.agb.blutspende_app.R
 import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
-import de.agb.blutspende_app.viewmodel.VMDatastore
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
+import de.agb.blutspende_app.viewmodel.VMDatastore
 import de.agb.blutspende_app.viewmodel.screens.VMDashboard
 
 @Composable
@@ -47,7 +47,7 @@ fun Home() {
                     .verticalScroll(rememberScrollState())
             ) {
                 val dataStore: VMDatastore = viewModel()
-                val viewModel: VMDashboard = viewModel()
+                val vm: VMDashboard = viewModel()
                 val globalFunctions: GlobalFunctions = viewModel()
 
                 ConstraintLayout(modifier = Modifier.fillMaxSize()) {
@@ -88,13 +88,11 @@ fun Home() {
 
                     Icon(painterResource(
                         id =
-                        when (dataStore.getBlutgruppe.collectAsState(0).value) {
-                            0 -> R.drawable.blood_0
-                            1 -> R.drawable.blood_a
-                            2 -> R.drawable.blood_b
-                            3 -> R.drawable.blood_ab
-                            else -> R.drawable.blood_bag_default
-                        }
+                        globalFunctions.getBloodbagIconFromBlutgruppeID(
+                            dataStore.getBlutgruppe.collectAsState(
+                                0
+                            ).value
+                        )
                     ),
                         contentDescription = "bloodBag",
                         tint = MaterialTheme.colorScheme.primaryContainer,
@@ -112,7 +110,7 @@ fun Home() {
                     val cardPadding = 10.dp
                     Card(
                         Modifier
-                            .fillMaxWidth(0.95f)
+                            .fillMaxWidth(0.7f)
                             .padding(cardPadding)
                             .constrainAs(containerBlutspendeDetails) {
                                 top.linkTo(userImage.bottom, margin = 60.dp)
