@@ -33,6 +33,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import de.agb.blutspende_app.R
 import de.agb.blutspende_app.model.IVorratItem
 import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
+import de.agb.blutspende_app.viewmodel.GlobalFunctions
 import de.agb.blutspende_app.viewmodel.VMDatastore
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -48,6 +49,7 @@ fun Vorrat() {
                     .verticalScroll(rememberScrollState())
             ) {
                 val dataStore: VMDatastore = viewModel()
+                val globalFunctions: GlobalFunctions = viewModel()
 
                 ConstraintLayout(modifier = Modifier.fillMaxSize()) {
                     val (containerSupply) = createRefs()
@@ -106,7 +108,11 @@ fun Vorrat() {
                         Text(
                             text = stringResource(
                                 id = R.string.yourBloodgroupAvailable,
-                                dataStore.getBlutgruppe.collectAsState("").value,
+                                globalFunctions.getBlutgruppeAsString(
+                                    dataStore.getBlutgruppe.collectAsState(
+                                        0
+                                    ).value
+                                ),
                                 when (dataStore.getRhesus.collectAsState(true).value) {
                                     true -> "pos"
                                     false -> "neg"
@@ -128,9 +134,21 @@ fun Vorrat() {
                                         override val height: Dp
                                             get() = 40.dp
                                         override val icon: Int
-                                            get() = R.drawable.blood_a
+                                            get() = when (i) {
+                                                0 -> R.drawable.blood_0
+                                                1 -> R.drawable.blood_0
+                                                2 -> R.drawable.blood_a
+                                                3 -> R.drawable.blood_a
+                                                else -> R.drawable.blood_bag_default
+                                            }
                                         override val name: String
-                                            get() = "pos"
+                                            get() = when (i % 2) {
+                                                0 -> "pos"
+                                                1 -> "neg"
+                                                else -> {
+                                                    "pos"
+                                                }
+                                            }
 
                                     },
                                     modifier = Modifier.weight(1f)
@@ -147,9 +165,21 @@ fun Vorrat() {
                                         override val height: Dp
                                             get() = 40.dp
                                         override val icon: Int
-                                            get() = R.drawable.blood_a
+                                            get() = when (i) {
+                                                0 -> R.drawable.blood_b
+                                                1 -> R.drawable.blood_b
+                                                2 -> R.drawable.blood_ab
+                                                3 -> R.drawable.blood_ab
+                                                else -> R.drawable.blood_bag_default
+                                            }
                                         override val name: String
-                                            get() = "pos"
+                                            get() = when (i % 2) {
+                                                0 -> "pos"
+                                                1 -> "neg"
+                                                else -> {
+                                                    "pos"
+                                                }
+                                            }
 
                                     },
                                     modifier = Modifier.weight(1f)
@@ -168,11 +198,29 @@ fun Vorrat() {
 @Composable
 fun DefinitionVorratItems(item: IVorratItem, modifier: Modifier) {
     val dataStore: VMDatastore = viewModel()
+    val globalFunctions: GlobalFunctions = viewModel()
+
+    val nameRhesus = when (dataStore.getRhesus.collectAsState(true).value) {
+        true -> "pos"
+        false -> "neg"
+    }
+
     Column(
         modifier,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Icon(painter = painterResource(id = item.icon), contentDescription = item.name)
+        Icon(
+            painter = painterResource(id = item.icon),
+            contentDescription = item.name,
+            tint = if ((nameRhesus == item.name) and (item.icon == globalFunctions.getBloodbagIconFromBlutgruppeID(
+                    dataStore.getBlutgruppe.collectAsState(0).value
+                ))
+            ) {
+                MaterialTheme.colorScheme.onPrimary
+            } else {
+                MaterialTheme.colorScheme.onSurfaceVariant
+            }
+        )
         Text(text = item.name, modifier = Modifier.fillMaxWidth(), textAlign = TextAlign.Center)
     }
 

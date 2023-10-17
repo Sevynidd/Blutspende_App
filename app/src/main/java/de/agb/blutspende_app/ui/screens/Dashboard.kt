@@ -34,7 +34,6 @@ import de.agb.blutspende_app.R
 import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
 import de.agb.blutspende_app.viewmodel.VMDatastore
-import de.agb.blutspende_app.viewmodel.screens.VMDashboard
 
 @Composable
 fun Home() {
@@ -47,7 +46,6 @@ fun Home() {
                     .verticalScroll(rememberScrollState())
             ) {
                 val dataStore: VMDatastore = viewModel()
-                val vm: VMDashboard = viewModel()
                 val globalFunctions: GlobalFunctions = viewModel()
 
                 ConstraintLayout(modifier = Modifier.fillMaxSize()) {
@@ -110,7 +108,7 @@ fun Home() {
                     val cardPadding = 10.dp
                     Card(
                         Modifier
-                            .fillMaxWidth(0.7f)
+                            .fillMaxWidth(0.8f)
                             .padding(cardPadding)
                             .constrainAs(containerBlutspendeDetails) {
                                 top.linkTo(userImage.bottom, margin = 60.dp)
