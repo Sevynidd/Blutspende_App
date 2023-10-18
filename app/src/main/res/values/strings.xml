@@ -16,6 +16,9 @@
         Blutgruppe A: Es befindet sich nur das Antigen A auf der Hülle der roten Blutkörperchen. \n
         Blutgruppe B: Es ist nur das Antigen B vorhanden. \nBlutgruppe 0: Es sind keine Antigene vorhanden. \n
         Blutgruppe AB: Es befinden sich beide Antigene A und B auf den roten Blutkörperchen."</string>
+    <string name="AB0System_Help_Text2">"Die Blutgruppen können nicht nur an den roten Blutkörperchen unterschieden werden.
+        Im Blutplasma befinden sich spezielle Eiweiße: die Blutgruppen-Antikörper.
+        Diese Antikörper sind in der Lage, Blut einer körperfremden Blutgruppe zu erkennen."</string>
     <string name="source">Quelle</string>
     <string name="screenDashboard" translatable="false">Dashboard</string>
     <string name="screenBloodLevels">Blutwerte</string>

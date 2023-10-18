@@ -16,6 +16,9 @@
         Blood group A: There is only antigen A on the sheath of red blood cells. \n
         Blood group B: Only antigen B is present. \nBlood group 0: No antigens are present. \n
         Blood group AB: Both antigens A and B are present on the red blood cells.</string>
+    <string name="AB0System_Help_Text2">"The blood groups can not only be distinguished by the red blood cells.
+        Special proteins are found in the blood plasma: the blood group antibodies.
+        These antibodies are able to recognize blood of a foreign blood group."</string>
     <string name="source">Source</string>
     <string name="screenBloodLevels">Blood values</string>
     <string name="screenSupply">Supply</string>

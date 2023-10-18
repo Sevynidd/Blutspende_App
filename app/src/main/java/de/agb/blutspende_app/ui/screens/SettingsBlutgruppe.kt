@@ -14,7 +14,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Info
@@ -25,21 +26,34 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.flowWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import de.agb.blutspende_app.R
 import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
+import de.agb.blutspende_app.viewmodel.GlobalFunctions
 import de.agb.blutspende_app.viewmodel.VMDatastore
 import de.agb.blutspende_app.viewmodel.screens.settings.VMSettingsBlutgruppe
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.launch
 
 @Composable
 fun SettingsBlutgruppe() {
@@ -52,6 +66,20 @@ fun SettingsBlutgruppe() {
                     .verticalScroll(rememberScrollState())
             ) {
                 Blutgruppe()
+
+                Spacer(modifier = Modifier.size(12.dp))
+
+                Rhesus()
+
+                Spacer(modifier = Modifier.size(12.dp))
+
+                Rhesuscomplex()
+
+                Spacer(modifier = Modifier.size(12.dp))
+
+                Kell()
+
+                Spacer(modifier = Modifier.size(12.dp))
             }
         }
     }
@@ -59,10 +87,11 @@ fun SettingsBlutgruppe() {
 
 @Composable
 fun Blutgruppe() {
-    val viewModel: VMSettingsBlutgruppe = viewModel()
+    val vm: VMSettingsBlutgruppe = viewModel()
     val vmDatastore: VMDatastore = viewModel()
+    val globalFunctions: GlobalFunctions = viewModel()
 
-    val showAB0SystemHint = viewModel.getIsVisibleAB0System
+    val showAB0SystemHint = vm.getIsVisibleAB0System
 
     Column(
         Modifier.fillMaxWidth()
@@ -70,25 +99,34 @@ fun Blutgruppe() {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(text = "ABO-System", fontSize = 22.sp)
 
-            IconButton(onClick = { viewModel.setIsVisibleAB0System(showAB0SystemHint.not()) }) {
+            IconButton(onClick = { vm.setIsVisibleAB0System(showAB0SystemHint.not()) }) {
                 Icon(Icons.Rounded.Info, contentDescription = "InfoBlutgruppe")
             }
         }
 
         AnimatedVisibility(showAB0SystemHint) {
             Card(
-                shape = RoundedCornerShape(6.dp),
                 modifier = Modifier.clickable {
-                    viewModel.setIsVisibleAB0System(showAB0SystemHint.not())
+                    vm.setIsVisibleAB0System(showAB0SystemHint.not())
                 }
             ) {
+                val cardItemPadding = Modifier.padding(12.dp)
                 Text(
                     text = stringResource(id = R.string.AB0System_Help_Title),
-                    modifier = Modifier.padding(12.dp)
+                    modifier = cardItemPadding
                 )
                 Text(
                     text = stringResource(id = R.string.AB0System_Help_Text1),
-                    modifier = Modifier.padding(12.dp)
+                    modifier = cardItemPadding
+                )
+                Image(
+                    painter = painterResource(id = R.drawable.unterscheidung_der_blutgruppen),
+                    contentDescription = "Unterscheidung Blutgruppen",
+                    modifier = cardItemPadding
+                )
+                Text(
+                    text = stringResource(id = R.string.AB0System_Help_Text2),
+                    modifier = cardItemPadding
                 )
             }
         }
@@ -100,18 +138,6 @@ fun Blutgruppe() {
         Column(modifier = Modifier.fillMaxWidth()) {
 
             val selectedOption by vmDatastore.getBlutgruppe.collectAsState(0)
-            val images = listOf(
-                R.drawable.blood_0,
-                R.drawable.blood_a,
-                R.drawable.blood_b,
-                R.drawable.blood_ab
-            )
-            val text = listOf(
-                "0",
-                "A",
-                "B",
-                "AB"
-            )
 
             Card {
                 Row(
@@ -130,12 +156,12 @@ fun Blutgruppe() {
                             horizontalAlignment = Alignment.CenterHorizontally) {
                             Image(
                                 painter = painterResource(
-                                    id = images[i]
+                                    id = globalFunctions.getBloodbagIconFromBlutgruppeID(i)
                                 ),
-                                contentDescription = text[i]
+                                contentDescription = globalFunctions.getBlutgruppeAsString(i)
                             )
                             Text(
-                                text = text[i],
+                                text = globalFunctions.getBlutgruppeAsString(i),
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.Center
                             )
@@ -149,48 +175,293 @@ fun Blutgruppe() {
                     }
                 }
             }
-
-
         }
     }
+}
 
-    /*
-    if (showDialog) {
-        val configuration = LocalConfiguration.current
-        val screenHeight = configuration.screenHeightDp.dp
+@Composable
+fun Rhesus() {
+    val vm: VMSettingsBlutgruppe = viewModel()
+    val vmDatastore: VMDatastore = viewModel()
+    val globalFunctions: GlobalFunctions = viewModel()
 
-        AlertDialog(modifier = Modifier.heightIn(250.dp, screenHeight - 150.dp),
-            onDismissRequest = { viewModel.setIsVisibleAB0System(false) },
-            title = { Text(stringResource(id = R.string.AB0System_Help_Title)) },
-            text = {
-                Column(Modifier.verticalScroll(rememberScrollState())) {
-                    Text(stringResource(id = R.string.AB0System_Help_Text))
-                    Image(
-                        painter = painterResource(id = R.drawable.unterscheidung_der_blutgruppen),
-                        contentDescription = "Blutgruppen"
-                    )
+    val showRhesusHint = vm.getIsVisibleRhesus
 
-                    val globalFunctions: GlobalFunctions = viewModel()
+    Column(
+        Modifier.fillMaxWidth()
+    ) {
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Text(text = "Rhesus", fontSize = 22.sp)
 
-                    globalFunctions.AddHyperlinkToText(
-                        fullText = stringResource(id = R.string.source) + ": blutspenden.de",
-                        linkText = listOf("blutspenden.de"),
-                        hyperlinks = listOf("https://www.blutspenden.de/rund-ums-blut/blutgruppen/"),
-                        style = SpanStyle(
-                            color = colorResource(id = R.color.blue),
-                            textDecoration = TextDecoration.Underline
-                        )
-                    )
+            IconButton(onClick = { vm.setIsVisibleRhesus(showRhesusHint.not()) }) {
+                Icon(Icons.Rounded.Info, contentDescription = "InfoRhesus")
+            }
+        }
+
+        AnimatedVisibility(showRhesusHint) {
+            Card(
+                modifier = Modifier.clickable {
+                    vm.setIsVisibleRhesus(showRhesusHint.not())
                 }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    viewModel.setIsVisibleAB0System(false)
-                }) {
-                    Text("ok".uppercase())
+            ) {
+                val cardItemPadding = Modifier.padding(12.dp)
+                Text(
+                    text = stringResource(id = R.string.AB0System_Help_Title),
+                    modifier = cardItemPadding
+                )
+                Text(
+                    text = stringResource(id = R.string.AB0System_Help_Text1),
+                    modifier = cardItemPadding
+                )
+                Image(
+                    painter = painterResource(id = R.drawable.unterscheidung_der_blutgruppen),
+                    contentDescription = "Unterscheidung Blutgruppen",
+                    modifier = cardItemPadding
+                )
+                Text(
+                    text = stringResource(id = R.string.AB0System_Help_Text2),
+                    modifier = cardItemPadding
+                )
+            }
+        }
+
+        if (showRhesusHint) {
+            Spacer(modifier = Modifier.size(16.dp))
+        }
+
+        Column(modifier = Modifier.fillMaxWidth()) {
+
+            val selectedOption by vmDatastore.getRhesus.collectAsState(true)
+
+            Card {
+                Row(
+                    modifier = Modifier.padding(10.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    for (i in 0..1) {
+                        Column(Modifier
+                            .weight(1f)
+                            .selectable(
+                                selected = ((i != 0) == selectedOption),
+                                onClick = {
+                                    vmDatastore.saveRhesusToDataStore((i != 0))
+                                }
+                            ),
+                            horizontalAlignment = Alignment.CenterHorizontally) {
+                            Image(
+                                painter = painterResource(
+                                    id = when (i) {
+                                        0 -> R.drawable.blood_rhesus_negative
+                                        1 -> R.drawable.blood_rhesus_positive
+                                        else -> R.drawable.blood_rhesus_positive
+                                    }
+                                ),
+                                contentDescription = globalFunctions.getRhesusAsString((i != 0))
+                            )
+                            Text(
+                                text = globalFunctions.getRhesusAsString((i != 0)),
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center
+                            )
+                            RadioButton(
+                                selected = ((i != 0) == selectedOption),
+                                onClick = {
+                                    vmDatastore.saveRhesusToDataStore((i != 0))
+                                }
+                            )
+                        }
+                    }
                 }
-            })
+            }
+        }
     }
-     */
+}
 
+@OptIn(ExperimentalComposeUiApi::class)
+@Composable
+fun Rhesuscomplex() {
+    val vm: VMSettingsBlutgruppe = viewModel()
+    val vmDatastore: VMDatastore = viewModel()
+
+    val showRhesuscomplexHint = vm.getIsVisibleRhesuscomplex
+
+    Column(
+        Modifier.fillMaxWidth()
+    ) {
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Text(text = stringResource(id = R.string.rhesuskomplex), fontSize = 22.sp)
+
+            IconButton(onClick = { vm.setIsVisibleRhesuscomplex(showRhesuscomplexHint.not()) }) {
+                Icon(Icons.Rounded.Info, contentDescription = "InfoRhesuskomplex")
+            }
+        }
+
+        AnimatedVisibility(showRhesuscomplexHint) {
+            Card(
+                modifier = Modifier.clickable {
+                    vm.setIsVisibleRhesuscomplex(showRhesuscomplexHint.not())
+                }
+            ) {
+                val cardItemPadding = Modifier.padding(12.dp)
+                Text(
+                    text = stringResource(id = R.string.AB0System_Help_Title),
+                    modifier = cardItemPadding
+                )
+                Text(
+                    text = stringResource(id = R.string.AB0System_Help_Text1),
+                    modifier = cardItemPadding
+                )
+                Image(
+                    painter = painterResource(id = R.drawable.unterscheidung_der_blutgruppen),
+                    contentDescription = "Unterscheidung Blutgruppen",
+                    modifier = cardItemPadding
+                )
+                Text(
+                    text = stringResource(id = R.string.AB0System_Help_Text2),
+                    modifier = cardItemPadding
+                )
+            }
+        }
+
+        if (showRhesuscomplexHint) {
+            Spacer(modifier = Modifier.size(16.dp))
+        }
+
+        Column(modifier = Modifier.fillMaxWidth()) {
+
+            Card {
+                val entry =
+                    MutableStateFlow("Init")
+                val entryC by entry.collectAsState()
+
+
+                val keyboardController = LocalSoftwareKeyboardController.current
+                val focusManager = LocalFocusManager.current
+
+                TextField(
+                    value = entryC,
+                    onValueChange = { entry.value = it },
+                    singleLine = true,
+                    placeholder = { Text("Bsp.: CcD.ee") },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
+                    keyboardActions = KeyboardActions(
+                        onDone = {
+                            keyboardController?.hide()
+                            focusManager.clearFocus()
+                            vmDatastore.saveRhesuskomplexToDataStore(entryC)
+                        }
+                    )
+                )
+
+                val lifecycleOwner: LifecycleOwner = LocalLifecycleOwner.current
+
+                LaunchedEffect(key1 = true) {
+                    lifecycleOwner.lifecycleScope.launch {
+                        vmDatastore.getRhesuskomplex.flowWithLifecycle(lifecycleOwner.lifecycle)
+                            .collect {
+                                entry.value = it
+                            }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun Kell() {
+    val vm: VMSettingsBlutgruppe = viewModel()
+    val vmDatastore: VMDatastore = viewModel()
+    val globalFunctions: GlobalFunctions = viewModel()
+
+    val showRhesusHint = vm.getIsVisibleRhesus
+
+    Column(
+        Modifier.fillMaxWidth()
+    ) {
+        Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+            Text(text = "Rhesus", fontSize = 22.sp)
+
+            IconButton(onClick = { vm.setIsVisibleRhesus(showRhesusHint.not()) }) {
+                Icon(Icons.Rounded.Info, contentDescription = "InfoRhesus")
+            }
+        }
+
+        AnimatedVisibility(showRhesusHint) {
+            Card(
+                modifier = Modifier.clickable {
+                    vm.setIsVisibleRhesus(showRhesusHint.not())
+                }
+            ) {
+                val cardItemPadding = Modifier.padding(12.dp)
+                Text(
+                    text = stringResource(id = R.string.AB0System_Help_Title),
+                    modifier = cardItemPadding
+                )
+                Text(
+                    text = stringResource(id = R.string.AB0System_Help_Text1),
+                    modifier = cardItemPadding
+                )
+                Image(
+                    painter = painterResource(id = R.drawable.unterscheidung_der_blutgruppen),
+                    contentDescription = "Unterscheidung Blutgruppen",
+                    modifier = cardItemPadding
+                )
+                Text(
+                    text = stringResource(id = R.string.AB0System_Help_Text2),
+                    modifier = cardItemPadding
+                )
+            }
+        }
+
+        if (showRhesusHint) {
+            Spacer(modifier = Modifier.size(16.dp))
+        }
+
+        Column(modifier = Modifier.fillMaxWidth()) {
+
+            val selectedOption by vmDatastore.getRhesus.collectAsState(true)
+
+            Card {
+                Row(
+                    modifier = Modifier.padding(10.dp),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    for (i in 0..1) {
+                        Column(Modifier
+                            .weight(1f)
+                            .selectable(
+                                selected = ((i != 0) == selectedOption),
+                                onClick = {
+                                    vmDatastore.saveRhesusToDataStore((i != 0))
+                                }
+                            ),
+                            horizontalAlignment = Alignment.CenterHorizontally) {
+                            Image(
+                                painter = painterResource(
+                                    id = when (i) {
+                                        0 -> R.drawable.blood_rhesus_negative
+                                        1 -> R.drawable.blood_rhesus_positive
+                                        else -> R.drawable.blood_rhesus_positive
+                                    }
+                                ),
+                                contentDescription = globalFunctions.getRhesusAsString((i != 0))
+                            )
+                            Text(
+                                text = globalFunctions.getRhesusAsString((i != 0)),
+                                modifier = Modifier.fillMaxWidth(),
+                                textAlign = TextAlign.Center
+                            )
+                            RadioButton(
+                                selected = ((i != 0) == selectedOption),
+                                onClick = {
+                                    vmDatastore.saveRhesusToDataStore((i != 0))
+                                }
+                            )
+                        }
+                    }
+                }
+            }
+        }
+    }
 }

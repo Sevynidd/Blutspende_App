@@ -73,7 +73,7 @@ class VMDatastore(application: Application) : AndroidViewModel(application) {
     val getRhesuskomplex = dataStore.getRhesuskomplex
 
     /**
-     * true = +; false = -
+     * Bsp.: CcD.ee
      */
     fun saveRhesuskomplexToDataStore(rhesuskomplex: String) {
         viewModelScope.launch(Dispatchers.IO) {
