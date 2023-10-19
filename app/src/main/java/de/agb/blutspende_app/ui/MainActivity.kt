@@ -120,6 +120,18 @@ fun TopBar(navController: NavHostController) {
                         "Zurück"
                     )
                 }
+            } else if (currentRoute == globalFunctions.getScreenRouteSettingsBlutgruppeWebview) {
+                IconButton(
+                    onClick = {
+                        navController.navigate(globalFunctions.getScreenRouteSettingsBlutgruppe)
+                    },
+                    enabled = true
+                ) {
+                    Icon(
+                        Icons.Filled.ArrowBack,
+                        "Zurück"
+                    )
+                }
             }
         },
         actions = {

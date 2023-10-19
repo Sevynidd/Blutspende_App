@@ -47,6 +47,7 @@ import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavController
 import de.agb.blutspende_app.R
 import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
@@ -56,7 +57,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 @Composable
-fun SettingsBlutgruppe() {
+fun SettingsBlutgruppe(navController: NavController) {
     Blutspende_AppTheme {
         Surface {
             Column(
@@ -77,7 +78,7 @@ fun SettingsBlutgruppe() {
 
                 Spacer(modifier = Modifier.size(12.dp))
 
-                Kell()
+                Kell(navController = navController)
 
                 Spacer(modifier = Modifier.size(12.dp))
             }
@@ -369,52 +370,29 @@ fun Rhesuscomplex() {
 }
 
 @Composable
-fun Kell() {
+fun Kell(navController: NavController) {
     val vm: VMSettingsBlutgruppe = viewModel()
     val vmDatastore: VMDatastore = viewModel()
     val globalFunctions: GlobalFunctions = viewModel()
 
-    val showRhesusHint = vm.getIsVisibleRhesus
+    val showKellHint = vm.getIsVisibleKell
 
     Column(
         Modifier.fillMaxWidth()
     ) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "Rhesus", fontSize = 22.sp)
+            Text(text = "Kell", fontSize = 22.sp)
 
-            IconButton(onClick = { vm.setIsVisibleRhesus(showRhesusHint.not()) }) {
-                Icon(Icons.Rounded.Info, contentDescription = "InfoRhesus")
+            IconButton(onClick = {
+                vmDatastore.saveBlutspendeInfoURLToDataStore("https://www.blutspende.de/magazin/von-a-bis-0/kell-system-in-der-blutgruppenbestimmung")
+                navController.navigate(globalFunctions.getScreenRouteSettingsBlutgruppeWebview)
+            }) {
+                Icon(Icons.Rounded.Info, contentDescription = "InfoKell")
             }
         }
 
-        AnimatedVisibility(showRhesusHint) {
-            Card(
-                modifier = Modifier.clickable {
-                    vm.setIsVisibleRhesus(showRhesusHint.not())
-                }
-            ) {
-                val cardItemPadding = Modifier.padding(12.dp)
-                Text(
-                    text = stringResource(id = R.string.AB0System_Help_Title),
-                    modifier = cardItemPadding
-                )
-                Text(
-                    text = stringResource(id = R.string.AB0System_Help_Text1),
-                    modifier = cardItemPadding
-                )
-                Image(
-                    painter = painterResource(id = R.drawable.unterscheidung_der_blutgruppen),
-                    contentDescription = "Unterscheidung Blutgruppen",
-                    modifier = cardItemPadding
-                )
-                Text(
-                    text = stringResource(id = R.string.AB0System_Help_Text2),
-                    modifier = cardItemPadding
-                )
-            }
-        }
 
-        if (showRhesusHint) {
+        if (showKellHint) {
             Spacer(modifier = Modifier.size(16.dp))
         }
 

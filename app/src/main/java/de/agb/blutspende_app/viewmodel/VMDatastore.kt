@@ -94,4 +94,12 @@ class VMDatastore(application: Application) : AndroidViewModel(application) {
             dataStore.saveKellToDataStore(kell)
         }
     }
+
+    val getBlutspendeInfoURL = dataStore.getBlutspendeInfoURL
+
+    fun saveBlutspendeInfoURLToDataStore(url: String) {
+        viewModelScope.launch(Dispatchers.IO) {
+            dataStore.saveBlutspendeInfoURLToDataStore(url)
+        }
+    }
 }

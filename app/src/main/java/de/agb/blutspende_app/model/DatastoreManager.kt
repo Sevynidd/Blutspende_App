@@ -25,6 +25,9 @@ class DatastoreManager(context: Context) {
         private val RHESUS_KEY = booleanPreferencesKey("rhesus")
         private val RHESUS_KOMPLEX_KEY = stringPreferencesKey("rhesus_komplex")
         private val KELL_KEY = booleanPreferencesKey("kell")
+
+        // BLUTSPENDE INFO URL
+        private val BLUTSPENDE_INFO_URL_KEY = stringPreferencesKey("blutspende_info_url_key")
     }
 
     // SETTINGS
@@ -116,4 +119,20 @@ class DatastoreManager(context: Context) {
         }
 
 
+    // BLUTSPENDE INFO URL
+
+    /**
+     * @param url URL, welche gespeichert werden soll
+     */
+    suspend fun saveBlutspendeInfoURLToDataStore(url: String) {
+        dataStore.edit { preferences ->
+            preferences[BLUTSPENDE_INFO_URL_KEY] = url
+        }
+    }
+
+    val getBlutspendeInfoURL: Flow<String> = dataStore.data
+        .map { preferences ->
+            preferences[BLUTSPENDE_INFO_URL_KEY] ?: ""
+
+        }
 }

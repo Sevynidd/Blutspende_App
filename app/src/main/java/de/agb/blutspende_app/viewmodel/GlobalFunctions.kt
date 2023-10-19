@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.unit.TextUnit
 import androidx.lifecycle.ViewModel
 import de.agb.blutspende_app.R
 import de.agb.blutspende_app.model.ScreenDefinition
@@ -30,7 +31,7 @@ class GlobalFunctions : ViewModel() {
             append(fullText)
             addStyle(
                 style = SpanStyle(
-                    color = MaterialTheme.colorScheme.onPrimaryContainer,
+                    color = MaterialTheme.colorScheme.onPrimaryContainer
                 ),
                 start = 0,
                 end = fullText.length
@@ -46,25 +47,19 @@ class GlobalFunctions : ViewModel() {
                     end = endIndex
                 )
                 addStringAnnotation(
-                    tag = "URL",
-                    annotation = hyperlinks[index],
-                    start = startIndex,
-                    end = endIndex
+                    tag = "URL", annotation = hyperlinks[index], start = startIndex, end = endIndex
                 )
             }
         }
 
         val uriHandler = LocalUriHandler.current
 
-        ClickableText(
-            text = annotatedText,
-            onClick = {
-                annotatedText.getStringAnnotations("URL", start = it, end = it)
-                    .firstOrNull()?.let { stringAnnotation ->
-                        uriHandler.openUri(stringAnnotation.item)
-                    }
-            }
-        )
+        ClickableText(text = annotatedText, onClick = {
+            annotatedText.getStringAnnotations("URL", start = it, end = it).firstOrNull()
+                ?.let { stringAnnotation ->
+                    uriHandler.openUri(stringAnnotation.item)
+                }
+        })
     }
 
     val getScreenRouteDashboard: String
@@ -81,6 +76,9 @@ class GlobalFunctions : ViewModel() {
 
     val getScreenRouteSettingsBlutgruppe: String
         get() = ScreenDefinition.SettingsBlutgruppe.route
+
+    val getScreenRouteSettingsBlutgruppeWebview: String
+        get() = ScreenDefinition.SettingsBlutgruppe_Webview.route
 
     /**
      * @param value Id, welche man aus dataStore.getBlutgruppe erhält

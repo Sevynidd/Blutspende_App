@@ -2,7 +2,6 @@ package de.agb.blutspende_app.viewmodel.screens.settings
 
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 
 class VMSettingsBlutgruppe : ViewModel() {
@@ -34,8 +33,6 @@ class VMSettingsBlutgruppe : ViewModel() {
     fun setIsVisibleRhesuscomplex(value: Boolean) {
         _isVisibleRhesuscomplex.value = value
     }
-
-
 
 
     private var _isVisibleKell = mutableStateOf(false)
