@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import android.webkit.WebView
 import android.webkit.WebViewClient
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -51,14 +52,24 @@ fun SettingsBlutgruppeWebview() {
 
                     Column {
                         globalFunctions.AddHyperlinkToText(
-                            fullText = "Quelle: blutspende.de",
-                            linkText = listOf("blutspende.de"),
+                            fullText = "Quelle: ${globalFunctions.getBaseURL(getHilfeURL)}",
+                            linkText = listOf(globalFunctions.getBaseURL(getHilfeURL)),
                             hyperlinks = listOf(getHilfeURL),
                             style = SpanStyle(
-                                color = colorResource(id = R.color.blue)
+                                color = when (vmDatastore.getThemeMode.collectAsState(initial = 0).value) {
+                                    1 -> colorResource(id = R.color.darkBlue)
+                                    2 -> colorResource(id = R.color.lightBlue)
+                                    else -> when {
+                                        isSystemInDarkTheme() -> colorResource(id = R.color.lightBlue)
+                                        else -> colorResource(id = R.color.darkBlue)
+                                    }
+                                }
                             )
                         )
                     }
+
+                    Spacer(modifier = Modifier.size(12.dp))
+
                     Column {
                         AndroidView(
                             factory = {

@@ -1,9 +1,7 @@
 package de.agb.blutspende_app.ui.screens
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -52,7 +50,6 @@ import de.agb.blutspende_app.R
 import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
 import de.agb.blutspende_app.viewmodel.VMDatastore
-import de.agb.blutspende_app.viewmodel.screens.settings.VMSettingsBlutgruppe
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
@@ -66,15 +63,15 @@ fun SettingsBlutgruppe(navController: NavController) {
                     .background(MaterialTheme.colorScheme.background)
                     .verticalScroll(rememberScrollState())
             ) {
-                Blutgruppe()
+                Blutgruppe(navController = navController)
 
                 Spacer(modifier = Modifier.size(12.dp))
 
-                Rhesus()
+                Rhesus(navController = navController)
 
                 Spacer(modifier = Modifier.size(12.dp))
 
-                Rhesuscomplex()
+                Rhesuscomplex(navController = navController)
 
                 Spacer(modifier = Modifier.size(12.dp))
 
@@ -87,12 +84,9 @@ fun SettingsBlutgruppe(navController: NavController) {
 }
 
 @Composable
-fun Blutgruppe() {
-    val vm: VMSettingsBlutgruppe = viewModel()
+fun Blutgruppe(navController: NavController) {
     val vmDatastore: VMDatastore = viewModel()
     val globalFunctions: GlobalFunctions = viewModel()
-
-    val showAB0SystemHint = vm.getIsVisibleAB0System
 
     Column(
         Modifier.fillMaxWidth()
@@ -100,40 +94,12 @@ fun Blutgruppe() {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(text = "ABO-System", fontSize = 22.sp)
 
-            IconButton(onClick = { vm.setIsVisibleAB0System(showAB0SystemHint.not()) }) {
+            IconButton(onClick = {
+                vmDatastore.saveBlutspendeInfoURLToDataStore("https://www.blutspenden.de/rund-ums-blut/blutgruppen/")
+                navController.navigate(globalFunctions.getScreenRouteSettingsBlutgruppeWebview)
+            }) {
                 Icon(Icons.Rounded.Info, contentDescription = "InfoBlutgruppe")
             }
-        }
-
-        AnimatedVisibility(showAB0SystemHint) {
-            Card(
-                modifier = Modifier.clickable {
-                    vm.setIsVisibleAB0System(showAB0SystemHint.not())
-                }
-            ) {
-                val cardItemPadding = Modifier.padding(12.dp)
-                Text(
-                    text = stringResource(id = R.string.AB0System_Help_Title),
-                    modifier = cardItemPadding
-                )
-                Text(
-                    text = stringResource(id = R.string.AB0System_Help_Text1),
-                    modifier = cardItemPadding
-                )
-                Image(
-                    painter = painterResource(id = R.drawable.unterscheidung_der_blutgruppen),
-                    contentDescription = "Unterscheidung Blutgruppen",
-                    modifier = cardItemPadding
-                )
-                Text(
-                    text = stringResource(id = R.string.AB0System_Help_Text2),
-                    modifier = cardItemPadding
-                )
-            }
-        }
-
-        if (showAB0SystemHint) {
-            Spacer(modifier = Modifier.size(16.dp))
         }
 
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -181,12 +147,9 @@ fun Blutgruppe() {
 }
 
 @Composable
-fun Rhesus() {
-    val vm: VMSettingsBlutgruppe = viewModel()
+fun Rhesus(navController: NavController) {
     val vmDatastore: VMDatastore = viewModel()
     val globalFunctions: GlobalFunctions = viewModel()
-
-    val showRhesusHint = vm.getIsVisibleRhesus
 
     Column(
         Modifier.fillMaxWidth()
@@ -194,40 +157,12 @@ fun Rhesus() {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(text = "Rhesus", fontSize = 22.sp)
 
-            IconButton(onClick = { vm.setIsVisibleRhesus(showRhesusHint.not()) }) {
+            IconButton(onClick = {
+                vmDatastore.saveBlutspendeInfoURLToDataStore("https://www.studysmarter.de/schule/biologie/genetik/rhesus-system/")
+                navController.navigate(globalFunctions.getScreenRouteSettingsBlutgruppeWebview)
+            }) {
                 Icon(Icons.Rounded.Info, contentDescription = "InfoRhesus")
             }
-        }
-
-        AnimatedVisibility(showRhesusHint) {
-            Card(
-                modifier = Modifier.clickable {
-                    vm.setIsVisibleRhesus(showRhesusHint.not())
-                }
-            ) {
-                val cardItemPadding = Modifier.padding(12.dp)
-                Text(
-                    text = stringResource(id = R.string.AB0System_Help_Title),
-                    modifier = cardItemPadding
-                )
-                Text(
-                    text = stringResource(id = R.string.AB0System_Help_Text1),
-                    modifier = cardItemPadding
-                )
-                Image(
-                    painter = painterResource(id = R.drawable.unterscheidung_der_blutgruppen),
-                    contentDescription = "Unterscheidung Blutgruppen",
-                    modifier = cardItemPadding
-                )
-                Text(
-                    text = stringResource(id = R.string.AB0System_Help_Text2),
-                    modifier = cardItemPadding
-                )
-            }
-        }
-
-        if (showRhesusHint) {
-            Spacer(modifier = Modifier.size(16.dp))
         }
 
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -280,11 +215,9 @@ fun Rhesus() {
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun Rhesuscomplex() {
-    val vm: VMSettingsBlutgruppe = viewModel()
+fun Rhesuscomplex(navController: NavController) {
     val vmDatastore: VMDatastore = viewModel()
-
-    val showRhesuscomplexHint = vm.getIsVisibleRhesuscomplex
+    val globalFunctions: GlobalFunctions = viewModel()
 
     Column(
         Modifier.fillMaxWidth()
@@ -292,40 +225,12 @@ fun Rhesuscomplex() {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Text(text = stringResource(id = R.string.rhesuskomplex), fontSize = 22.sp)
 
-            IconButton(onClick = { vm.setIsVisibleRhesuscomplex(showRhesuscomplexHint.not()) }) {
+            IconButton(onClick = {
+                vmDatastore.saveBlutspendeInfoURLToDataStore("https://www.studysmarter.de/schule/biologie/genetik/rhesus-system/")
+                navController.navigate(globalFunctions.getScreenRouteSettingsBlutgruppeWebview)
+            }) {
                 Icon(Icons.Rounded.Info, contentDescription = "InfoRhesuskomplex")
             }
-        }
-
-        AnimatedVisibility(showRhesuscomplexHint) {
-            Card(
-                modifier = Modifier.clickable {
-                    vm.setIsVisibleRhesuscomplex(showRhesuscomplexHint.not())
-                }
-            ) {
-                val cardItemPadding = Modifier.padding(12.dp)
-                Text(
-                    text = stringResource(id = R.string.AB0System_Help_Title),
-                    modifier = cardItemPadding
-                )
-                Text(
-                    text = stringResource(id = R.string.AB0System_Help_Text1),
-                    modifier = cardItemPadding
-                )
-                Image(
-                    painter = painterResource(id = R.drawable.unterscheidung_der_blutgruppen),
-                    contentDescription = "Unterscheidung Blutgruppen",
-                    modifier = cardItemPadding
-                )
-                Text(
-                    text = stringResource(id = R.string.AB0System_Help_Text2),
-                    modifier = cardItemPadding
-                )
-            }
-        }
-
-        if (showRhesuscomplexHint) {
-            Spacer(modifier = Modifier.size(16.dp))
         }
 
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -371,11 +276,8 @@ fun Rhesuscomplex() {
 
 @Composable
 fun Kell(navController: NavController) {
-    val vm: VMSettingsBlutgruppe = viewModel()
     val vmDatastore: VMDatastore = viewModel()
     val globalFunctions: GlobalFunctions = viewModel()
-
-    val showKellHint = vm.getIsVisibleKell
 
     Column(
         Modifier.fillMaxWidth()
@@ -391,14 +293,9 @@ fun Kell(navController: NavController) {
             }
         }
 
-
-        if (showKellHint) {
-            Spacer(modifier = Modifier.size(16.dp))
-        }
-
         Column(modifier = Modifier.fillMaxWidth()) {
 
-            val selectedOption by vmDatastore.getRhesus.collectAsState(true)
+            val selectedOption by vmDatastore.getKell.collectAsState(true)
 
             Card {
                 Row(
@@ -411,7 +308,7 @@ fun Kell(navController: NavController) {
                             .selectable(
                                 selected = ((i != 0) == selectedOption),
                                 onClick = {
-                                    vmDatastore.saveRhesusToDataStore((i != 0))
+                                    vmDatastore.saveKellToDataStore((i != 0))
                                 }
                             ),
                             horizontalAlignment = Alignment.CenterHorizontally) {
@@ -433,7 +330,7 @@ fun Kell(navController: NavController) {
                             RadioButton(
                                 selected = ((i != 0) == selectedOption),
                                 onClick = {
-                                    vmDatastore.saveRhesusToDataStore((i != 0))
+                                    vmDatastore.saveKellToDataStore((i != 0))
                                 }
                             )
                         }

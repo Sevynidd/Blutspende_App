@@ -6,12 +6,21 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalUriHandler
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.unit.TextUnit
 import androidx.lifecycle.ViewModel
 import de.agb.blutspende_app.R
 import de.agb.blutspende_app.model.ScreenDefinition
 
 class GlobalFunctions : ViewModel() {
+
+    /**
+     * @param url URL, aus welcher die BaseURL entnommen werden soll
+     * Bsp.: https://www.youtube.com/watch?v=4v3k82yL25w -> https://www.youtube.com/
+     */
+    fun getBaseURL(url: String): String {
+        val urlSplitted = url.split("/", limit = 4)
+
+        return urlSplitted[2] + "/"
+    }
 
     /**
      * @param fullText Der komplette Text, welcher hinzugefügt werden soll

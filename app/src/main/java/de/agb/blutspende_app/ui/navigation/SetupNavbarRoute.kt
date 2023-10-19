@@ -2,12 +2,12 @@ package de.agb.blutspende_app.ui.navigation
 
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.core.EaseIn
+import androidx.compose.animation.core.EaseOut
 import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -18,7 +18,6 @@ import de.agb.blutspende_app.ui.screens.Settings
 import de.agb.blutspende_app.ui.screens.SettingsBlutgruppe
 import de.agb.blutspende_app.ui.screens.SettingsBlutgruppeWebview
 import de.agb.blutspende_app.ui.screens.Vorrat
-import de.agb.blutspende_app.viewmodel.screens.settings.VMSettingsBlutgruppe
 
 @Composable
 fun SetupNavbarGraph(
@@ -61,6 +60,16 @@ fun SetupNavbarGraph(
                     animationSpec = tween(200, easing = EaseIn),
                     towards = AnimatedContentTransitionScope.SlideDirection.Start
                 )
+            },
+            exitTransition = {
+                fadeOut(
+                    animationSpec = tween(
+                        200, easing = LinearEasing
+                    )
+                ) + slideOutOfContainer(
+                    animationSpec = tween(200, easing = EaseOut),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right
+                )
             }) {
             SettingsBlutgruppe(navController)
         }
@@ -74,8 +83,17 @@ fun SetupNavbarGraph(
                     animationSpec = tween(200, easing = EaseIn),
                     towards = AnimatedContentTransitionScope.SlideDirection.Start
                 )
+            },
+            exitTransition = {
+                fadeOut(
+                    animationSpec = tween(
+                        200, easing = LinearEasing
+                    )
+                ) + slideOutOfContainer(
+                    animationSpec = tween(200, easing = EaseOut),
+                    towards = AnimatedContentTransitionScope.SlideDirection.Right
+                )
             }) {
-            val vm: VMSettingsBlutgruppe = viewModel()
             SettingsBlutgruppeWebview()
         }
     }
