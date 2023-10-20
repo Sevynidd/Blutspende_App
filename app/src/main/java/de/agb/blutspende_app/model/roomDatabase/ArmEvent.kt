@@ -1,4 +1,4 @@
-package de.agb.blutspende_app.model.roomDatabase.arm
+package de.agb.blutspende_app.model.roomDatabase
 
 sealed interface ArmEvent {
     data object SaveArm : ArmEvent

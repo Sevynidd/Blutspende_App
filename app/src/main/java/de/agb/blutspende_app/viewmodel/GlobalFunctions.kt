@@ -19,7 +19,7 @@ class GlobalFunctions : ViewModel() {
     fun getBaseURL(url: String): String {
         val urlSplitted = url.split("/", limit = 4)
 
-        return urlSplitted[2] + "/"
+        return urlSplitted[2]
     }
 
     /**

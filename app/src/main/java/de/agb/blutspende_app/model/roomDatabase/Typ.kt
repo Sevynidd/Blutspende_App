@@ -1,4 +1,4 @@
-package de.agb.blutspende_app.model.roomDatabase.typ
+package de.agb.blutspende_app.model.roomDatabase
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
