@@ -1,6 +1,7 @@
 package de.agb.blutspende_app.model.roomDatabase
 
-data class ArmState(
+data class BlutwerteState(
     val arm: List<Arm> = emptyList(),
-    val bezeichnung: String = ""
+    val bezeichnung: String = "",
+    val armID: Int = 0
 )

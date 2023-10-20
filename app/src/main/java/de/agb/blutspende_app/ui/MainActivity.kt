@@ -20,6 +20,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -28,6 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -35,10 +37,14 @@ import androidx.navigation.compose.rememberNavController
 import com.commandiron.bubble_navigation_bar_compose.BubbleNavigationBar
 import com.commandiron.bubble_navigation_bar_compose.BubbleNavigationBarItem
 import de.agb.blutspende_app.R
+import de.agb.blutspende_app.model.roomDatabase.Arm
+import de.agb.blutspende_app.model.roomDatabase.BlutwerteDatabase
+import de.agb.blutspende_app.model.roomDatabase.Typ
 import de.agb.blutspende_app.ui.navigation.SetupNavbarGraph
 import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
 import de.agb.blutspende_app.viewmodel.VMMainActivity
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,6 +60,24 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    val dao = BlutwerteDatabase.getInstance(this).blutwerteDao()
+                    val arm = listOf(
+                        Arm(armID = 0, bezeichnung = "Linker Arm"),
+                        Arm(armID = 1, bezeichnung = "Rechter Arm")
+                    )
+                    val typ = listOf(
+                        Typ(typID = 0, blutspendeTyp = "Vollblut"),
+                        Typ(typID = 1, blutspendeTyp = "Plasma"),
+                        Typ(typID = 2, blutspendeTyp = "Thrombozyten")
+                    )
+
+                    LaunchedEffect(key1 = true) {
+                        lifecycleScope.launch {
+                            arm.forEach { dao.addArm(it) }
+                            typ.forEach { dao.addTyp(it) }
+                        }
+                    }
+
                     NavigationBar()
                 }
             }

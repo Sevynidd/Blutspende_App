@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -29,6 +30,7 @@ interface BlutwerteDao {
     @Delete
     suspend fun deleteTyp(typ: Typ)
 
-    @Query("SELECT * FROM Blutwerte WHERE fArmID = :armID and  ORDER BY blutwerteID ASC")
-    fun readAllData(): Flow<List<Arm>>
+    @Transaction
+    @Query("SELECT * FROM Blutwerte WHERE fArmID = :armID AND fTypID = :typID ORDER BY blutwerteID ASC")
+    fun readAllData(armID: Int, typID: Int): Flow<List<Blutwerte>>
 }
