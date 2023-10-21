@@ -1,35 +1,39 @@
 package de.agb.blutspende_app.ui.screens
 
-import android.widget.Toast
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
-import androidx.compose.animation.slideInVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CornerSize
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.FloatingActionButtonDefaults
-import androidx.compose.material3.Icon
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material3.Card
+import androidx.compose.material3.DatePickerFormatter
+import androidx.compose.material3.DateRangePicker
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDateRangePickerState
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
-import de.agb.blutspende_app.R
+import androidx.compose.ui.unit.sp
 import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
+import java.text.DateFormat.MEDIUM
+import java.text.DateFormat.getDateInstance
+import java.util.Date
 
 @Composable
 fun Blutwerte() {
@@ -41,91 +45,95 @@ fun Blutwerte() {
                     .background(MaterialTheme.colorScheme.background)
             ) {
 
-                var menuOpen by remember {
-                    mutableStateOf(false)
-                }
-                val currentMenuIcon: Int by rememberUpdatedState(
-                    if (menuOpen) R.drawable.close else R.drawable.menu
-                )
+                Content()
 
-                val density = LocalDensity.current
-                val context = LocalContext.current
+            }
+        }
+    }
+}
 
-                Column(
-                    Modifier
-                        .fillMaxSize(),
-                    verticalArrangement = Arrangement.Bottom,
-                    horizontalAlignment = Alignment.End
-                ) {
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun Content() {
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .wrapContentHeight()
+    ) {
 
-                    for (i in 0..2) {
-                        AnimatedVisibility(menuOpen,
-                            enter = slideInVertically {
-                                with(density) {
-                                    60.dp.roundToPx()
-                                }
-                            }) {
-                            FloatingActionButton(shape = MaterialTheme.shapes.medium.copy(
-                                CornerSize(
-                                    percent = 50
-                                )
-                            ),
-                                elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(2.dp),
-                                modifier = Modifier
-                                    .padding(bottom = 15.dp)
-                                    .size(40.dp),
-                                onClick = {
-                                    Toast.makeText(
-                                        context,
-                                        when (i) {
-                                            0 -> "FABEdit"
-                                            1 -> "FABPlus"
-                                            else -> "FABMinus"
-                                        }, Toast.LENGTH_SHORT
-                                    ).show()
-                                    menuOpen = menuOpen.not()
-                                }) {
-                                Icon(
-                                    painter = painterResource(
-                                        id = when (i) {
-                                            0 -> R.drawable.edit
-                                            1 -> R.drawable.plus
-                                            else -> R.drawable.minus
-                                        }
-                                    ),
-                                    contentDescription = when (i) {
-                                        0 -> "FABEdit"
-                                        1 -> "FABPlus"
-                                        else -> "FABMinus"
-                                    },
-                                    modifier = Modifier.size(18.dp)
-                                )
-                            }
-                        }
-                    }
+        Text(text = "Filter")
 
-                    FloatingActionButton(shape = MaterialTheme.shapes.medium.copy(
-                        CornerSize(
-                            percent = 50
+        Spacer(modifier = Modifier.size(16.dp))
+
+        var bottomSheetVisible by remember { mutableStateOf(false) }
+        val sheetState = rememberModalBottomSheetState()
+        val dateRangePickerState = rememberDateRangePickerState()
+
+        val sdf = getDateInstance(MEDIUM)
+
+        ClickableText(
+            text = AnnotatedString(
+                if (dateRangePickerState.selectedStartDateMillis == null) {
+                    "NaN"
+                } else {
+                    sdf.format(
+                        Date(
+                            dateRangePickerState.selectedStartDateMillis ?: 0
                         )
-                    ),
-                        elevation = FloatingActionButtonDefaults.bottomAppBarFabElevation(2.dp),
-                        modifier = Modifier
-                            .padding(bottom = 30.dp)
-                            .size(50.dp),
-                        onClick = { menuOpen = menuOpen.not() }) {
-                        Crossfade(
-                            targetState = currentMenuIcon,
-                            label = "CrossfadeMenuIcon"
-                        ) { icon ->
-                            Icon(
-                                painter = painterResource(id = icon),
-                                contentDescription = "Menu",
-                                modifier = Modifier.size(22.dp)
+                    )
+                } + "  bis  " +
+                        if (dateRangePickerState.selectedEndDateMillis == null) {
+                            "NaN"
+                        } else {
+                            sdf.format(
+                                Date(
+                                    dateRangePickerState.selectedEndDateMillis ?: 0
+                                )
                             )
                         }
-                    }
+            ),
+            style = TextStyle(color = MaterialTheme.colorScheme.onBackground, fontSize = 15.sp),
+            onClick = { bottomSheetVisible = bottomSheetVisible.not() })
+
+
+        if (bottomSheetVisible) {
+
+            ModalBottomSheet(sheetState = sheetState,
+                onDismissRequest = { bottomSheetVisible = false }) {
+
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight(0.7f)
+                ) {
+                    DateRangePicker(
+                        state = dateRangePickerState,
+                        dateFormatter = DatePickerFormatter(
+                            "dd.MM.yyyy",
+                            "dd.MM.yyyy",
+                            "dd.MM.yyyy"
+                        )
+                    )
+
                 }
+            }
+
+        }
+
+        Column(
+            modifier = Modifier.padding(top = 14.dp, bottom = 14.dp)
+        ) {
+            val cardPadding = 12.dp
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+            ) {
+                Text(
+                    modifier = Modifier.padding(cardPadding),
+                    text = "Die letzten 3 Blutspendewerte:"
+                )
+
+
             }
         }
     }

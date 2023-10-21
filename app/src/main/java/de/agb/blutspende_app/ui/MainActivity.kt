@@ -1,5 +1,6 @@
 package de.agb.blutspende_app.ui
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -23,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -60,29 +62,37 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    val dao = BlutwerteDatabase.getInstance(this).blutwerteDao()
-                    val arm = listOf(
-                        Arm(armID = 0, bezeichnung = "Linker Arm"),
-                        Arm(armID = 1, bezeichnung = "Rechter Arm")
-                    )
-                    val typ = listOf(
-                        Typ(typID = 0, blutspendeTyp = "Vollblut"),
-                        Typ(typID = 1, blutspendeTyp = "Plasma"),
-                        Typ(typID = 2, blutspendeTyp = "Thrombozyten")
-                    )
-
-                    LaunchedEffect(key1 = true) {
-                        lifecycleScope.launch {
-                            arm.forEach { dao.addArm(it) }
-                            typ.forEach { dao.addTyp(it) }
-                        }
-                    }
+                    DatabaseInit(this.applicationContext)
 
                     NavigationBar()
                 }
             }
         }
     }
+}
+
+@Composable
+fun DatabaseInit(context: Context) {
+    val dao = BlutwerteDatabase.getInstance(context).blutwerteDao()
+    val arm = listOf(
+        Arm(armID = 0, bezeichnung = "Linker Arm"),
+        Arm(armID = 1, bezeichnung = "Rechter Arm")
+    )
+    val typ = listOf(
+        Typ(typID = 0, blutspendeTyp = "Vollblut"),
+        Typ(typID = 1, blutspendeTyp = "Plasma"),
+        Typ(typID = 2, blutspendeTyp = "Thrombozyten")
+    )
+
+    val lifecycleOwner = LocalLifecycleOwner.current
+
+    LaunchedEffect(key1 = true) {
+        lifecycleOwner.lifecycleScope.launch {
+            arm.forEach { dao.addArm(it) }
+            typ.forEach { dao.addTyp(it) }
+        }
+    }
+
 }
 
 @Composable
