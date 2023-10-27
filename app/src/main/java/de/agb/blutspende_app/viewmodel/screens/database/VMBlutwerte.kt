@@ -8,6 +8,7 @@ import de.agb.blutspende_app.model.roomDatabase.BlutwerteEvent
 import de.agb.blutspende_app.model.roomDatabase.BlutwerteState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -16,31 +17,24 @@ class VMBlutwerte(
     private val blutwerteDao: BlutwerteDao
 ) : ViewModel() {
     private val _state = MutableStateFlow(BlutwerteState())
+    private val _blutwerte = blutwerteDao.readAllData(_state.value.fArmID, _state.value.fTypID)
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+
+    private val _typ = blutwerteDao.readTyp()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+
+    private val _arm = blutwerteDao.readArm()
+        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+
+    val state = combine(_state, _blutwerte) { state, blut ->
+        state.copy(
+            blutwerteList = blut
+        )
+
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), BlutwerteState())
 
     fun onEvent(event: BlutwerteEvent) {
         when (event) {
-
-            is BlutwerteEvent.DeleteBlutwert -> {
-                viewModelScope.launch {
-                    blutwerteDao.deleteBlutwert(event.blutwert)
-                }
-            }
-
-            is BlutwerteEvent.FArmID -> {
-                _state.update {
-                    it.copy(
-                        fArmID = event.armID
-                    )
-                }
-            }
-
-            is BlutwerteEvent.FTypID -> {
-                _state.update {
-                    it.copy(
-                        fTypID = event.typID
-                    )
-                }
-            }
 
             BlutwerteEvent.SaveBlutwert -> {
                 val sys = _state.value.systolisch
@@ -83,18 +77,24 @@ class VMBlutwerte(
                 }
             }
 
-            is BlutwerteEvent.SetDiastolisch -> {
+            is BlutwerteEvent.DeleteBlutwert -> {
+                viewModelScope.launch {
+                    blutwerteDao.deleteBlutwert(event.blutwert)
+                }
+            }
+
+            is BlutwerteEvent.SetSystolisch -> {
                 _state.update {
                     it.copy(
-                        diastolisch = event.dia
+                        systolisch = event.sys
                     )
                 }
             }
 
-            is BlutwerteEvent.SetHaemoglobin -> {
+            is BlutwerteEvent.SetDiastolisch -> {
                 _state.update {
                     it.copy(
-                        haemoglobin = event.haemoglobin
+                        diastolisch = event.dia
                     )
                 }
             }
@@ -107,10 +107,26 @@ class VMBlutwerte(
                 }
             }
 
-            is BlutwerteEvent.SetSystolisch -> {
+            is BlutwerteEvent.SetHaemoglobin -> {
                 _state.update {
                     it.copy(
-                        systolisch = event.sys
+                        haemoglobin = event.haemoglobin
+                    )
+                }
+            }
+
+            is BlutwerteEvent.FArmID -> {
+                _state.update {
+                    it.copy(
+                        fArmID = event.armID
+                    )
+                }
+            }
+
+            is BlutwerteEvent.FTypID -> {
+                _state.update {
+                    it.copy(
+                        fTypID = event.typID
                     )
                 }
             }

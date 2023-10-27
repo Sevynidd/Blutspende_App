@@ -24,12 +24,18 @@ interface BlutwerteDao {
     @Update
     suspend fun editBlutwert(blutwert: Blutwerte)
 
-
     @Delete
     suspend fun deleteBlutwert(blutwert: Blutwerte)
-
 
     @Transaction
     @Query("SELECT * FROM Blutwerte WHERE fArmID = :armID AND fTypID = :typID ORDER BY blutwerteID ASC")
     fun readAllData(armID: Int, typID: Int): Flow<List<Blutwerte>>
+
+    @Transaction
+    @Query("SELECT * FROM Typ")
+    fun readTyp(): Flow<List<Typ>>
+
+    @Transaction
+    @Query("SELECT * FROM Arm")
+    fun readArm(): Flow<List<Arm>>
 }

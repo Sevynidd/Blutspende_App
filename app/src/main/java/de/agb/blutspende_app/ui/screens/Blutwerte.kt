@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.DatePickerFormatter
 import androidx.compose.material3.DateRangePicker
@@ -30,13 +31,15 @@ import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import de.agb.blutspende_app.model.roomDatabase.BlutwerteEvent
+import de.agb.blutspende_app.model.roomDatabase.BlutwerteState
 import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
 import java.text.DateFormat.MEDIUM
 import java.text.DateFormat.getDateInstance
 import java.util.Date
 
 @Composable
-fun Blutwerte() {
+fun Blutwerte(state: BlutwerteState, onEvent: (BlutwerteEvent) -> Unit) {
     Blutspende_AppTheme {
         Surface {
             Column(
@@ -45,7 +48,7 @@ fun Blutwerte() {
                     .background(MaterialTheme.colorScheme.background)
             ) {
 
-                Content()
+                Content(state, onEvent)
 
             }
         }
@@ -54,7 +57,7 @@ fun Blutwerte() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Content() {
+fun Content(state: BlutwerteState, onEvent: (BlutwerteEvent) -> Unit) {
     Column(
         Modifier
             .fillMaxWidth()
@@ -133,7 +136,22 @@ fun Content() {
                     text = "Die letzten 3 Blutspendewerte:"
                 )
 
+                state.blutwerteList.forEach { blutwert ->
+                    Text(text = blutwert.blutwerteID.toString())
+                }
 
+            }
+
+            Button(onClick = {
+                onEvent(BlutwerteEvent.SetSystolisch(120))
+                onEvent(BlutwerteEvent.SetDiastolisch(90))
+                onEvent(BlutwerteEvent.SetHaemoglobin(13.5f))
+                onEvent(BlutwerteEvent.SetPuls(70))
+                onEvent(BlutwerteEvent.FArmID(0))
+                onEvent(BlutwerteEvent.FTypID(0))
+                onEvent(BlutwerteEvent.SaveBlutwert)
+            }) {
+                Text(text = "TestButton")
             }
         }
     }

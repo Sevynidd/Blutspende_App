@@ -1,7 +1,7 @@
 package de.agb.blutspende_app.model.roomDatabase
 
 data class BlutwerteState(
-    val blutwerte: List<Blutwerte> = emptyList(),
+    val blutwerteList: List<Blutwerte> = emptyList(),
     val systolisch: Int = 0,
     val diastolisch: Int = 0,
     val puls: Int = 0,

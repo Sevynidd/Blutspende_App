@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,6 +23,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
@@ -31,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
@@ -41,14 +45,30 @@ import com.commandiron.bubble_navigation_bar_compose.BubbleNavigationBarItem
 import de.agb.blutspende_app.R
 import de.agb.blutspende_app.model.roomDatabase.Arm
 import de.agb.blutspende_app.model.roomDatabase.BlutwerteDatabase
+import de.agb.blutspende_app.model.roomDatabase.BlutwerteEvent
+import de.agb.blutspende_app.model.roomDatabase.BlutwerteState
 import de.agb.blutspende_app.model.roomDatabase.Typ
 import de.agb.blutspende_app.ui.navigation.SetupNavbarGraph
 import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
 import de.agb.blutspende_app.viewmodel.VMMainActivity
+import de.agb.blutspende_app.viewmodel.screens.database.VMBlutwerte
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
+
+    private val vmDatabase by viewModels<VMBlutwerte>(
+        factoryProducer = {
+            object : ViewModelProvider.Factory {
+                override fun <T : ViewModel> create(modelClass: Class<T>): T {
+                    return VMBlutwerte(
+                        BlutwerteDatabase.getInstance(applicationContext).blutwerteDao()
+                    ) as T
+                }
+            }
+        }
+    )
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         //Setzen eines Splashscreen
@@ -62,9 +82,11 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
+                    val databaseState by vmDatabase.state.collectAsState()
+
                     DatabaseInit(this.applicationContext)
 
-                    NavigationBar()
+                    NavigationBar(databaseState, vmDatabase::onEvent)
                 }
             }
         }
@@ -73,6 +95,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun DatabaseInit(context: Context) {
+
     val dao = BlutwerteDatabase.getInstance(context).blutwerteDao()
     val arm = listOf(
         Arm(armID = 0, bezeichnung = "Linker Arm"),
@@ -92,11 +115,10 @@ fun DatabaseInit(context: Context) {
             typ.forEach { dao.addTyp(it) }
         }
     }
-
 }
 
 @Composable
-fun NavigationBar() {
+fun NavigationBar(state: BlutwerteState, onEvent: (BlutwerteEvent) -> Unit) {
 
     val navController = rememberNavController()
 
@@ -112,7 +134,7 @@ fun NavigationBar() {
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                SetupNavbarGraph(navController = navController)
+                SetupNavbarGraph(navController = navController, state, onEvent)
             }
         },
         bottomBar = {
