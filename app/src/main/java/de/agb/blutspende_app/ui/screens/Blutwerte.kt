@@ -22,21 +22,24 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import de.agb.blutspende_app.model.roomDatabase.BlutwerteEvent
 import de.agb.blutspende_app.model.roomDatabase.BlutwerteState
 import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
+import de.agb.blutspende_app.viewmodel.GlobalFunctions
 import java.text.DateFormat.MEDIUM
 import java.text.DateFormat.getDateInstance
-import java.util.Date
 
 @Composable
 fun Blutwerte(state: BlutwerteState, onEvent: (BlutwerteEvent) -> Unit) {
@@ -58,6 +61,8 @@ fun Blutwerte(state: BlutwerteState, onEvent: (BlutwerteEvent) -> Unit) {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Content(state: BlutwerteState, onEvent: (BlutwerteEvent) -> Unit) {
+    val globalFunctions: GlobalFunctions = viewModel()
+
     Column(
         Modifier
             .fillMaxWidth()
@@ -74,34 +79,34 @@ fun Content(state: BlutwerteState, onEvent: (BlutwerteEvent) -> Unit) {
 
         val sdf = getDateInstance(MEDIUM)
 
-        ClickableText(
-            text = AnnotatedString(
-                if (dateRangePickerState.selectedStartDateMillis == null) {
-                    "NaN"
-                } else {
-                    sdf.format(
-                        Date(
-                            dateRangePickerState.selectedStartDateMillis ?: 0
-                        )
-                    )
-                } + "  bis  " +
-                        if (dateRangePickerState.selectedEndDateMillis == null) {
-                            "NaN"
-                        } else {
-                            sdf.format(
-                                Date(
-                                    dateRangePickerState.selectedEndDateMillis ?: 0
-                                )
-                            )
-                        }
-            ),
+        LaunchedEffect(key1 = LocalLifecycleOwner.current) {
+            if ((dateRangePickerState.selectedStartDateMillis == null) or (dateRangePickerState.selectedEndDateMillis == null)) {
+                dateRangePickerState.setSelection(
+                    System.currentTimeMillis() - 604800000L, System.currentTimeMillis()
+                )
+            }
+        }
+
+        ClickableText(text = AnnotatedString(
+
+            sdf.format(
+                globalFunctions.millisToDate(
+                    dateRangePickerState.selectedStartDateMillis ?: 0
+                )
+            ) + "  bis  " + sdf.format(
+                globalFunctions.millisToDate(
+                    dateRangePickerState.selectedEndDateMillis ?: 0
+                )
+            )
+        ),
             style = TextStyle(color = MaterialTheme.colorScheme.onBackground, fontSize = 15.sp),
             onClick = { bottomSheetVisible = bottomSheetVisible.not() })
 
 
         if (bottomSheetVisible) {
 
-            ModalBottomSheet(sheetState = sheetState,
+            ModalBottomSheet(
+                sheetState = sheetState,
                 onDismissRequest = { bottomSheetVisible = false }) {
 
                 Column(
@@ -110,11 +115,8 @@ fun Content(state: BlutwerteState, onEvent: (BlutwerteEvent) -> Unit) {
                         .fillMaxHeight(0.7f)
                 ) {
                     DateRangePicker(
-                        state = dateRangePickerState,
-                        dateFormatter = DatePickerFormatter(
-                            "dd.MM.yyyy",
-                            "dd.MM.yyyy",
-                            "dd.MM.yyyy"
+                        state = dateRangePickerState, dateFormatter = DatePickerFormatter(
+                            "dd.MM.yyyy", "dd.MM.yyyy", "dd.MM.yyyy"
                         )
                     )
 
@@ -128,8 +130,7 @@ fun Content(state: BlutwerteState, onEvent: (BlutwerteEvent) -> Unit) {
         ) {
             val cardPadding = 12.dp
             Card(
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
                     modifier = Modifier.padding(cardPadding),

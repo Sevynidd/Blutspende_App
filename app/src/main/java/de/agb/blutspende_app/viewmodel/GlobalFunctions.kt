@@ -9,6 +9,8 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.lifecycle.ViewModel
 import de.agb.blutspende_app.R
 import de.agb.blutspende_app.model.ScreenDefinition
+import java.text.DateFormat
+import java.util.Date
 
 class GlobalFunctions : ViewModel() {
 
@@ -87,7 +89,7 @@ class GlobalFunctions : ViewModel() {
         get() = ScreenDefinition.SettingsBlutgruppe.route
 
     val getScreenRouteSettingsBlutgruppeWebview: String
-        get() = ScreenDefinition.SettingsBlutgruppe_Webview.route
+        get() = ScreenDefinition.SettingsBlutgruppeWebview.route
 
     /**
      * @param value Id, welche man aus dataStore.getBlutgruppe erhält
@@ -119,6 +121,9 @@ class GlobalFunctions : ViewModel() {
         return getRhesusAsString(value)
     }
 
+    /**
+     * @param id Id, welche man aus dataStore.getBlutgruppe erhält
+     */
     fun getBloodbagIconFromBlutgruppeID(id: Int): Int {
         return when (id) {
             0 -> R.drawable.blood_0
@@ -129,4 +134,12 @@ class GlobalFunctions : ViewModel() {
         }
     }
 
+
+    fun millisToDate(millis: Long): Date {
+        return Date(millis)
+    }
+
+    fun dateToMillis(date: Date): Long {
+        return date.time
+    }
 }

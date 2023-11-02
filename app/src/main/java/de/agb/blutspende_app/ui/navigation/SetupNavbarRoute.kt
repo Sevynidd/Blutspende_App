@@ -77,7 +77,7 @@ fun SetupNavbarGraph(
             }) {
             SettingsBlutgruppe(navController)
         }
-        composable(route = ScreenDefinition.SettingsBlutgruppe_Webview.route,
+        composable(route = ScreenDefinition.SettingsBlutgruppeWebview.route,
             enterTransition = {
                 fadeIn(
                     animationSpec = tween(

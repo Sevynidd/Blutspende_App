@@ -12,6 +12,6 @@ sealed class ScreenDefinition(val route: String, val iconId: Int) {
     data object SettingsBlutgruppe :
         ScreenDefinition(route = "SettingsBlutgruppe", R.drawable.blood_drop)
 
-    data object SettingsBlutgruppe_Webview :
+    data object SettingsBlutgruppeWebview :
         ScreenDefinition(route = "SettingsBlutgruppe_Webview", R.drawable.blood_drop)
 }
