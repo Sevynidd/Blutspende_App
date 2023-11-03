@@ -20,14 +20,14 @@ class DatastoreManager(context: Context) {
         private val THEME_MODE_KEY = intPreferencesKey("theme_mode")
         private val GENDER_KEY = booleanPreferencesKey("gender")
 
-        // BLUT
-        private val BLUTGRUPPE_KEY = intPreferencesKey("blutgruppe")
+        // BLOOD
+        private val BLOODVALUE_KEY = intPreferencesKey("bloodvalue")
         private val RHESUS_KEY = booleanPreferencesKey("rhesus")
-        private val RHESUS_KOMPLEX_KEY = stringPreferencesKey("rhesus_komplex")
+        private val RHESUSCOMPLEX_KEY = stringPreferencesKey("rhesus_complex")
         private val KELL_KEY = booleanPreferencesKey("kell")
 
-        // BLUTSPENDE INFO URL
-        private val BLUTSPENDE_INFO_URL_KEY = stringPreferencesKey("blutspende_info_url_key")
+        // BLOOD DONATION INFO URL
+        private val BLOOD_DONATION_INFO_URL_KEY = stringPreferencesKey("blood_donation_info_url")
     }
 
     // SETTINGS
@@ -47,7 +47,7 @@ class DatastoreManager(context: Context) {
         }
 
     /**
-     * @param gender false (0) = Männlich; true (1) = Weiblich
+     * @param gender false (0) = Male; true (1) = Female
      */
     suspend fun saveGenderToDataStore(gender: Boolean) {
         dataStore.edit { preferences ->
@@ -63,17 +63,17 @@ class DatastoreManager(context: Context) {
     // BLUT
 
     /**
-     * @param blutgruppe 0 = 0; 1 = A; 2 = B; 3 = AB
+     * @param bloodGroup 0 = 0; 1 = A; 2 = B; 3 = AB
      */
-    suspend fun saveBlutgruppeToDataStore(blutgruppe: Int) {
+    suspend fun saveBloodGroupToDataStore(bloodGroup: Int) {
         dataStore.edit { preferences ->
-            preferences[BLUTGRUPPE_KEY] = blutgruppe
+            preferences[BLOODVALUE_KEY] = bloodGroup
         }
     }
 
-    val getBlutgruppe: Flow<Int> = dataStore.data
+    val getBloodgroup: Flow<Int> = dataStore.data
         .map { preferences ->
-            preferences[BLUTGRUPPE_KEY] ?: 0
+            preferences[BLOODVALUE_KEY] ?: 0
         }
 
     /**
@@ -91,17 +91,17 @@ class DatastoreManager(context: Context) {
         }
 
     /**
-     * @param rhesuskomplex Bsp.: CcD.ee
+     * @param rhesuscomplex ex.: CcD.ee
      */
-    suspend fun saveRhesuskomplexToDataStore(rhesuskomplex: String) {
+    suspend fun saveRhesuscomplexToDataStore(rhesuscomplex: String) {
         dataStore.edit { preferences ->
-            preferences[RHESUS_KOMPLEX_KEY] = rhesuskomplex
+            preferences[RHESUSCOMPLEX_KEY] = rhesuscomplex
         }
     }
 
-    val getRhesuskomplex: Flow<String> = dataStore.data
+    val getRhesuscomplex: Flow<String> = dataStore.data
         .map { preferences ->
-            preferences[RHESUS_KOMPLEX_KEY] ?: ""
+            preferences[RHESUSCOMPLEX_KEY] ?: ""
         }
 
     /**
@@ -119,20 +119,20 @@ class DatastoreManager(context: Context) {
         }
 
 
-    // BLUTSPENDE INFO URL
+    // BLOOD DONATION INFO URL
 
     /**
-     * @param url URL, welche gespeichert werden soll
+     * @param url URL, which should be saved
      */
-    suspend fun saveBlutspendeInfoURLToDataStore(url: String) {
+    suspend fun saveBloodDonationInfoURLToDataStore(url: String) {
         dataStore.edit { preferences ->
-            preferences[BLUTSPENDE_INFO_URL_KEY] = url
+            preferences[BLOOD_DONATION_INFO_URL_KEY] = url
         }
     }
 
-    val getBlutspendeInfoURL: Flow<String> = dataStore.data
+    val getBloodDonationInfoURL: Flow<String> = dataStore.data
         .map { preferences ->
-            preferences[BLUTSPENDE_INFO_URL_KEY] ?: ""
+            preferences[BLOOD_DONATION_INFO_URL_KEY] ?: ""
 
         }
 }

@@ -44,25 +44,25 @@ import com.commandiron.bubble_navigation_bar_compose.BubbleNavigationBar
 import com.commandiron.bubble_navigation_bar_compose.BubbleNavigationBarItem
 import de.agb.blutspende_app.R
 import de.agb.blutspende_app.model.roomDatabase.Arm
-import de.agb.blutspende_app.model.roomDatabase.BlutwerteDatabase
-import de.agb.blutspende_app.model.roomDatabase.BlutwerteEvent
-import de.agb.blutspende_app.model.roomDatabase.BlutwerteState
-import de.agb.blutspende_app.model.roomDatabase.Typ
+import de.agb.blutspende_app.model.roomDatabase.BloodValuesDatabase
+import de.agb.blutspende_app.model.roomDatabase.BloodValuesEvent
+import de.agb.blutspende_app.model.roomDatabase.BloodValuesState
+import de.agb.blutspende_app.model.roomDatabase.Type
 import de.agb.blutspende_app.ui.navigation.SetupNavbarGraph
-import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
+import de.agb.blutspende_app.ui.theme.Blooddonation_AppTheme
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
 import de.agb.blutspende_app.viewmodel.VMMainActivity
-import de.agb.blutspende_app.viewmodel.screens.database.VMBlutwerte
+import de.agb.blutspende_app.viewmodel.screens.database.VMBloodValues
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
-    private val vmDatabase by viewModels<VMBlutwerte>(
+    private val vmDatabase by viewModels<VMBloodValues>(
         factoryProducer = {
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return VMBlutwerte(
-                        BlutwerteDatabase.getInstance(applicationContext).blutwerteDao()
+                    return VMBloodValues(
+                        BloodValuesDatabase.getInstance(applicationContext).bloodValuesDao()
                     ) as T
                 }
             }
@@ -77,7 +77,7 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
-            Blutspende_AppTheme {
+            Blooddonation_AppTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -96,15 +96,15 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun DatabaseInit(context: Context) {
 
-    val dao = BlutwerteDatabase.getInstance(context).blutwerteDao()
+    val dao = BloodValuesDatabase.getInstance(context).bloodValuesDao()
     val arm = listOf(
         Arm(armID = 0, bezeichnung = "Linker Arm"),
         Arm(armID = 1, bezeichnung = "Rechter Arm")
     )
     val typ = listOf(
-        Typ(typID = 0, blutspendeTyp = "Vollblut"),
-        Typ(typID = 1, blutspendeTyp = "Plasma"),
-        Typ(typID = 2, blutspendeTyp = "Thrombozyten")
+        Type(typID = 0, blutspendeTyp = "Vollblut"),
+        Type(typID = 1, blutspendeTyp = "Plasma"),
+        Type(typID = 2, blutspendeTyp = "Thrombozyten")
     )
 
     val lifecycleOwner = LocalLifecycleOwner.current
@@ -112,13 +112,13 @@ fun DatabaseInit(context: Context) {
     LaunchedEffect(key1 = true) {
         lifecycleOwner.lifecycleScope.launch {
             arm.forEach { dao.addArm(it) }
-            typ.forEach { dao.addTyp(it) }
+            typ.forEach { dao.addType(it) }
         }
     }
 }
 
 @Composable
-fun NavigationBar(state: BlutwerteState, onEvent: (BlutwerteEvent) -> Unit) {
+fun NavigationBar(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Unit) {
 
     val navController = rememberNavController()
 
@@ -156,15 +156,15 @@ fun TopBar(navController: NavHostController) {
                 text =
                 when (currentRoute) {
                     globalFunctions.getScreenRouteDashboard -> stringResource(id = R.string.screenDashboard)
-                    globalFunctions.getScreenRouteBlutwerte -> stringResource(id = R.string.screenBloodLevels)
-                    globalFunctions.getScreenRouteVorrat -> stringResource(id = R.string.screenSupply)
+                    globalFunctions.getScreenRouteBloodvalue -> stringResource(id = R.string.screenBloodLevels)
+                    globalFunctions.getScreenRouteSupply -> stringResource(id = R.string.screenSupply)
                     else -> stringResource(id = R.string.settings)
                 },
                 fontSize = 20.sp
             )
         },
         navigationIcon = {
-            if (currentRoute == globalFunctions.getScreenRouteSettingsBlutgruppe) {
+            if (currentRoute == globalFunctions.getScreenRouteSettingsBloodgroup) {
                 IconButton(
                     onClick = {
                         navController.navigate(globalFunctions.getScreenRouteSettings)
@@ -176,10 +176,10 @@ fun TopBar(navController: NavHostController) {
                         "Zurück"
                     )
                 }
-            } else if (currentRoute == globalFunctions.getScreenRouteSettingsBlutgruppeWebview) {
+            } else if (currentRoute == globalFunctions.getScreenRouteSettingsBloodgroupWebview) {
                 IconButton(
                     onClick = {
-                        navController.navigate(globalFunctions.getScreenRouteSettingsBlutgruppe)
+                        navController.navigate(globalFunctions.getScreenRouteSettingsBloodgroup)
                     },
                     enabled = true
                 ) {
@@ -226,8 +226,8 @@ fun BottomBar(
                 title =
                 when (item.route) {
                     globalFunctions.getScreenRouteDashboard -> stringResource(id = R.string.screenDashboard)
-                    globalFunctions.getScreenRouteBlutwerte -> stringResource(id = R.string.screenBloodLevels)
-                    globalFunctions.getScreenRouteVorrat -> stringResource(id = R.string.screenSupply)
+                    globalFunctions.getScreenRouteBloodvalue -> stringResource(id = R.string.screenBloodLevels)
+                    globalFunctions.getScreenRouteSupply -> stringResource(id = R.string.screenSupply)
                     else -> stringResource(id = R.string.settings)
                 },
                 selectedColor = MaterialTheme.colorScheme.onPrimaryContainer,

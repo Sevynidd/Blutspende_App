@@ -34,16 +34,16 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import de.agb.blutspende_app.model.roomDatabase.BlutwerteEvent
-import de.agb.blutspende_app.model.roomDatabase.BlutwerteState
-import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
+import de.agb.blutspende_app.model.roomDatabase.BloodValuesEvent
+import de.agb.blutspende_app.model.roomDatabase.BloodValuesState
+import de.agb.blutspende_app.ui.theme.Blooddonation_AppTheme
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
 import java.text.DateFormat.MEDIUM
 import java.text.DateFormat.getDateInstance
 
 @Composable
-fun Blutwerte(state: BlutwerteState, onEvent: (BlutwerteEvent) -> Unit) {
-    Blutspende_AppTheme {
+fun BloodValues(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Unit) {
+    Blooddonation_AppTheme {
         Surface {
             Column(
                 modifier = Modifier
@@ -60,7 +60,7 @@ fun Blutwerte(state: BlutwerteState, onEvent: (BlutwerteEvent) -> Unit) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun Content(state: BlutwerteState, onEvent: (BlutwerteEvent) -> Unit) {
+fun Content(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Unit) {
     val globalFunctions: GlobalFunctions = viewModel()
 
     Column(
@@ -137,20 +137,20 @@ fun Content(state: BlutwerteState, onEvent: (BlutwerteEvent) -> Unit) {
                     text = "Die letzten 3 Blutspendewerte:"
                 )
 
-                state.blutwerteList.forEach { blutwert ->
+                state.bloodValuesList.forEach { blutwert ->
                     Text(text = blutwert.blutwerteID.toString())
                 }
 
             }
 
             Button(onClick = {
-                onEvent(BlutwerteEvent.SetSystolisch(120))
-                onEvent(BlutwerteEvent.SetDiastolisch(90))
-                onEvent(BlutwerteEvent.SetHaemoglobin(13.5f))
-                onEvent(BlutwerteEvent.SetPuls(70))
-                onEvent(BlutwerteEvent.FArmID(0))
-                onEvent(BlutwerteEvent.FTypID(0))
-                onEvent(BlutwerteEvent.SaveBlutwert)
+                onEvent(BloodValuesEvent.SetSystolic(120))
+                onEvent(BloodValuesEvent.SetDiastolic(90))
+                onEvent(BloodValuesEvent.SetHaemoglobin(13.5f))
+                onEvent(BloodValuesEvent.SetPulse(70))
+                onEvent(BloodValuesEvent.FArmID(0))
+                onEvent(BloodValuesEvent.FTypID(0))
+                onEvent(BloodValuesEvent.SaveBloodValues)
             }) {
                 Text(text = "TestButton")
             }

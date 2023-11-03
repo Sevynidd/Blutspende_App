@@ -16,13 +16,13 @@ import androidx.room.PrimaryKey
             childColumns = arrayOf("fArmID")
         ),
         ForeignKey(
-            entity = Typ::class,
+            entity = Type::class,
             parentColumns = arrayOf("typID"),
             childColumns = arrayOf("fTypID")
         )
     ]
 )
-data class Blutwerte(
+data class BloodValues(
     @PrimaryKey(autoGenerate = true)
     val blutwerteID: Int = 0,
     @ColumnInfo("sys")

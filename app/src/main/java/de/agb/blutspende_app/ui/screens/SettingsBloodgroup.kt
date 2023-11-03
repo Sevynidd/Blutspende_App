@@ -47,15 +47,15 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import de.agb.blutspende_app.R
-import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
+import de.agb.blutspende_app.ui.theme.Blooddonation_AppTheme
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
 import de.agb.blutspende_app.viewmodel.VMDatastore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 @Composable
-fun SettingsBlutgruppe(navController: NavController) {
-    Blutspende_AppTheme {
+fun SettingsBloodgroup(navController: NavController) {
+    Blooddonation_AppTheme {
         Surface {
             Column(
                 modifier = Modifier
@@ -63,7 +63,7 @@ fun SettingsBlutgruppe(navController: NavController) {
                     .background(MaterialTheme.colorScheme.background)
                     .verticalScroll(rememberScrollState())
             ) {
-                Blutgruppe(navController = navController)
+                Bloodgroup(navController = navController)
 
                 Spacer(modifier = Modifier.size(12.dp))
 
@@ -84,7 +84,7 @@ fun SettingsBlutgruppe(navController: NavController) {
 }
 
 @Composable
-fun Blutgruppe(navController: NavController) {
+fun Bloodgroup(navController: NavController) {
     val vmDatastore: VMDatastore = viewModel()
     val globalFunctions: GlobalFunctions = viewModel()
 
@@ -95,8 +95,8 @@ fun Blutgruppe(navController: NavController) {
             Text(text = "ABO-System", fontSize = 22.sp)
 
             IconButton(onClick = {
-                vmDatastore.saveBlutspendeInfoURLToDataStore("https://www.blutspenden.de/rund-ums-blut/blutgruppen/")
-                navController.navigate(globalFunctions.getScreenRouteSettingsBlutgruppeWebview)
+                vmDatastore.saveBlooddonationInfoURLToDataStore("https://www.blutspenden.de/rund-ums-blut/blutgruppen/")
+                navController.navigate(globalFunctions.getScreenRouteSettingsBloodgroupWebview)
             }) {
                 Icon(Icons.Rounded.Info, contentDescription = "InfoBlutgruppe")
             }
@@ -104,7 +104,7 @@ fun Blutgruppe(navController: NavController) {
 
         Column(modifier = Modifier.fillMaxWidth()) {
 
-            val selectedOption by vmDatastore.getBlutgruppe.collectAsState(0)
+            val selectedOption by vmDatastore.getBloodgroup.collectAsState(0)
 
             Card {
                 Row(
@@ -117,25 +117,25 @@ fun Blutgruppe(navController: NavController) {
                             .selectable(
                                 selected = (i == selectedOption),
                                 onClick = {
-                                    vmDatastore.saveBlutgruppeToDataStore(i)
+                                    vmDatastore.saveBloodgroupToDataStore(i)
                                 }
                             ),
                             horizontalAlignment = Alignment.CenterHorizontally) {
                             Image(
                                 painter = painterResource(
-                                    id = globalFunctions.getBloodbagIconFromBlutgruppeID(i)
+                                    id = globalFunctions.getBloodbagIconFromBloodgroupID(i)
                                 ),
-                                contentDescription = globalFunctions.getBlutgruppeAsString(i)
+                                contentDescription = globalFunctions.getBloodgroupAsString(i)
                             )
                             Text(
-                                text = globalFunctions.getBlutgruppeAsString(i),
+                                text = globalFunctions.getBloodgroupAsString(i),
                                 modifier = Modifier.fillMaxWidth(),
                                 textAlign = TextAlign.Center
                             )
                             RadioButton(
                                 selected = (i == selectedOption),
                                 onClick = {
-                                    vmDatastore.saveBlutgruppeToDataStore(i)
+                                    vmDatastore.saveBloodgroupToDataStore(i)
                                 }
                             )
                         }
@@ -158,8 +158,8 @@ fun Rhesus(navController: NavController) {
             Text(text = "Rhesus", fontSize = 22.sp)
 
             IconButton(onClick = {
-                vmDatastore.saveBlutspendeInfoURLToDataStore("https://www.studysmarter.de/schule/biologie/genetik/rhesus-system/")
-                navController.navigate(globalFunctions.getScreenRouteSettingsBlutgruppeWebview)
+                vmDatastore.saveBlooddonationInfoURLToDataStore("https://www.studysmarter.de/schule/biologie/genetik/rhesus-system/")
+                navController.navigate(globalFunctions.getScreenRouteSettingsBloodgroupWebview)
             }) {
                 Icon(Icons.Rounded.Info, contentDescription = "InfoRhesus")
             }
@@ -226,8 +226,8 @@ fun Rhesuscomplex(navController: NavController) {
             Text(text = stringResource(id = R.string.rhesuskomplex), fontSize = 22.sp)
 
             IconButton(onClick = {
-                vmDatastore.saveBlutspendeInfoURLToDataStore("https://www.studysmarter.de/schule/biologie/genetik/rhesus-system/")
-                navController.navigate(globalFunctions.getScreenRouteSettingsBlutgruppeWebview)
+                vmDatastore.saveBlooddonationInfoURLToDataStore("https://www.studysmarter.de/schule/biologie/genetik/rhesus-system/")
+                navController.navigate(globalFunctions.getScreenRouteSettingsBloodgroupWebview)
             }) {
                 Icon(Icons.Rounded.Info, contentDescription = "InfoRhesuskomplex")
             }
@@ -248,13 +248,13 @@ fun Rhesuscomplex(navController: NavController) {
                     value = entryC,
                     onValueChange = { entry.value = it },
                     singleLine = true,
-                    placeholder = { Text("Bsp.: CcD.ee") },
+                    placeholder = { Text("Ex.: CcD.ee") },
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text),
                     keyboardActions = KeyboardActions(
                         onDone = {
                             keyboardController?.hide()
                             focusManager.clearFocus()
-                            vmDatastore.saveRhesuskomplexToDataStore(entryC)
+                            vmDatastore.saveRhesuscomplexToDataStore(entryC)
                         }
                     )
                 )
@@ -263,7 +263,7 @@ fun Rhesuscomplex(navController: NavController) {
 
                 LaunchedEffect(key1 = true) {
                     lifecycleOwner.lifecycleScope.launch {
-                        vmDatastore.getRhesuskomplex.flowWithLifecycle(lifecycleOwner.lifecycle)
+                        vmDatastore.getRhesuscomplex.flowWithLifecycle(lifecycleOwner.lifecycle)
                             .collect {
                                 entry.value = it
                             }
@@ -286,8 +286,8 @@ fun Kell(navController: NavController) {
             Text(text = "Kell", fontSize = 22.sp)
 
             IconButton(onClick = {
-                vmDatastore.saveBlutspendeInfoURLToDataStore("https://www.blutspende.de/magazin/von-a-bis-0/kell-system-in-der-blutgruppenbestimmung")
-                navController.navigate(globalFunctions.getScreenRouteSettingsBlutgruppeWebview)
+                vmDatastore.saveBlooddonationInfoURLToDataStore("https://www.blutspende.de/magazin/von-a-bis-0/kell-system-in-der-blutgruppenbestimmung")
+                navController.navigate(globalFunctions.getScreenRouteSettingsBloodgroupWebview)
             }) {
                 Icon(Icons.Rounded.Info, contentDescription = "InfoKell")
             }

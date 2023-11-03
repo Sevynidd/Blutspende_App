@@ -9,7 +9,7 @@ import androidx.room.PrimaryKey
         Index(value = arrayOf("typID", "blutspendeTyp"))
     ]
 )
-data class Typ(
+data class Type(
     @PrimaryKey
     val typID: Int,
     val blutspendeTyp: String

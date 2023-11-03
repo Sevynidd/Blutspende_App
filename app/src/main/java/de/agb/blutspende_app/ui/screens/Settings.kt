@@ -46,14 +46,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import de.agb.blutspende_app.R
 import de.agb.blutspende_app.model.ISettingsItem
-import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
+import de.agb.blutspende_app.ui.theme.Blooddonation_AppTheme
 import de.agb.blutspende_app.viewmodel.VMDatastore
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
 import de.agb.blutspende_app.viewmodel.screens.settings.VMSettings
 
 @Composable
 fun Settings(navController: NavHostController) {
-    Blutspende_AppTheme {
+    Blooddonation_AppTheme {
         Surface {
             Column(
                 modifier = Modifier
@@ -69,11 +69,11 @@ fun Settings(navController: NavHostController) {
 
                     Spacer(Modifier.size(10.dp))
 
-                    DarstellungItem()
+                    ThemeItem()
 
                     Spacer(Modifier.size(10.dp))
 
-                    GeschlechtItem()
+                    SexItem()
 
 
                     Spacer(Modifier.size(10.dp))
@@ -85,7 +85,7 @@ fun Settings(navController: NavHostController) {
 
                     Spacer(Modifier.size(10.dp))
 
-                    BlutgruppeItem(navController)
+                    BloodgroupItem(navController)
                 }
             }
         }
@@ -136,7 +136,7 @@ fun DefinitionSettingsItem(item: ISettingsItem) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun DarstellungItem() {
+fun ThemeItem() {
     val vmDatastore: VMDatastore = viewModel()
     val vmSettings: VMSettings = viewModel()
 
@@ -202,7 +202,7 @@ fun DarstellungItem() {
                             horizontalAlignment = CenterHorizontally) {
                             Image(
                                 painter = painterResource(
-                                    id = vmSettings.getImageIdsDarstellung[i]
+                                    id = vmSettings.getImageIdsTheme[i]
                                 ),
                                 contentDescription = radioOptions[i]
                             )
@@ -228,7 +228,7 @@ fun DarstellungItem() {
 }
 
 @Composable
-fun BlutgruppeItem(navController: NavHostController) {
+fun BloodgroupItem(navController: NavHostController) {
     val globalFunctions: GlobalFunctions = viewModel()
 
     DefinitionSettingsItem(
@@ -238,7 +238,7 @@ fun BlutgruppeItem(navController: NavHostController) {
                 "ABO, Rhesus, " + stringResource(id = R.string.rhesuskomplex) + " & Kell"
             override val icon = R.drawable.blood_drop
             override val onClick = {
-                navController.navigate(globalFunctions.getScreenRouteSettingsBlutgruppe)
+                navController.navigate(globalFunctions.getScreenRouteSettingsBloodgroup)
             }
             override val rightArrowButtonVisible = true
         }
@@ -247,7 +247,7 @@ fun BlutgruppeItem(navController: NavHostController) {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun GeschlechtItem() {
+fun SexItem() {
     val viewModel: VMSettings = viewModel()
     val vmDatastore: VMDatastore = viewModel()
 

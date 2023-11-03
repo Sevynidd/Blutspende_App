@@ -10,30 +10,30 @@ import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
 @Dao
-interface BlutwerteDao {
+interface BloodValuesDao {
 
     @Insert(onConflict = OnConflictStrategy.ABORT)
-    suspend fun addBlutwert(blutwert: Blutwerte)
+    suspend fun addBloodValue(bloodvalue: BloodValues)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addArm(arm: Arm)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun addTyp(typ: Typ)
+    suspend fun addType(type: Type)
 
     @Update
-    suspend fun editBlutwert(blutwert: Blutwerte)
+    suspend fun editBloodValue(bloodValue: BloodValues)
 
     @Delete
-    suspend fun deleteBlutwert(blutwert: Blutwerte)
+    suspend fun deleteBloodValue(bloodValue: BloodValues)
 
     @Transaction
-    @Query("SELECT * FROM Blutwerte WHERE fArmID = :armID AND fTypID = :typID ORDER BY blutwerteID ASC")
-    fun readAllData(armID: Int, typID: Int): Flow<List<Blutwerte>>
+    @Query("SELECT * FROM BloodValues WHERE fArmID = :armID AND fTypID = :typID ORDER BY blutwerteID ASC")
+    fun allData(armID: Int, typID: Int): Flow<List<BloodValues>>
 
     @Transaction
-    @Query("SELECT * FROM Typ")
-    fun readTyp(): Flow<List<Typ>>
+    @Query("SELECT * FROM Type")
+    fun readType(): Flow<List<Type>>
 
     @Transaction
     @Query("SELECT * FROM Arm")

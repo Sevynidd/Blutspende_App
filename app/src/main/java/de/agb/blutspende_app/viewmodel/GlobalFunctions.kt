@@ -9,14 +9,13 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.lifecycle.ViewModel
 import de.agb.blutspende_app.R
 import de.agb.blutspende_app.model.ScreenDefinition
-import java.text.DateFormat
 import java.util.Date
 
 class GlobalFunctions : ViewModel() {
 
     /**
-     * @param url URL, aus welcher die BaseURL entnommen werden soll
-     * Bsp.: https://www.youtube.com/watch?v=4v3k82yL25w -> https://www.youtube.com/
+     * @param url URL, from which the BaseURL should be taken
+     * Ex.: https://www.youtube.com/watch?v=dQw4w9WgXcQ -> www.youtube.com
      */
     fun getBaseURL(url: String): String {
         val urlSplitted = url.split("/", limit = 4)
@@ -25,10 +24,10 @@ class GlobalFunctions : ViewModel() {
     }
 
     /**
-     * @param fullText Der komplette Text, welcher hinzugefügt werden soll
-     * @param linkText Die Textabschnitte, welche einen Hyperlink bekommen sollen
-     * @param hyperlinks Die Hyperlinks, welche hinzugefügt werden sollen
-     * @param style Der Style, wie der Hyperlink aussehen soll
+     * @param fullText The whole text
+     * @param linkText Textsections, which should get links
+     * @param hyperlinks The hyperlinks, which the linkText should get
+     * @param style Style for the hyperlink
      */
     @Composable
     fun AddHyperlinkToText(
@@ -76,25 +75,25 @@ class GlobalFunctions : ViewModel() {
     val getScreenRouteDashboard: String
         get() = ScreenDefinition.Dashboard.route
 
-    val getScreenRouteBlutwerte: String
-        get() = ScreenDefinition.Blutwerte.route
+    val getScreenRouteBloodvalue: String
+        get() = ScreenDefinition.BloodValues.route
 
-    val getScreenRouteVorrat: String
-        get() = ScreenDefinition.Vorrat.route
+    val getScreenRouteSupply: String
+        get() = ScreenDefinition.Supply.route
 
     val getScreenRouteSettings: String
         get() = ScreenDefinition.Settings.route
 
-    val getScreenRouteSettingsBlutgruppe: String
-        get() = ScreenDefinition.SettingsBlutgruppe.route
+    val getScreenRouteSettingsBloodgroup: String
+        get() = ScreenDefinition.SettingsBloodgroup.route
 
-    val getScreenRouteSettingsBlutgruppeWebview: String
-        get() = ScreenDefinition.SettingsBlutgruppeWebview.route
+    val getScreenRouteSettingsBloodgroupWebview: String
+        get() = ScreenDefinition.SettingsBloodgroupWebview.route
 
     /**
-     * @param value Id, welche man aus dataStore.getBlutgruppe erhält
+     * @param value Id, which you can get from dataStore.getBloodgroup
      */
-    fun getBlutgruppeAsString(value: Int): String {
+    fun getBloodgroupAsString(value: Int): String {
         return when (value) {
             0 -> "0"
             1 -> "A"
@@ -105,7 +104,7 @@ class GlobalFunctions : ViewModel() {
     }
 
     /**
-     * @param value Boolean, welchen man aus dataStore.getRhesus erhält
+     * @param value Boolean, which you can get from dataStore.getRhesus
      */
     fun getRhesusAsString(value: Boolean): String {
         return when (value) {
@@ -115,16 +114,16 @@ class GlobalFunctions : ViewModel() {
     }
 
     /**
-     * @param value Boolean, welchen man aus dataStore.getKell erhält
+     * @param value Boolean, which you can get from dataStore.getKell
      */
     fun getKellAsString(value: Boolean): String {
         return getRhesusAsString(value)
     }
 
     /**
-     * @param id Id, welche man aus dataStore.getBlutgruppe erhält
+     * @param id Id, which you can get from dataStore.getBloodgroup
      */
-    fun getBloodbagIconFromBlutgruppeID(id: Int): Int {
+    fun getBloodbagIconFromBloodgroupID(id: Int): Int {
         return when (id) {
             0 -> R.drawable.blood_0
             1 -> R.drawable.blood_a

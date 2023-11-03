@@ -84,7 +84,7 @@ private val DarkColors = darkColorScheme(
 )
 
 @Composable
-fun Blutspende_AppTheme(
+fun Blooddonation_AppTheme(
     content: @Composable () -> Unit
 ) {
     val viewModel: VMDatastore = viewModel()

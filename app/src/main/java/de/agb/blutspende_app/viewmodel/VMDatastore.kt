@@ -26,12 +26,12 @@ class VMDatastore(application: Application) : AndroidViewModel(application) {
     }
 
     /**
-     * false (0) = Männlich; true (1) = Weiblich
+     * false (0) = Male; true (1) = Female
      */
     val getGender = dataStore.getGender
 
     /**
-     * false (0) = Männlich; true (1) = Weiblich
+     * false (0) = Male; true (1) = Female
      */
     fun saveGenderToDataStore(gender: Boolean) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -42,14 +42,14 @@ class VMDatastore(application: Application) : AndroidViewModel(application) {
     /**
      * 0 = 0; 1 = A; 2 = B; 3 = AB
      */
-    val getBlutgruppe = dataStore.getBlutgruppe
+    val getBloodgroup = dataStore.getBloodgroup
 
     /**
      * 0 = 0; 1 = A; 2 = B; 3 = AB
      */
-    fun saveBlutgruppeToDataStore(blutgruppe: Int) {
+    fun saveBloodgroupToDataStore(blutgruppe: Int) {
         viewModelScope.launch(Dispatchers.IO) {
-            dataStore.saveBlutgruppeToDataStore(blutgruppe)
+            dataStore.saveBloodGroupToDataStore(blutgruppe)
         }
     }
 
@@ -68,16 +68,16 @@ class VMDatastore(application: Application) : AndroidViewModel(application) {
     }
 
     /**
-     * Bsp.: CcD.ee
+     * Ex.: CcD.ee
      */
-    val getRhesuskomplex = dataStore.getRhesuskomplex
+    val getRhesuscomplex = dataStore.getRhesuscomplex
 
     /**
-     * Bsp.: CcD.ee
+     * Ex.: CcD.ee
      */
-    fun saveRhesuskomplexToDataStore(rhesuskomplex: String) {
+    fun saveRhesuscomplexToDataStore(rhesuscomplex: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            dataStore.saveRhesuskomplexToDataStore(rhesuskomplex)
+            dataStore.saveRhesuscomplexToDataStore(rhesuscomplex)
         }
     }
 
@@ -95,11 +95,11 @@ class VMDatastore(application: Application) : AndroidViewModel(application) {
         }
     }
 
-    val getBlutspendeInfoURL = dataStore.getBlutspendeInfoURL
+    val getBlooddonationInfoURL = dataStore.getBloodDonationInfoURL
 
-    fun saveBlutspendeInfoURLToDataStore(url: String) {
+    fun saveBlooddonationInfoURLToDataStore(url: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            dataStore.saveBlutspendeInfoURLToDataStore(url)
+            dataStore.saveBloodDonationInfoURLToDataStore(url)
         }
     }
 }

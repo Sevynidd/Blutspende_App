@@ -7,8 +7,8 @@ class VMMainActivity : ViewModel() {
 
     private val _navigationItems = listOf(
         ScreenDefinition.Dashboard,
-        ScreenDefinition.Blutwerte,
-        ScreenDefinition.Vorrat
+        ScreenDefinition.BloodValues,
+        ScreenDefinition.Supply
     )
 
     val getNavigationItems: List<ScreenDefinition> get() = _navigationItems

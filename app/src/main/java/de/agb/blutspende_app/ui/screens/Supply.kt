@@ -31,16 +31,16 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import de.agb.blutspende_app.R
-import de.agb.blutspende_app.model.IVorratItem
-import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
+import de.agb.blutspende_app.model.ISupplyItem
+import de.agb.blutspende_app.ui.theme.Blooddonation_AppTheme
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
 import de.agb.blutspende_app.viewmodel.VMDatastore
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
-fun Vorrat() {
-    Blutspende_AppTheme {
+fun Supply() {
+    Blooddonation_AppTheme {
         Surface {
             Column(
                 modifier = Modifier
@@ -90,7 +90,7 @@ fun Vorrat() {
                             modifier = Modifier.padding(cardPadding)
                         )
 
-                        // STAND DATUM
+                        // DATE
                         val dateFormatter =
                             DateTimeFormatter.ofPattern(stringResource(id = R.string.dateFormat))
                         Text(
@@ -104,12 +104,12 @@ fun Vorrat() {
                             textAlign = TextAlign.Center,
                             fontWeight = FontWeight.Bold
                         )
-                        // STAND TEXT
+                        // DATE TEXT
                         Text(
                             text = stringResource(
                                 id = R.string.yourBloodgroupAvailable,
-                                globalFunctions.getBlutgruppeAsString(
-                                    dataStore.getBlutgruppe.collectAsState(
+                                globalFunctions.getBloodgroupAsString(
+                                    dataStore.getBloodgroup.collectAsState(
                                         0
                                     ).value
                                 ),
@@ -129,8 +129,8 @@ fun Vorrat() {
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
                             for (i in 0..3) {
-                                DefinitionVorratItems(
-                                    object : IVorratItem {
+                                DefinitionSupplyItems(
+                                    object : ISupplyItem {
                                         override val height: Dp
                                             get() = 40.dp
                                         override val icon: Int
@@ -160,8 +160,8 @@ fun Vorrat() {
                             horizontalArrangement = Arrangement.SpaceEvenly
                         ) {
                             for (i in 0..3) {
-                                DefinitionVorratItems(
-                                    object : IVorratItem {
+                                DefinitionSupplyItems(
+                                    object : ISupplyItem {
                                         override val height: Dp
                                             get() = 40.dp
                                         override val icon: Int
@@ -196,7 +196,7 @@ fun Vorrat() {
 }
 
 @Composable
-fun DefinitionVorratItems(item: IVorratItem, modifier: Modifier) {
+fun DefinitionSupplyItems(item: ISupplyItem, modifier: Modifier) {
     val dataStore: VMDatastore = viewModel()
     val globalFunctions: GlobalFunctions = viewModel()
 
@@ -212,8 +212,8 @@ fun DefinitionVorratItems(item: IVorratItem, modifier: Modifier) {
         Icon(
             painter = painterResource(id = item.icon),
             contentDescription = item.name,
-            tint = if ((nameRhesus == item.name) and (item.icon == globalFunctions.getBloodbagIconFromBlutgruppeID(
-                    dataStore.getBlutgruppe.collectAsState(0).value
+            tint = if ((nameRhesus == item.name) and (item.icon == globalFunctions.getBloodbagIconFromBloodgroupID(
+                    dataStore.getBloodgroup.collectAsState(0).value
                 ))
             ) {
                 MaterialTheme.colorScheme.onPrimary

@@ -31,13 +31,13 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import de.agb.blutspende_app.R
-import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
+import de.agb.blutspende_app.ui.theme.Blooddonation_AppTheme
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
 import de.agb.blutspende_app.viewmodel.VMDatastore
 
 @Composable
 fun Home() {
-    Blutspende_AppTheme {
+    Blooddonation_AppTheme {
         Surface {
             Column(
                 modifier = Modifier
@@ -49,7 +49,7 @@ fun Home() {
                 val globalFunctions: GlobalFunctions = viewModel()
 
                 ConstraintLayout(modifier = Modifier.fillMaxSize()) {
-                    val (textBlutspende, userImage, bloodBag, containerBlutspendeDetails) = createRefs()
+                    val (textBlooddonation, userImage, bloodBag, containerBlooddonationDetails) = createRefs()
 
                     Text(
                         text = stringResource(
@@ -60,7 +60,7 @@ fun Home() {
                         textAlign = TextAlign.Center,
                         modifier = Modifier
                             .fillMaxWidth(0.7f)
-                            .constrainAs(textBlutspende) {
+                            .constrainAs(textBlooddonation) {
                                 top.linkTo(parent.top, margin = 80.dp)
                                 start.linkTo(parent.start)
                                 end.linkTo(parent.end)
@@ -79,15 +79,15 @@ fun Home() {
                             .size(180.dp)
                             .background(MaterialTheme.colorScheme.onPrimaryContainer, CircleShape)
                             .constrainAs(userImage) {
-                                top.linkTo(textBlutspende.bottom, margin = 60.dp)
+                                top.linkTo(textBlooddonation.bottom, margin = 60.dp)
                                 start.linkTo(parent.start)
                                 end.linkTo(parent.end)
                             })
 
                     Icon(painterResource(
                         id =
-                        globalFunctions.getBloodbagIconFromBlutgruppeID(
-                            dataStore.getBlutgruppe.collectAsState(
+                        globalFunctions.getBloodbagIconFromBloodgroupID(
+                            dataStore.getBloodgroup.collectAsState(
                                 0
                             ).value
                         )
@@ -110,7 +110,7 @@ fun Home() {
                         Modifier
                             .fillMaxWidth(0.8f)
                             .padding(cardPadding)
-                            .constrainAs(containerBlutspendeDetails) {
+                            .constrainAs(containerBlooddonationDetails) {
                                 top.linkTo(userImage.bottom, margin = 60.dp)
                                 start.linkTo(parent.start)
                                 end.linkTo(parent.end)
@@ -131,8 +131,8 @@ fun Home() {
                                         fontWeight = FontWeight.SemiBold
                                     )
                                     Text(
-                                        text = globalFunctions.getBlutgruppeAsString(
-                                            dataStore.getBlutgruppe.collectAsState(0).value
+                                        text = globalFunctions.getBloodgroupAsString(
+                                            dataStore.getBloodgroup.collectAsState(0).value
                                         )
                                     )
 
@@ -168,7 +168,7 @@ fun Home() {
                                         textAlign = TextAlign.Center
                                     )
                                     Text(
-                                        text = dataStore.getRhesuskomplex.collectAsState("").value
+                                        text = dataStore.getRhesuscomplex.collectAsState("").value
                                     )
 
                                 }

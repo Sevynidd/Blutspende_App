@@ -7,23 +7,24 @@ import androidx.room.RoomDatabase
 
 @Database(
     entities = [
-        Blutwerte::class,
+        BloodValues::class,
         Arm::class,
-        Typ::class
+        Type::class
     ], version = 1, exportSchema = false
 )
-abstract class BlutwerteDatabase : RoomDatabase() {
-    abstract fun blutwerteDao(): BlutwerteDao
+abstract class BloodValuesDatabase : RoomDatabase() {
+    abstract fun bloodValuesDao(): BloodValuesDao
 
+    // Singleton for the database
     companion object {
         @Volatile
-        private var INSTANCE: BlutwerteDatabase? = null
+        private var INSTANCE: BloodValuesDatabase? = null
 
-        fun getInstance(context: Context): BlutwerteDatabase {
+        fun getInstance(context: Context): BloodValuesDatabase {
             synchronized(this) {
                 return INSTANCE ?: Room.databaseBuilder(
                     context.applicationContext,
-                    BlutwerteDatabase::class.java,
+                    BloodValuesDatabase::class.java,
                     "Blutspende_db"
                 ).fallbackToDestructiveMigration()
                     .build().also {

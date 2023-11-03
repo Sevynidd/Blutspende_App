@@ -2,10 +2,10 @@ package de.agb.blutspende_app.viewmodel.screens.database
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import de.agb.blutspende_app.model.roomDatabase.Blutwerte
-import de.agb.blutspende_app.model.roomDatabase.BlutwerteDao
-import de.agb.blutspende_app.model.roomDatabase.BlutwerteEvent
-import de.agb.blutspende_app.model.roomDatabase.BlutwerteState
+import de.agb.blutspende_app.model.roomDatabase.BloodValues
+import de.agb.blutspende_app.model.roomDatabase.BloodValuesDao
+import de.agb.blutspende_app.model.roomDatabase.BloodValuesEvent
+import de.agb.blutspende_app.model.roomDatabase.BloodValuesState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.combine
@@ -13,33 +13,33 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class VMBlutwerte(
-    private val blutwerteDao: BlutwerteDao
+class VMBloodValues(
+    private val bloodValuesDao: BloodValuesDao
 ) : ViewModel() {
-    private val _state = MutableStateFlow(BlutwerteState())
-    private val _blutwerte = blutwerteDao.readAllData(_state.value.fArmID, _state.value.fTypID)
+    private val _state = MutableStateFlow(BloodValuesState())
+    private val _bloodvalues = bloodValuesDao.allData(_state.value.fArmID, _state.value.fTypID)
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
-    private val _typ = blutwerteDao.readTyp()
+    private val _type = bloodValuesDao.readType()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
-    private val _arm = blutwerteDao.readArm()
+    private val _arm = bloodValuesDao.readArm()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
-    val state = combine(_state, _blutwerte) { state, blut ->
+    val state = combine(_state, _bloodvalues) { state, blut ->
         state.copy(
-            blutwerteList = blut
+            bloodValuesList = blut
         )
 
-    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), BlutwerteState())
+    }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), BloodValuesState())
 
-    fun onEvent(event: BlutwerteEvent) {
+    fun onEvent(event: BloodValuesEvent) {
         when (event) {
 
-            BlutwerteEvent.SaveBlutwert -> {
-                val sys = _state.value.systolisch
-                val dia = _state.value.diastolisch
-                val puls = _state.value.puls
+            BloodValuesEvent.SaveBloodValues -> {
+                val sys = _state.value.systolic
+                val dia = _state.value.diastolic
+                val puls = _state.value.pulse
                 val haemoglobin = _state.value.haemoglobin
                 val fArmID = _state.value.fArmID
                 val fTypID = _state.value.fTypID
@@ -52,7 +52,7 @@ class VMBlutwerte(
                     return
                 }
 
-                val blutwert = Blutwerte(
+                val bloodValue = BloodValues(
                     systolisch = sys,
                     diastolisch = dia,
                     puls = puls,
@@ -62,14 +62,14 @@ class VMBlutwerte(
                 )
 
                 viewModelScope.launch {
-                    blutwerteDao.addBlutwert(blutwert)
+                    bloodValuesDao.addBloodValue(bloodValue)
                 }
 
                 _state.update {
                     it.copy(
-                        systolisch = 0,
-                        diastolisch = 0,
-                        puls = 0,
+                        systolic = 0,
+                        diastolic = 0,
+                        pulse = 0,
                         haemoglobin = 0.0f,
                         fArmID = 0,
                         fTypID = 0
@@ -77,37 +77,37 @@ class VMBlutwerte(
                 }
             }
 
-            is BlutwerteEvent.DeleteBlutwert -> {
+            is BloodValuesEvent.DeleteBloodValues -> {
                 viewModelScope.launch {
-                    blutwerteDao.deleteBlutwert(event.blutwert)
+                    bloodValuesDao.deleteBloodValue(event.bloodValue)
                 }
             }
 
-            is BlutwerteEvent.SetSystolisch -> {
+            is BloodValuesEvent.SetSystolic -> {
                 _state.update {
                     it.copy(
-                        systolisch = event.sys
+                        systolic = event.sys
                     )
                 }
             }
 
-            is BlutwerteEvent.SetDiastolisch -> {
+            is BloodValuesEvent.SetDiastolic -> {
                 _state.update {
                     it.copy(
-                        diastolisch = event.dia
+                        diastolic = event.dia
                     )
                 }
             }
 
-            is BlutwerteEvent.SetPuls -> {
+            is BloodValuesEvent.SetPulse -> {
                 _state.update {
                     it.copy(
-                        puls = event.puls
+                        pulse = event.pulse
                     )
                 }
             }
 
-            is BlutwerteEvent.SetHaemoglobin -> {
+            is BloodValuesEvent.SetHaemoglobin -> {
                 _state.update {
                     it.copy(
                         haemoglobin = event.haemoglobin
@@ -115,7 +115,7 @@ class VMBlutwerte(
                 }
             }
 
-            is BlutwerteEvent.FArmID -> {
+            is BloodValuesEvent.FArmID -> {
                 _state.update {
                     it.copy(
                         fArmID = event.armID
@@ -123,7 +123,7 @@ class VMBlutwerte(
                 }
             }
 
-            is BlutwerteEvent.FTypID -> {
+            is BloodValuesEvent.FTypID -> {
                 _state.update {
                     it.copy(
                         fTypID = event.typID

@@ -12,20 +12,20 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import de.agb.blutspende_app.model.ScreenDefinition
-import de.agb.blutspende_app.model.roomDatabase.BlutwerteEvent
-import de.agb.blutspende_app.model.roomDatabase.BlutwerteState
-import de.agb.blutspende_app.ui.screens.Blutwerte
+import de.agb.blutspende_app.model.roomDatabase.BloodValuesEvent
+import de.agb.blutspende_app.model.roomDatabase.BloodValuesState
+import de.agb.blutspende_app.ui.screens.BloodValues
 import de.agb.blutspende_app.ui.screens.Home
 import de.agb.blutspende_app.ui.screens.Settings
-import de.agb.blutspende_app.ui.screens.SettingsBlutgruppe
-import de.agb.blutspende_app.ui.screens.SettingsBlutgruppeWebview
-import de.agb.blutspende_app.ui.screens.Vorrat
+import de.agb.blutspende_app.ui.screens.SettingsBloodgroup
+import de.agb.blutspende_app.ui.screens.SettingsBloodgroupWebview
+import de.agb.blutspende_app.ui.screens.Supply
 
 @Composable
 fun SetupNavbarGraph(
     navController: NavHostController,
-    databaseState: BlutwerteState,
-    databaseOnEvent: (BlutwerteEvent) -> Unit
+    databaseState: BloodValuesState,
+    databaseOnEvent: (BloodValuesEvent) -> Unit
 ) {
     NavHost(navController = navController, startDestination = ScreenDefinition.Dashboard.route,
         enterTransition = {
@@ -45,16 +45,16 @@ fun SetupNavbarGraph(
         composable(route = ScreenDefinition.Dashboard.route) {
             Home()
         }
-        composable(route = ScreenDefinition.Blutwerte.route) {
-            Blutwerte(databaseState, databaseOnEvent)
+        composable(route = ScreenDefinition.BloodValues.route) {
+            BloodValues(databaseState, databaseOnEvent)
         }
-        composable(route = ScreenDefinition.Vorrat.route) {
-            Vorrat()
+        composable(route = ScreenDefinition.Supply.route) {
+            Supply()
         }
         composable(route = ScreenDefinition.Settings.route) {
             Settings(navController)
         }
-        composable(route = ScreenDefinition.SettingsBlutgruppe.route,
+        composable(route = ScreenDefinition.SettingsBloodgroup.route,
             enterTransition = {
                 fadeIn(
                     animationSpec = tween(
@@ -75,9 +75,9 @@ fun SetupNavbarGraph(
                     towards = AnimatedContentTransitionScope.SlideDirection.Right
                 )
             }) {
-            SettingsBlutgruppe(navController)
+            SettingsBloodgroup(navController)
         }
-        composable(route = ScreenDefinition.SettingsBlutgruppeWebview.route,
+        composable(route = ScreenDefinition.SettingsBloodgroupWebview.route,
             enterTransition = {
                 fadeIn(
                     animationSpec = tween(
@@ -98,7 +98,7 @@ fun SetupNavbarGraph(
                     towards = AnimatedContentTransitionScope.SlideDirection.Right
                 )
             }) {
-            SettingsBlutgruppeWebview()
+            SettingsBloodgroupWebview()
         }
     }
 }

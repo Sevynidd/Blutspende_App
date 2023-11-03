@@ -26,13 +26,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import de.agb.blutspende_app.R
-import de.agb.blutspende_app.ui.theme.Blutspende_AppTheme
+import de.agb.blutspende_app.ui.theme.Blooddonation_AppTheme
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
 import de.agb.blutspende_app.viewmodel.VMDatastore
 
 @Composable
-fun SettingsBlutgruppeWebview() {
-    Blutspende_AppTheme {
+fun SettingsBloodgroupWebview() {
+    Blooddonation_AppTheme {
         Surface {
             Column(
                 modifier = Modifier
@@ -43,18 +43,18 @@ fun SettingsBlutgruppeWebview() {
                 val vmDatastore: VMDatastore = viewModel()
                 val globalFunctions: GlobalFunctions = viewModel()
 
-                val getHilfeURL =
-                    vmDatastore.getBlutspendeInfoURL.collectAsState(initial = "").value
+                val getHelpURL =
+                    vmDatastore.getBlooddonationInfoURL.collectAsState(initial = "").value
 
-                if (getHilfeURL == "") {
+                if (getHelpURL == "") {
                     Text("Fehler: Es kann keine Website angezeigt werden")
                 } else {
 
                     Column {
                         globalFunctions.AddHyperlinkToText(
-                            fullText = "Quelle: ${globalFunctions.getBaseURL(getHilfeURL)}",
-                            linkText = listOf(globalFunctions.getBaseURL(getHilfeURL)),
-                            hyperlinks = listOf(getHilfeURL),
+                            fullText = "Quelle: ${globalFunctions.getBaseURL(getHelpURL)}",
+                            linkText = listOf(globalFunctions.getBaseURL(getHelpURL)),
+                            hyperlinks = listOf(getHelpURL),
                             style = SpanStyle(
                                 color = when (vmDatastore.getThemeMode.collectAsState(initial = 0).value) {
                                     1 -> colorResource(id = R.color.darkBlue)
@@ -81,10 +81,10 @@ fun SettingsBlutgruppeWebview() {
                                     setLayerType(View.LAYER_TYPE_HARDWARE, null)
                                     settings.allowFileAccess = true
                                     webViewClient = WebViewClient()
-                                    loadUrl(getHilfeURL)
+                                    loadUrl(getHelpURL)
                                 }
                             }, update = {
-                                it.loadUrl(getHilfeURL)
+                                it.loadUrl(getHelpURL)
                             },
                             modifier = Modifier.clip(RoundedCornerShape(10.dp))
                         )
