@@ -17,8 +17,9 @@ class VMBloodValues(
     private val bloodValuesDao: BloodValuesDao
 ) : ViewModel() {
     private val _state = MutableStateFlow(BloodValuesState())
-    private val _bloodvalues = bloodValuesDao.getBloodValues(_state.value.fArmID, _state.value.fTypID)
-        .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
+    private val _bloodvalues =
+        bloodValuesDao.getBloodValues(_state.value.fArmID, _state.value.fTypID)
+            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
     private val _type = bloodValuesDao.getTypes()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
