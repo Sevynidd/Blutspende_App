@@ -29,13 +29,13 @@ interface BloodValuesDao {
 
     @Transaction
     @Query("SELECT * FROM BloodValues WHERE fArmID = :armID AND fTypID = :typID ORDER BY blutwerteID ASC")
-    fun allData(armID: Int, typID: Int): Flow<List<BloodValues>>
+    fun getBloodValues(armID: Int, typID: Int): Flow<List<BloodValues>>
 
     @Transaction
-    @Query("SELECT * FROM Type")
-    fun readType(): Flow<List<Type>>
+    @Query("SELECT * FROM Type ORDER BY typID ASC")
+    fun getTypes(): Flow<List<Type>>
 
     @Transaction
-    @Query("SELECT * FROM Arm")
-    fun readArm(): Flow<List<Arm>>
+    @Query("SELECT * FROM Arm ORDER BY armID ASC")
+    fun getArms(): Flow<List<Arm>>
 }

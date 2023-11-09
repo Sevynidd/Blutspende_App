@@ -138,7 +138,13 @@ fun Content(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Unit) {
                 )
 
                 state.bloodValuesList.forEach { blutwert ->
-                    Text(text = blutwert.blutwerteID.toString())
+                    Text(text = blutwert.blutwerteID.toString() + " " +
+                            blutwert.systolisch + " Sys " +
+                            blutwert.diastolisch + " Dia " +
+                            blutwert.puls + " Puls " +
+                            state.armsList[blutwert.fArmID].bezeichnung + " " +
+                            state.typesList[blutwert.fTypID].blutspendeTyp
+                    )
                 }
 
             }
