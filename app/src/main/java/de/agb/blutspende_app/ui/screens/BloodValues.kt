@@ -14,11 +14,15 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.DatePickerFormatter
 import androidx.compose.material3.DateRangePicker
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -58,72 +62,15 @@ fun BloodValues(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Unit) {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun Content(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Unit) {
-    val globalFunctions: GlobalFunctions = viewModel()
-
     Column(
         Modifier
             .fillMaxWidth()
             .wrapContentHeight()
     ) {
 
-        Text(text = "Filter")
-
-        Spacer(modifier = Modifier.size(16.dp))
-
-        var bottomSheetVisible by remember { mutableStateOf(false) }
-        val sheetState = rememberModalBottomSheetState()
-        val dateRangePickerState = rememberDateRangePickerState()
-
-        val sdf = getDateInstance(MEDIUM)
-
-        LaunchedEffect(key1 = LocalLifecycleOwner.current) {
-            if ((dateRangePickerState.selectedStartDateMillis == null) or (dateRangePickerState.selectedEndDateMillis == null)) {
-                dateRangePickerState.setSelection(
-                    System.currentTimeMillis() - 604800000L, System.currentTimeMillis()
-                )
-            }
-        }
-
-        ClickableText(text = AnnotatedString(
-
-            sdf.format(
-                globalFunctions.millisToDate(
-                    dateRangePickerState.selectedStartDateMillis ?: 0
-                )
-            ) + "  bis  " + sdf.format(
-                globalFunctions.millisToDate(
-                    dateRangePickerState.selectedEndDateMillis ?: 0
-                )
-            )
-        ),
-            style = TextStyle(color = MaterialTheme.colorScheme.onBackground, fontSize = 15.sp),
-            onClick = { bottomSheetVisible = bottomSheetVisible.not() })
-
-
-        if (bottomSheetVisible) {
-
-            ModalBottomSheet(
-                sheetState = sheetState,
-                onDismissRequest = { bottomSheetVisible = false }) {
-
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(0.7f)
-                ) {
-                    DateRangePicker(
-                        state = dateRangePickerState, dateFormatter = DatePickerFormatter(
-                            "dd.MM.yyyy", "dd.MM.yyyy", "dd.MM.yyyy"
-                        )
-                    )
-
-                }
-            }
-
-        }
+        BloodValueFilter()
 
         Column(
             modifier = Modifier.padding(top = 14.dp, bottom = 14.dp)
@@ -138,12 +85,13 @@ fun Content(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Unit) {
                 )
 
                 state.bloodValuesList.forEach { blutwert ->
-                    Text(text = blutwert.blutwerteID.toString() + " " +
-                            blutwert.systolisch + " Sys " +
-                            blutwert.diastolisch + " Dia " +
-                            blutwert.puls + " Puls " +
-                            state.armsList[blutwert.fArmID].bezeichnung + " " +
-                            state.typesList[blutwert.fTypID].blutspendeTyp
+                    Text(
+                        text = blutwert.blutwerteID.toString() + " " +
+                                blutwert.systolisch + " Sys " +
+                                blutwert.diastolisch + " Dia " +
+                                blutwert.puls + " Puls " +
+                                state.armsList[blutwert.fArmID].bezeichnung + " " +
+                                state.typesList[blutwert.fTypID].blutspendeTyp
                     )
                 }
 
@@ -161,5 +109,109 @@ fun Content(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Unit) {
                 Text(text = "TestButton")
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun BloodValueFilter() {
+    val globalFunctions: GlobalFunctions = viewModel()
+
+    val options = listOf("Letzter Blutwert", "Alle Blutwerte zwischen zwei Daten")
+    var expanded by remember { mutableStateOf(false) }
+    var selectedOptionText by remember { mutableStateOf(options[0]) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = {
+            expanded = !expanded
+        }
+    ) {
+        TextField(
+            readOnly = true,
+            value = selectedOptionText,
+            onValueChange = { },
+            modifier = Modifier.menuAnchor(),
+            textStyle = TextStyle(fontSize = 14.sp),
+            label = { Text("Filter") },
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(
+                    expanded = expanded
+                )
+            },
+            colors = ExposedDropdownMenuDefaults.textFieldColors()
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = {
+                expanded = false
+            }
+        ) {
+            options.forEach { selectionOption ->
+                DropdownMenuItem(
+                    text = { Text(text = selectionOption) },
+                    onClick = {
+                        selectedOptionText = selectionOption
+                        expanded = false
+                    }
+                )
+            }
+        }
+    }
+
+
+    Spacer(modifier = Modifier.size(16.dp))
+
+    var bottomSheetVisible by remember { mutableStateOf(false) }
+    val sheetState = rememberModalBottomSheetState()
+    val dateRangePickerState = rememberDateRangePickerState()
+
+    val sdf = getDateInstance(MEDIUM)
+
+    LaunchedEffect(key1 = LocalLifecycleOwner.current) {
+        if ((dateRangePickerState.selectedStartDateMillis == null) or (dateRangePickerState.selectedEndDateMillis == null)) {
+            dateRangePickerState.setSelection(
+                System.currentTimeMillis() - 604800000L, System.currentTimeMillis()
+            )
+        }
+    }
+
+    if (selectedOptionText == options[1]) {
+        ClickableText(text = AnnotatedString(
+
+            sdf.format(
+                globalFunctions.millisToDate(
+                    dateRangePickerState.selectedStartDateMillis ?: 0
+                )
+            ) + "  bis  " + sdf.format(
+                globalFunctions.millisToDate(
+                    dateRangePickerState.selectedEndDateMillis ?: 0
+                )
+            )
+        ),
+            style = TextStyle(color = MaterialTheme.colorScheme.onBackground, fontSize = 15.sp),
+            onClick = { bottomSheetVisible = bottomSheetVisible.not() })
+    }
+
+    if (bottomSheetVisible) {
+
+        ModalBottomSheet(
+            sheetState = sheetState,
+            onDismissRequest = { bottomSheetVisible = false }) {
+
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(0.7f)
+            ) {
+                DateRangePicker(
+                    state = dateRangePickerState, dateFormatter = DatePickerFormatter(
+                        "dd.MM.yyyy", "dd.MM.yyyy", "dd.MM.yyyy"
+                    )
+                )
+
+            }
+        }
+
     }
 }
