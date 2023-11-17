@@ -84,7 +84,7 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val databaseState by vmDatabase.state.collectAsState()
 
-                    DatabaseInit(this.applicationContext)
+                    //DatabaseInit(this.applicationContext)
 
                     NavigationBar(databaseState, vmDatabase::onEvent)
                 }

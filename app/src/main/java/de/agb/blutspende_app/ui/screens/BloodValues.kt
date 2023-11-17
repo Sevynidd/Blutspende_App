@@ -160,7 +160,7 @@ fun BloodValueFilter() {
     }
 
 
-    Spacer(modifier = Modifier.size(16.dp))
+    Spacer(modifier = Modifier.size(24.dp))
 
     var bottomSheetVisible by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()

@@ -1,12 +1,9 @@
 package de.agb.blutspende_app.model.roomDatabase
 
 import androidx.room.Entity
-import androidx.room.Index
 import androidx.room.PrimaryKey
 
-@Entity(indices = [
-    Index(value = arrayOf("armID", "bezeichnung"))
-])
+@Entity
 data class Arm(
     @PrimaryKey
     val armID: Int,

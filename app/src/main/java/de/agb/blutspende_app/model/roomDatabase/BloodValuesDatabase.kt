@@ -10,7 +10,7 @@ import androidx.room.RoomDatabase
         BloodValues::class,
         Arm::class,
         Type::class
-    ], version = 1, exportSchema = false
+    ], version = 1, exportSchema = true
 )
 abstract class BloodValuesDatabase : RoomDatabase() {
     abstract fun bloodValuesDao(): BloodValuesDao
@@ -26,7 +26,7 @@ abstract class BloodValuesDatabase : RoomDatabase() {
                     context.applicationContext,
                     BloodValuesDatabase::class.java,
                     "Blutspende_db"
-                ).fallbackToDestructiveMigration()
+                ).fallbackToDestructiveMigrationOnDowngrade().createFromAsset("database/Blutspende.db")
                     .build().also {
                         INSTANCE = it
                     }
