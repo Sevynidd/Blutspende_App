@@ -2,6 +2,7 @@ package de.agb.blutspende_app.ui.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,18 +12,15 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.text.ClickableText
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.DatePickerFormatter
 import androidx.compose.material3.DateRangePicker
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.ExposedDropdownMenuBox
-import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -117,50 +115,24 @@ fun Content(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Unit) {
 fun BloodValueFilter() {
     val globalFunctions: GlobalFunctions = viewModel()
 
-    val options = listOf("Letzter Blutwert", "Alle Blutwerte zwischen zwei Daten")
-    var expanded by remember { mutableStateOf(false) }
+    val options = listOf("Letzte 3 Blutwerte", "Blutwerte mit Datumsfilter")
     var selectedOptionText by remember { mutableStateOf(options[0]) }
 
-    ExposedDropdownMenuBox(
-        expanded = expanded,
-        onExpandedChange = {
-            expanded = !expanded
-        }
-    ) {
-        TextField(
-            readOnly = true,
-            value = selectedOptionText,
-            onValueChange = { },
-            modifier = Modifier.menuAnchor(),
-            textStyle = TextStyle(fontSize = 14.sp),
-            label = { Text("Filter") },
-            trailingIcon = {
-                ExposedDropdownMenuDefaults.TrailingIcon(
-                    expanded = expanded
-                )
-            },
-            colors = ExposedDropdownMenuDefaults.textFieldColors()
-        )
-        ExposedDropdownMenu(
-            expanded = expanded,
-            onDismissRequest = {
-                expanded = false
-            }
-        ) {
-            options.forEach { selectionOption ->
-                DropdownMenuItem(
-                    text = { Text(text = selectionOption) },
-                    onClick = {
-                        selectedOptionText = selectionOption
-                        expanded = false
-                    }
-                )
+    Row {
+        options.forEach { item ->
+            Button(modifier = Modifier.padding(horizontal = 6.dp),
+                colors = when (item == selectedOptionText) {
+                    true -> ButtonDefaults.buttonColors()
+                    false -> ButtonDefaults.filledTonalButtonColors()
+                },
+                onClick = { selectedOptionText = item }
+            ) {
+                Text(text = item)
             }
         }
     }
 
-
-    Spacer(modifier = Modifier.size(24.dp))
+    Spacer(modifier = Modifier.size(18.dp))
 
     var bottomSheetVisible by remember { mutableStateOf(false) }
     val sheetState = rememberModalBottomSheetState()

@@ -19,12 +19,12 @@ import androidx.room.PrimaryKey
     ]
 )
 data class BloodValues(
-    val haemoglobin: Float?,
-    val diastolisch: Int,
     @PrimaryKey(autoGenerate = true)
     val blutwerteID: Int = 0,
-    val fArmID: Int,
-    val fTypID: Int,
+    val systolisch: Int,
+    val diastolisch: Int,
+    val haemoglobin: Float?,
     val puls: Int,
-    val systolisch: Int
+    val fArmID: Int,
+    val fTypID: Int
 )

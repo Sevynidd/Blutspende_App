@@ -6,13 +6,13 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
-import androidx.room.Update
+import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface BloodValuesDao {
 
-    @Insert(onConflict = OnConflictStrategy.ABORT)
+    @Upsert
     suspend fun addBloodValue(bloodvalue: BloodValues)
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
@@ -20,9 +20,6 @@ interface BloodValuesDao {
 
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     suspend fun addType(type: Type)
-
-    @Update
-    suspend fun editBloodValue(bloodValue: BloodValues)
 
     @Delete
     suspend fun deleteBloodValue(bloodValue: BloodValues)
