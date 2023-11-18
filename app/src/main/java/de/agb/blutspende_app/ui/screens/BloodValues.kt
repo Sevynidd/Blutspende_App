@@ -125,7 +125,11 @@ fun BloodValueFilter() {
                     true -> ButtonDefaults.buttonColors()
                     false -> ButtonDefaults.filledTonalButtonColors()
                 },
-                onClick = { selectedOptionText = item }
+                onClick = {
+                    if (selectedOptionText != item) {
+                        selectedOptionText = item
+                    }
+                }
             ) {
                 Text(text = item)
             }
