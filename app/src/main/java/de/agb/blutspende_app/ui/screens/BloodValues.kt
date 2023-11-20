@@ -26,7 +26,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -40,6 +39,7 @@ import de.agb.blutspende_app.model.roomDatabase.BloodValuesEvent
 import de.agb.blutspende_app.model.roomDatabase.BloodValuesState
 import de.agb.blutspende_app.ui.theme.Blooddonation_AppTheme
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
+import de.agb.blutspende_app.viewmodel.screens.VMBloodValues
 import java.text.DateFormat.MEDIUM
 import java.text.DateFormat.getDateInstance
 
@@ -62,6 +62,8 @@ fun BloodValues(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Unit) {
 
 @Composable
 fun Content(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Unit) {
+    val vmBloodValues: VMBloodValues = viewModel()
+
     Column(
         Modifier
             .fillMaxWidth()
@@ -79,7 +81,11 @@ fun Content(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Unit) {
             ) {
                 Text(
                     modifier = Modifier.padding(cardPadding),
-                    text = "Die letzten 3 Blutspendewerte:"
+                    text = when (vmBloodValues.getSelectedFilterText.value) {
+                        vmBloodValues.getFilterOptions[0] -> "Die letzten 3 Blutspendewerte:"
+                        vmBloodValues.getFilterOptions[1] -> "Blutwerte anhand des Datumsfilters:"
+                        else -> "Die letzten 3 Blutspendewerte:"
+                    }
                 )
 
                 state.bloodValuesList.forEach { blutwert ->
@@ -114,12 +120,12 @@ fun Content(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Unit) {
 @Composable
 fun BloodValueFilter() {
     val globalFunctions: GlobalFunctions = viewModel()
+    val vmBloodValues: VMBloodValues = viewModel()
 
-    val options = listOf("Letzte 3 Blutwerte", "Blutwerte mit Datumsfilter")
-    var selectedOptionText by remember { mutableStateOf(options[0]) }
+    var selectedOptionText by remember { vmBloodValues.getSelectedFilterText }
 
     Row {
-        options.forEach { item ->
+        vmBloodValues.getFilterOptions.forEach { item ->
             Button(modifier = Modifier.padding(horizontal = 6.dp),
                 colors = when (item == selectedOptionText) {
                     true -> ButtonDefaults.buttonColors()
@@ -138,7 +144,7 @@ fun BloodValueFilter() {
 
     Spacer(modifier = Modifier.size(18.dp))
 
-    var bottomSheetVisible by remember { mutableStateOf(false) }
+    var bottomSheetVisible by remember { vmBloodValues.getBottomSheetVisible }
     val sheetState = rememberModalBottomSheetState()
     val dateRangePickerState = rememberDateRangePickerState()
 
@@ -152,7 +158,7 @@ fun BloodValueFilter() {
         }
     }
 
-    if (selectedOptionText == options[1]) {
+    if (selectedOptionText == vmBloodValues.getFilterOptions[1]) {
         ClickableText(text = AnnotatedString(
 
             sdf.format(

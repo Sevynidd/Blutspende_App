@@ -10,7 +10,7 @@ import androidx.room.RoomDatabase
         BloodValues::class,
         Arm::class,
         Type::class
-    ], version = 2, exportSchema = false
+    ], version = 1, exportSchema = false
 )
 abstract class BloodValuesDatabase : RoomDatabase() {
     abstract fun bloodValuesDao(): BloodValuesDao
