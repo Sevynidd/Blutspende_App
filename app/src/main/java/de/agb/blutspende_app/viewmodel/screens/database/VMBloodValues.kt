@@ -12,6 +12,7 @@ import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import java.util.Date
 
 class VMBloodValues(
     private val bloodValuesDao: BloodValuesDao
@@ -46,11 +47,11 @@ class VMBloodValues(
                 val haemoglobin = _state.value.haemoglobin
                 val fArmID = _state.value.fArmID
                 val fTypID = _state.value.fTypID
+                val timestamp = _state.value.timestamp
 
                 if ((sys == 0) or
                     (dia == 0) or
-                    (puls == 0) or
-                    (haemoglobin == 0.0f)
+                    (puls == 0)
                 ) {
                     return
                 }
@@ -61,7 +62,8 @@ class VMBloodValues(
                     puls = puls,
                     haemoglobin = haemoglobin,
                     fArmID = fArmID,
-                    fTypID = fTypID
+                    fTypID = fTypID,
+                    timestamp = timestamp
                 )
 
                 viewModelScope.launch {
@@ -75,7 +77,8 @@ class VMBloodValues(
                         pulse = 0,
                         haemoglobin = 0.0f,
                         fArmID = 0,
-                        fTypID = 0
+                        fTypID = 0,
+                        timestamp = Date(0)
                     )
                 }
             }
@@ -130,6 +133,14 @@ class VMBloodValues(
                 _state.update {
                     it.copy(
                         fTypID = event.typID
+                    )
+                }
+            }
+
+            is BloodValuesEvent.SetTimestamp -> {
+                _state.update {
+                    it.copy(
+                        timestamp = event.timestamp
                     )
                 }
             }

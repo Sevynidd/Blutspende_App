@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
+import androidx.room.TypeConverters
 
 @Database(
     entities = [
@@ -12,6 +13,7 @@ import androidx.room.RoomDatabase
         Type::class
     ], version = 1, exportSchema = false
 )
+@TypeConverters(Converters::class)
 abstract class BloodValuesDatabase : RoomDatabase() {
     abstract fun bloodValuesDao(): BloodValuesDao
 

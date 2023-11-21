@@ -5,7 +5,6 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Transaction
 import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
@@ -24,15 +23,21 @@ interface BloodValuesDao {
     @Delete
     suspend fun deleteBloodValue(bloodValue: BloodValues)
 
-    @Transaction
-    @Query("SELECT * FROM BloodValues WHERE fArmID = :armID AND fTypID = :typID ORDER BY blutwerteID ASC")
+    @Query("SELECT * FROM BloodValues WHERE fArmID = :armID AND fTypID = :typID ORDER BY timestamp ASC, blutwerteID ASC")
     fun getBloodValues(armID: Int, typID: Int): Flow<List<BloodValues>>
 
-    @Transaction
     @Query("SELECT * FROM Type ORDER BY typID ASC")
     fun getTypes(): Flow<List<Type>>
 
-    @Transaction
     @Query("SELECT * FROM Arm ORDER BY armID ASC")
     fun getArms(): Flow<List<Arm>>
+
+    @Query("SELECT * FROM BloodValues WHERE fArmID = :armID AND fTypID = :typID AND timestamp BETWEEN :beginDate AND :endDate ORDER BY timestamp ASC, blutwerteID ASC")
+    fun getBloodValuesFilteredDates(
+        armID: Int,
+        typID: Int,
+        beginDate: Int,
+        endDate: Int
+    ): Flow<List<BloodValues>>
+
 }

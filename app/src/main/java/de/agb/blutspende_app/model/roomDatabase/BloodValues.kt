@@ -3,6 +3,7 @@ package de.agb.blutspende_app.model.roomDatabase
 import androidx.room.Entity
 import androidx.room.ForeignKey
 import androidx.room.PrimaryKey
+import java.util.Date
 
 @Entity(
     foreignKeys = [
@@ -25,6 +26,7 @@ data class BloodValues(
     val diastolisch: Int,
     val haemoglobin: Float?,
     val puls: Int,
+    val timestamp: Date,
     val fArmID: Int,
     val fTypID: Int
 )
