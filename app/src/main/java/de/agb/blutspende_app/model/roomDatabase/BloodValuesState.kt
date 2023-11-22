@@ -1,7 +1,5 @@
 package de.agb.blutspende_app.model.roomDatabase
 
-import java.util.Date
-
 data class BloodValuesState(
     val bloodValuesList: List<BloodValues> = emptyList(),
     val systolic: Int = 0,
@@ -12,5 +10,7 @@ data class BloodValuesState(
     val armsList: List<Arm> = emptyList(),
     val fTypID: Int = 0,
     val typesList: List<Type> = emptyList(),
-    val timestamp: Date = Date(0)
+    val timestamp: Long = 0,
+    val bloodvaluesTop3List: List<BloodValues> = emptyList(),
+    val bloodvaluesBetweenDates: List<BloodValues> = emptyList()
 )

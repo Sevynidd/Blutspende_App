@@ -26,6 +26,9 @@ interface BloodValuesDao {
     @Query("SELECT * FROM BloodValues WHERE fArmID = :armID AND fTypID = :typID ORDER BY timestamp ASC, blutwerteID ASC")
     fun getBloodValues(armID: Int, typID: Int): Flow<List<BloodValues>>
 
+    @Query("SELECT * FROM BloodValues WHERE fArmID = :armID AND fTypID = :typID ORDER BY timestamp ASC, blutwerteID ASC LIMIT 3")
+    fun getBloodValuesTop3(armID: Int, typID: Int): Flow<List<BloodValues>>
+
     @Query("SELECT * FROM Type ORDER BY typID ASC")
     fun getTypes(): Flow<List<Type>>
 

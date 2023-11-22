@@ -40,8 +40,11 @@ import de.agb.blutspende_app.model.roomDatabase.BloodValuesState
 import de.agb.blutspende_app.ui.theme.Blooddonation_AppTheme
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
 import de.agb.blutspende_app.viewmodel.screens.VMBloodValues
+import java.text.DateFormat.LONG
 import java.text.DateFormat.MEDIUM
 import java.text.DateFormat.getDateInstance
+import java.text.DateFormat.getTimeInstance
+import java.util.Date
 
 @Composable
 fun BloodValues(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Unit) {
@@ -63,6 +66,7 @@ fun BloodValues(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Unit) {
 @Composable
 fun Content(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Unit) {
     val vmBloodValues: VMBloodValues = viewModel()
+    val vmGlobalFunctions: GlobalFunctions = viewModel()
 
     Column(
         Modifier
@@ -88,17 +92,36 @@ fun Content(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Unit) {
                     }
                 )
 
-                state.bloodValuesList.forEach { blutwert ->
-                    Text(
-                        text = blutwert.blutwerteID.toString() + " " +
-                                blutwert.systolisch + " Sys " +
-                                blutwert.diastolisch + " Dia " +
-                                blutwert.puls + " Puls " +
-                                state.armsList[blutwert.fArmID].bezeichnung + " " +
-                                state.typesList[blutwert.fTypID].blutspendeTyp
-                    )
-                }
+                val dateFormat = getDateInstance(MEDIUM)
+                val timeFormat = getTimeInstance(MEDIUM)
 
+                if (vmBloodValues.getSelectedFilterText.value == vmBloodValues.getFilterOptions[0]) {
+                    state.bloodvaluesTop3List.forEach { blutwert ->
+                        Text(
+                            text = blutwert.blutwerteID.toString() + " " +
+                                    blutwert.systolisch + " Sys " +
+                                    blutwert.diastolisch + " Dia " +
+                                    blutwert.puls + " Puls " +
+                                    state.armsList[blutwert.fArmID].bezeichnung + " " +
+                                    state.typesList[blutwert.fTypID].blutspendeTyp + "\n" +
+                                    //dateFormat.format(blutwert.timestamp) + " " + timeFormat.format(blutwert.timestamp) +
+                                    Date(blutwert.timestamp)
+                        )
+                    }
+                } else {
+                    state.bloodValuesList.forEach { blutwert ->
+                        Text(
+                            text = blutwert.blutwerteID.toString() + " " +
+                                    blutwert.systolisch + " Sys " +
+                                    blutwert.diastolisch + " Dia " +
+                                    blutwert.puls + " Puls " +
+                                    state.armsList[blutwert.fArmID].bezeichnung + " " +
+                                    state.typesList[blutwert.fTypID].blutspendeTyp + "\n" +
+                                    //dateFormat.format(blutwert.timestamp) + " " + timeFormat.format(blutwert.timestamp) +
+                                    Date(blutwert.timestamp)
+                        )
+                    }
+                }
             }
 
             Button(onClick = {
@@ -106,6 +129,7 @@ fun Content(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Unit) {
                 onEvent(BloodValuesEvent.SetDiastolic(90))
                 onEvent(BloodValuesEvent.SetHaemoglobin(13.5f))
                 onEvent(BloodValuesEvent.SetPulse(70))
+                onEvent(BloodValuesEvent.SetTimestamp(System.currentTimeMillis()))
                 onEvent(BloodValuesEvent.FArmID(0))
                 onEvent(BloodValuesEvent.FTypID(0))
                 onEvent(BloodValuesEvent.SaveBloodValues)

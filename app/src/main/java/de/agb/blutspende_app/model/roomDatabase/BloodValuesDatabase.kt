@@ -13,7 +13,6 @@ import androidx.room.TypeConverters
         Type::class
     ], version = 1, exportSchema = false
 )
-@TypeConverters(Converters::class)
 abstract class BloodValuesDatabase : RoomDatabase() {
     abstract fun bloodValuesDao(): BloodValuesDao
 
