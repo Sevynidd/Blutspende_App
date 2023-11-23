@@ -64,8 +64,6 @@ fun BloodValues(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Unit) {
 
 @Composable
 fun Content(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Unit) {
-    val vmBloodValues: VMBloodValues = viewModel()
-    val vmGlobalFunctions: GlobalFunctions = viewModel()
 
     Column(
         Modifier
@@ -78,65 +76,9 @@ fun Content(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Unit) {
         Column(
             modifier = Modifier.padding(top = 14.dp, bottom = 14.dp)
         ) {
-            Text("Blutwerte")
 
-            val cardPadding = 12.dp
-            Card(
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text(
-                    modifier = Modifier.padding(cardPadding),
-                    text = when (vmBloodValues.getSelectedFilterText.value) {
-                        vmBloodValues.getFilterOptions[0] -> "Die letzten 3 Blutspendewerte:"
-                        vmBloodValues.getFilterOptions[1] -> "Blutwerte anhand des Datumsfilters:"
-                        else -> "Die letzten 3 Blutspendewerte:"
-                    }
-                )
+            ContentBloodValues(state, onEvent)
 
-                val dateFormat = getDateInstance(MEDIUM)
-                val timeFormat = getTimeInstance(MEDIUM)
-
-                if (vmBloodValues.getSelectedFilterText.value == vmBloodValues.getFilterOptions[0]) {
-                    state.bloodvaluesTop3List.forEach { blutwert ->
-                        Text(
-                            text = blutwert.blutwerteID.toString() + " " +
-                                    blutwert.systolisch + " Sys " +
-                                    blutwert.diastolisch + " Dia " +
-                                    blutwert.puls + " Puls " +
-                                    state.armsList[blutwert.fArmID].bezeichnung + " " +
-                                    state.typesList[blutwert.fTypID].blutspendeTyp + "\n" +
-                                    //dateFormat.format(blutwert.timestamp) + " " + timeFormat.format(blutwert.timestamp) +
-                                    Date(blutwert.timestamp)
-                        )
-                    }
-                } else {
-                    state.bloodValuesList.forEach { blutwert ->
-                        Text(
-                            text = blutwert.blutwerteID.toString() + " " +
-                                    blutwert.systolisch + " Sys " +
-                                    blutwert.diastolisch + " Dia " +
-                                    blutwert.puls + " Puls " +
-                                    state.armsList[blutwert.fArmID].bezeichnung + " " +
-                                    state.typesList[blutwert.fTypID].blutspendeTyp + "\n" +
-                                    //dateFormat.format(blutwert.timestamp) + " " + timeFormat.format(blutwert.timestamp) +
-                                    Date(blutwert.timestamp)
-                        )
-                    }
-                }
-            }
-
-            Button(onClick = {
-                onEvent(BloodValuesEvent.SetSystolic(120))
-                onEvent(BloodValuesEvent.SetDiastolic(90))
-                onEvent(BloodValuesEvent.SetHaemoglobin(13.5f))
-                onEvent(BloodValuesEvent.SetPulse(70))
-                onEvent(BloodValuesEvent.SetTimestamp(System.currentTimeMillis()))
-                onEvent(BloodValuesEvent.FArmID(0))
-                onEvent(BloodValuesEvent.FTypID(0))
-                onEvent(BloodValuesEvent.SaveBloodValues)
-            }) {
-                Text(text = "TestButton")
-            }
         }
     }
 }
@@ -220,5 +162,72 @@ fun BloodValueFilter() {
             }
         }
 
+    }
+}
+
+@Composable
+fun ContentBloodValues(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Unit) {
+    val vmBloodValues: VMBloodValues = viewModel()
+    val vmGlobalFunctions: GlobalFunctions = viewModel()
+
+    Text(
+        text = when (vmBloodValues.getSelectedFilterText.value) {
+            vmBloodValues.getFilterOptions[0] -> "Die letzten 3 Blutspendewerte"
+            vmBloodValues.getFilterOptions[1] -> "Blutwerte anhand des Datumsfilters"
+            else -> "Die letzten 3 Blutspendewerte"
+        },
+        style = MaterialTheme.typography.titleMedium
+    )
+
+    Spacer(modifier = Modifier.size(14.dp))
+
+    val cardPadding = 12.dp
+    Card(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        val dateFormat = getDateInstance(MEDIUM)
+        val timeFormat = getTimeInstance(MEDIUM)
+
+        if (vmBloodValues.getSelectedFilterText.value == vmBloodValues.getFilterOptions[0]) {
+
+            state.bloodvaluesTop3List.forEach { blutwert ->
+                Text(
+                    text = blutwert.blutwerteID.toString() + " " +
+                            blutwert.systolisch + " Sys " +
+                            blutwert.diastolisch + " Dia " +
+                            blutwert.puls + " Puls " +
+                            state.armsList[blutwert.fArmID].bezeichnung + " " +
+                            state.typesList[blutwert.fTypID].blutspendeTyp + "\n" +
+                            //dateFormat.format(blutwert.timestamp) + " " + timeFormat.format(blutwert.timestamp) +
+                            Date(blutwert.timestamp)
+                )
+            }
+        } else {
+            state.bloodValuesList.forEach { blutwert ->
+                Text(
+                    text = blutwert.blutwerteID.toString() + " " +
+                            blutwert.systolisch + " Sys " +
+                            blutwert.diastolisch + " Dia " +
+                            blutwert.puls + " Puls " +
+                            state.armsList[blutwert.fArmID].bezeichnung + " " +
+                            state.typesList[blutwert.fTypID].blutspendeTyp + "\n" +
+                            //dateFormat.format(blutwert.timestamp) + " " + timeFormat.format(blutwert.timestamp) +
+                            Date(blutwert.timestamp)
+                )
+            }
+        }
+    }
+
+    Button(onClick = {
+        onEvent(BloodValuesEvent.SetSystolic(120))
+        onEvent(BloodValuesEvent.SetDiastolic(90))
+        onEvent(BloodValuesEvent.SetHaemoglobin(13.5f))
+        onEvent(BloodValuesEvent.SetPulse(70))
+        onEvent(BloodValuesEvent.SetTimestamp(System.currentTimeMillis()))
+        onEvent(BloodValuesEvent.FArmID(0))
+        onEvent(BloodValuesEvent.FTypID(0))
+        onEvent(BloodValuesEvent.SaveBloodValues)
+    }) {
+        Text(text = "TestButton")
     }
 }
