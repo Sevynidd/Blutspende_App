@@ -30,7 +30,6 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.ViewModel
@@ -49,7 +48,7 @@ import de.agb.blutspende_app.model.roomDatabase.BloodValuesEvent
 import de.agb.blutspende_app.model.roomDatabase.BloodValuesState
 import de.agb.blutspende_app.model.roomDatabase.Type
 import de.agb.blutspende_app.ui.navigation.SetupNavbarGraph
-import de.agb.blutspende_app.ui.theme.Blooddonation_AppTheme
+import de.agb.blutspende_app.ui.theme.BlooddonationAppTheme
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
 import de.agb.blutspende_app.viewmodel.VMMainActivity
 import de.agb.blutspende_app.viewmodel.screens.database.VMBloodValues
@@ -77,7 +76,7 @@ class MainActivity : ComponentActivity() {
         WindowCompat.setDecorFitsSystemWindows(window, false)
 
         setContent {
-            Blooddonation_AppTheme {
+            BlooddonationAppTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
@@ -160,7 +159,7 @@ fun TopBar(navController: NavHostController) {
                     globalFunctions.getScreenRouteSupply -> stringResource(id = R.string.screenSupply)
                     else -> stringResource(id = R.string.settings)
                 },
-                fontSize = 20.sp
+                style = MaterialTheme.typography.titleLarge
             )
         },
         navigationIcon = {

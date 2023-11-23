@@ -26,13 +26,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.lifecycle.viewmodel.compose.viewModel
 import de.agb.blutspende_app.R
-import de.agb.blutspende_app.ui.theme.Blooddonation_AppTheme
+import de.agb.blutspende_app.ui.theme.BlooddonationAppTheme
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
 import de.agb.blutspende_app.viewmodel.VMDatastore
 
 @Composable
 fun SettingsBloodgroupWebview() {
-    Blooddonation_AppTheme {
+    BlooddonationAppTheme {
         Surface {
             Column(
                 modifier = Modifier

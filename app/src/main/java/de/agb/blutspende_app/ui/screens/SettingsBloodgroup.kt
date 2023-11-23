@@ -40,14 +40,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import de.agb.blutspende_app.R
-import de.agb.blutspende_app.ui.theme.Blooddonation_AppTheme
+import de.agb.blutspende_app.ui.theme.BlooddonationAppTheme
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
 import de.agb.blutspende_app.viewmodel.VMDatastore
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -55,7 +54,7 @@ import kotlinx.coroutines.launch
 
 @Composable
 fun SettingsBloodgroup(navController: NavController) {
-    Blooddonation_AppTheme {
+    BlooddonationAppTheme {
         Surface {
             Column(
                 modifier = Modifier
@@ -92,7 +91,7 @@ fun Bloodgroup(navController: NavController) {
         Modifier.fillMaxWidth()
     ) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "ABO-System", fontSize = 22.sp)
+            Text(text = "ABO-System", style = MaterialTheme.typography.titleMedium)
 
             IconButton(onClick = {
                 vmDatastore.saveBlooddonationInfoURLToDataStore("https://www.blutspenden.de/rund-ums-blut/blutgruppen/")
@@ -155,7 +154,7 @@ fun Rhesus(navController: NavController) {
         Modifier.fillMaxWidth()
     ) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "Rhesus", fontSize = 22.sp)
+            Text(text = "Rhesus", style = MaterialTheme.typography.titleMedium)
 
             IconButton(onClick = {
                 vmDatastore.saveBlooddonationInfoURLToDataStore("https://www.studysmarter.de/schule/biologie/genetik/rhesus-system/")
@@ -223,7 +222,10 @@ fun Rhesuscomplex(navController: NavController) {
         Modifier.fillMaxWidth()
     ) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Text(text = stringResource(id = R.string.rhesuskomplex), fontSize = 22.sp)
+            Text(
+                text = stringResource(id = R.string.rhesuskomplex),
+                style = MaterialTheme.typography.titleMedium
+            )
 
             IconButton(onClick = {
                 vmDatastore.saveBlooddonationInfoURLToDataStore("https://www.studysmarter.de/schule/biologie/genetik/rhesus-system/")
@@ -283,7 +285,7 @@ fun Kell(navController: NavController) {
         Modifier.fillMaxWidth()
     ) {
         Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-            Text(text = "Kell", fontSize = 22.sp)
+            Text(text = "Kell", style = MaterialTheme.typography.titleMedium)
 
             IconButton(onClick = {
                 vmDatastore.saveBlooddonationInfoURLToDataStore("https://www.blutspende.de/magazin/von-a-bis-0/kell-system-in-der-blutgruppenbestimmung")

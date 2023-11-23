@@ -32,7 +32,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import de.agb.blutspende_app.R
 import de.agb.blutspende_app.model.ISupplyItem
-import de.agb.blutspende_app.ui.theme.Blooddonation_AppTheme
+import de.agb.blutspende_app.ui.theme.BlooddonationAppTheme
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
 import de.agb.blutspende_app.viewmodel.VMDatastore
 import java.time.LocalDate
@@ -40,7 +40,7 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun Supply() {
-    Blooddonation_AppTheme {
+    BlooddonationAppTheme {
         Surface {
             Column(
                 modifier = Modifier

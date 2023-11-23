@@ -37,7 +37,6 @@ import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -46,14 +45,14 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import de.agb.blutspende_app.R
 import de.agb.blutspende_app.model.ISettingsItem
-import de.agb.blutspende_app.ui.theme.Blooddonation_AppTheme
-import de.agb.blutspende_app.viewmodel.VMDatastore
+import de.agb.blutspende_app.ui.theme.BlooddonationAppTheme
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
+import de.agb.blutspende_app.viewmodel.VMDatastore
 import de.agb.blutspende_app.viewmodel.screens.settings.VMSettings
 
 @Composable
 fun Settings(navController: NavHostController) {
-    Blooddonation_AppTheme {
+    BlooddonationAppTheme {
         Surface {
             Column(
                 modifier = Modifier
@@ -65,7 +64,10 @@ fun Settings(navController: NavHostController) {
                     modifier = Modifier.fillMaxSize()
                 ) {
 
-                    Text(text = stringResource(id = R.string.settings_general), fontSize = 18.sp)
+                    Text(
+                        text = stringResource(id = R.string.settings_general),
+                        style = MaterialTheme.typography.titleMedium
+                    )
 
                     Spacer(Modifier.size(10.dp))
 
@@ -81,7 +83,10 @@ fun Settings(navController: NavHostController) {
                     Spacer(Modifier.size(10.dp))
 
 
-                    Text(text = stringResource(id = R.string.blood_donation), fontSize = 18.sp)
+                    Text(
+                        text = stringResource(id = R.string.blood_donation),
+                        style = MaterialTheme.typography.titleMedium
+                    )
 
                     Spacer(Modifier.size(10.dp))
 
@@ -113,15 +118,13 @@ fun DefinitionSettingsItem(item: ISettingsItem) {
         Column(Modifier.wrapContentWidth()) {
             Text(
                 text = item.title,
-                style = TextStyle(color = MaterialTheme.colorScheme.onBackground, fontSize = 15.sp)
+                style =
+                MaterialTheme.typography.labelLarge.merge(MaterialTheme.colorScheme.onBackground)
             )
             item.subTitle?.let {
                 Text(
                     text = it,
-                    style = TextStyle(
-                        color = MaterialTheme.colorScheme.onBackground,
-                        fontSize = 12.sp
-                    )
+                    style = MaterialTheme.typography.labelMedium.merge(MaterialTheme.colorScheme.onBackground)
                 )
             }
         }

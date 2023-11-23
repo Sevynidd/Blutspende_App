@@ -37,10 +37,9 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import de.agb.blutspende_app.model.roomDatabase.BloodValuesEvent
 import de.agb.blutspende_app.model.roomDatabase.BloodValuesState
-import de.agb.blutspende_app.ui.theme.Blooddonation_AppTheme
+import de.agb.blutspende_app.ui.theme.BlooddonationAppTheme
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
 import de.agb.blutspende_app.viewmodel.screens.VMBloodValues
-import java.text.DateFormat.LONG
 import java.text.DateFormat.MEDIUM
 import java.text.DateFormat.getDateInstance
 import java.text.DateFormat.getTimeInstance
@@ -48,7 +47,7 @@ import java.util.Date
 
 @Composable
 fun BloodValues(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Unit) {
-    Blooddonation_AppTheme {
+    BlooddonationAppTheme {
         Surface {
             Column(
                 modifier = Modifier
@@ -79,6 +78,8 @@ fun Content(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Unit) {
         Column(
             modifier = Modifier.padding(top = 14.dp, bottom = 14.dp)
         ) {
+            Text("Blutwerte")
+
             val cardPadding = 12.dp
             Card(
                 modifier = Modifier.fillMaxWidth()

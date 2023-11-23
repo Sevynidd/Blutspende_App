@@ -1,7 +1,6 @@
 package de.agb.blutspende_app.ui.theme
 
 
-import de.agb.blutspende_app.viewmodel.VMDatastore
 import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
@@ -16,6 +15,7 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
+import de.agb.blutspende_app.viewmodel.VMDatastore
 
 
 private val LightColors = lightColorScheme(
@@ -84,7 +84,7 @@ private val DarkColors = darkColorScheme(
 )
 
 @Composable
-fun Blooddonation_AppTheme(
+fun BlooddonationAppTheme(
     content: @Composable () -> Unit
 ) {
     val viewModel: VMDatastore = viewModel()
@@ -120,6 +120,7 @@ fun Blooddonation_AppTheme(
 
     MaterialTheme(
         colorScheme = colors,
+        typography = customTypography,
         content = content
     )
 }
