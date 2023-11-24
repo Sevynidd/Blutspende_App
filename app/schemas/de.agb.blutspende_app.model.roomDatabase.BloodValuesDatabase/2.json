@@ -1,0 +1,151 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 2,
+    "identityHash": "abfd0264b677d2ec426cd934711fe79c",
+    "entities": [
+      {
+        "tableName": "BloodValues",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`blutwerteID` INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, `systolisch` INTEGER NOT NULL, `diastolisch` INTEGER NOT NULL, `haemoglobin` REAL, `puls` INTEGER NOT NULL, `timestamp` INTEGER NOT NULL, `fArmID` INTEGER NOT NULL, `fTypID` INTEGER NOT NULL, FOREIGN KEY(`fArmID`) REFERENCES `Arm`(`armID`) ON UPDATE NO ACTION ON DELETE NO ACTION , FOREIGN KEY(`fTypID`) REFERENCES `Type`(`typID`) ON UPDATE NO ACTION ON DELETE NO ACTION )",
+        "fields": [
+          {
+            "fieldPath": "blutwerteID",
+            "columnName": "blutwerteID",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "systolisch",
+            "columnName": "systolisch",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "diastolisch",
+            "columnName": "diastolisch",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "haemoglobin",
+            "columnName": "haemoglobin",
+            "affinity": "REAL",
+            "notNull": false
+          },
+          {
+            "fieldPath": "puls",
+            "columnName": "puls",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "timestamp",
+            "columnName": "timestamp",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fArmID",
+            "columnName": "fArmID",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "fTypID",
+            "columnName": "fTypID",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": true,
+          "columnNames": [
+            "blutwerteID"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": [
+          {
+            "table": "Arm",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "fArmID"
+            ],
+            "referencedColumns": [
+              "armID"
+            ]
+          },
+          {
+            "table": "Type",
+            "onDelete": "NO ACTION",
+            "onUpdate": "NO ACTION",
+            "columns": [
+              "fTypID"
+            ],
+            "referencedColumns": [
+              "typID"
+            ]
+          }
+        ]
+      },
+      {
+        "tableName": "Arm",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`armID` INTEGER NOT NULL, `bezeichnung` TEXT NOT NULL, PRIMARY KEY(`armID`))",
+        "fields": [
+          {
+            "fieldPath": "armID",
+            "columnName": "armID",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "bezeichnung",
+            "columnName": "bezeichnung",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "armID"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "Type",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`typID` INTEGER NOT NULL, `blutspendeTyp` TEXT NOT NULL, PRIMARY KEY(`typID`))",
+        "fields": [
+          {
+            "fieldPath": "typID",
+            "columnName": "typID",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "blutspendeTyp",
+            "columnName": "blutspendeTyp",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "typID"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, 'abfd0264b677d2ec426cd934711fe79c')"
+    ]
+  }
+}

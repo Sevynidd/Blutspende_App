@@ -1,17 +1,21 @@
 package de.agb.blutspende_app.model.roomDatabase
 
 import android.content.Context
+import androidx.room.AutoMigration
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
-import androidx.room.TypeConverters
 
 @Database(
     entities = [
         BloodValues::class,
         Arm::class,
         Type::class
-    ], version = 1, exportSchema = false
+    ], version = 1,
+    exportSchema = true,
+    autoMigrations = [
+        AutoMigration(from = 1, to = 2)
+    ]
 )
 abstract class BloodValuesDatabase : RoomDatabase() {
     abstract fun bloodValuesDao(): BloodValuesDao
@@ -27,10 +31,9 @@ abstract class BloodValuesDatabase : RoomDatabase() {
                     context.applicationContext,
                     BloodValuesDatabase::class.java,
                     "BloodDonation_db"
-                ).fallbackToDestructiveMigration()
-                    .build().also {
-                        INSTANCE = it
-                    }
+                ).build().also {
+                    INSTANCE = it
+                }
             }
         }
     }
