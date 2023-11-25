@@ -10,7 +10,5 @@ data class BloodValuesState(
     val armsList: List<Arm> = emptyList(),
     val fTypID: Int = 0,
     val typesList: List<Type> = emptyList(),
-    val timestamp: Long = 0,
-    val bloodvaluesTop3List: List<BloodValues> = emptyList(),
-    val bloodvaluesBetweenDates: List<BloodValues> = emptyList()
+    val timestamp: Long = 0
 )

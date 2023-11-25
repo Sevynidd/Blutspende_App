@@ -27,20 +27,12 @@ class VMBloodValues(
     private val _arm = bloodValuesDao.getArms()
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
-    private val _bloodvaluesTop3 =
-        bloodValuesDao.getBloodValuesTop3(_state.value.fArmID, _state.value.fTypID)
-            .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
-    //private val _bloodvaluesBetweenDates =
-        //bloodValuesDao.getBloodValuesFilteredDates(_state.value.fArmID, _state.value.fTypID, )
-
-
-    val state = combine(_state, _bloodvalues, _type, _arm, _bloodvaluesTop3) { state, blut, type, arm, bv3 ->
+    val state = combine(_state, _bloodvalues, _type, _arm) { state, blut, type, arm ->
         state.copy(
             bloodValuesList = blut,
             typesList = type,
-            armsList = arm,
-            bloodvaluesTop3List = bv3
+            armsList = arm
         )
 
     }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), BloodValuesState())

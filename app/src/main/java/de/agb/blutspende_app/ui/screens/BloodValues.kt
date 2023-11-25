@@ -118,11 +118,12 @@ fun BloodValueFilter() {
     val sheetState = rememberModalBottomSheetState()
     val dateRangePickerState = rememberDateRangePickerState()
 
-    val sdf = getDateInstance(MEDIUM)
+    val dateFormat = getDateInstance(MEDIUM)
 
     LaunchedEffect(key1 = LocalLifecycleOwner.current) {
         if ((dateRangePickerState.selectedStartDateMillis == null) or (dateRangePickerState.selectedEndDateMillis == null)) {
             dateRangePickerState.setSelection(
+                // 604800000L is a week
                 System.currentTimeMillis() - 604800000L, System.currentTimeMillis()
             )
         }
@@ -131,11 +132,11 @@ fun BloodValueFilter() {
     if (selectedOptionText == vmBloodValues.getFilterOptions[1]) {
         ClickableText(text = AnnotatedString(
 
-            sdf.format(
+            dateFormat.format(
                 globalFunctions.millisToDate(
                     dateRangePickerState.selectedStartDateMillis ?: 0
                 )
-            ) + "  bis  " + sdf.format(
+            ) + "  bis  " + dateFormat.format(
                 globalFunctions.millisToDate(
                     dateRangePickerState.selectedEndDateMillis ?: 0
                 )
@@ -174,51 +175,53 @@ fun ContentBloodValues(state: BloodValuesState, onEvent: (BloodValuesEvent) -> U
     val vmGlobalFunctions: GlobalFunctions = viewModel()
 
     Text(
-        text = when (vmBloodValues.getSelectedFilterText.value) {
-            vmBloodValues.getFilterOptions[0] -> "Die letzten 3 Blutspendewerte"
-            vmBloodValues.getFilterOptions[1] -> "Blutwerte anhand des Datumsfilters"
-            else -> "Die letzten 3 Blutspendewerte"
-        },
+        text = vmBloodValues.getSelectedFilterText.value,
         style = MaterialTheme.typography.titleMedium
     )
 
     Spacer(modifier = Modifier.size(14.dp))
 
-    val cardPadding = 12.dp
-    Card(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        val dateFormat = getDateInstance(MEDIUM)
-        val timeFormat = getTimeInstance(MEDIUM)
+    if (state.bloodValuesList.isNotEmpty()) {
+        val cardPadding = 12.dp
+        Card(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            val dateFormat = getDateInstance(MEDIUM)
+            val timeFormat = getTimeInstance(MEDIUM)
 
-        if (vmBloodValues.getSelectedFilterText.value == vmBloodValues.getFilterOptions[0]) {
+            if (vmBloodValues.getSelectedFilterText.value == vmBloodValues.getFilterOptions[0]) {
 
-            state.bloodvaluesTop3List.forEach { blutwert ->
-                Text(
-                    text = blutwert.blutwerteID.toString() + " " +
-                            blutwert.systolisch + " Sys " +
-                            blutwert.diastolisch + " Dia " +
-                            blutwert.puls + " Puls " +
-                            state.armsList[blutwert.fArmID].bezeichnung + " " +
-                            state.typesList[blutwert.fTypID].blutspendeTyp + "\n" +
-                            //dateFormat.format(blutwert.timestamp) + " " + timeFormat.format(blutwert.timestamp) +
-                            Date(blutwert.timestamp),
-                    modifier = Modifier.padding(cardPadding)
-                )
-            }
-        } else {
-            state.bloodValuesList.forEach { blutwert ->
-                Text(
-                    text = blutwert.blutwerteID.toString() + " " +
-                            blutwert.systolisch + " Sys " +
-                            blutwert.diastolisch + " Dia " +
-                            blutwert.puls + " Puls " +
-                            state.armsList[blutwert.fArmID].bezeichnung + " " +
-                            state.typesList[blutwert.fTypID].blutspendeTyp + "\n" +
-                            //dateFormat.format(blutwert.timestamp) + " " + timeFormat.format(blutwert.timestamp) +
-                            Date(blutwert.timestamp),
-                    modifier = Modifier.padding(cardPadding)
-                )
+                state.bloodValuesList.forEachIndexed { index, bloodValues ->
+                    if (index < 3) {
+                        Text(
+                            text = bloodValues.blutwerteID.toString() + " " +
+                                    bloodValues.systolisch + " Sys " +
+                                    bloodValues.diastolisch + " Dia " +
+                                    bloodValues.puls + " Puls " +
+                                    state.armsList[bloodValues.fArmID].bezeichnung + " " +
+                                    state.typesList[bloodValues.fTypID].blutspendeTyp + "\n" +
+                                    //dateFormat.format(blutwert.timestamp) + " " + timeFormat.format(blutwert.timestamp) +
+                                    Date(bloodValues.timestamp),
+                            modifier = Modifier.padding(cardPadding)
+                        )
+                    }
+                }
+            } else {
+                // TODO Recompose on startdate/enddate change of DatePicker
+                state.bloodValuesList.forEach { blutwert ->
+                    if (blutwert.timestamp in (System.currentTimeMillis() - 604800000L)..(System.currentTimeMillis()))
+                        Text(
+                            text = blutwert.blutwerteID.toString() + " " +
+                                    blutwert.systolisch + " Sys " +
+                                    blutwert.diastolisch + " Dia " +
+                                    blutwert.puls + " Puls " +
+                                    state.armsList[blutwert.fArmID].bezeichnung + " " +
+                                    state.typesList[blutwert.fTypID].blutspendeTyp + "\n" +
+                                    //dateFormat.format(blutwert.timestamp) + " " + timeFormat.format(blutwert.timestamp) +
+                                    Date(blutwert.timestamp),
+                            modifier = Modifier.padding(cardPadding)
+                        )
+                }
             }
         }
     }
