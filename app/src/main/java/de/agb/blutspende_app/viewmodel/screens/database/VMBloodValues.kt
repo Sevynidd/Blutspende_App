@@ -28,9 +28,9 @@ class VMBloodValues(
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
 
-    val state = combine(_state, _bloodvalues, _type, _arm) { state, blut, type, arm ->
+    val state = combine(_state, _bloodvalues, _type, _arm) { state, blood, type, arm ->
         state.copy(
-            bloodValuesList = blut,
+            bloodValuesList = blood,
             typesList = type,
             armsList = arm
         )
