@@ -37,6 +37,12 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
+import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
+import com.patrykandpatrick.vico.compose.chart.Chart
+import com.patrykandpatrick.vico.compose.chart.line.lineChart
+import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
+import com.patrykandpatrick.vico.core.entry.entryOf
 import de.agb.blutspende_app.model.roomDatabase.BloodValuesEvent
 import de.agb.blutspende_app.model.roomDatabase.BloodValuesState
 import de.agb.blutspende_app.ui.theme.BlooddonationAppTheme
@@ -74,21 +80,13 @@ fun Content(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Unit) {
             .wrapContentHeight()
     ) {
 
-        BloodValueFilter()
-
-        Column(
-            modifier = Modifier.padding(top = 14.dp, bottom = 14.dp)
-        ) {
-
-            ContentBloodValues(state, onEvent)
-
-        }
+        BloodValueFilter(state, onEvent)
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun BloodValueFilter() {
+fun BloodValueFilter(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Unit) {
     val globalFunctions: GlobalFunctions = viewModel()
     val vmBloodValues: VMBloodValues = viewModel()
 
@@ -134,11 +132,12 @@ fun BloodValueFilter() {
 
             dateFormat.format(
                 globalFunctions.millisToDate(
-                    dateRangePickerState.selectedStartDateMillis ?: 0
+                    dateRangePickerState.selectedStartDateMillis
+                        ?: (System.currentTimeMillis() - 604800000L)
                 )
             ) + "  bis  " + dateFormat.format(
                 globalFunctions.millisToDate(
-                    dateRangePickerState.selectedEndDateMillis ?: 0
+                    dateRangePickerState.selectedEndDateMillis ?: (System.currentTimeMillis())
                 )
             )
         ),
@@ -167,12 +166,6 @@ fun BloodValueFilter() {
         }
 
     }
-}
-
-@Composable
-fun ContentBloodValues(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Unit) {
-    val vmBloodValues: VMBloodValues = viewModel()
-    val vmGlobalFunctions: GlobalFunctions = viewModel()
 
     Text(
         text = vmBloodValues.getSelectedFilterText.value,
@@ -180,9 +173,9 @@ fun ContentBloodValues(state: BloodValuesState, onEvent: (BloodValuesEvent) -> U
     )
 
     Spacer(modifier = Modifier.size(14.dp))
+    val cardPadding = 12.dp
 
     if (state.bloodValuesList.isNotEmpty()) {
-        val cardPadding = 12.dp
         Card(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -207,9 +200,10 @@ fun ContentBloodValues(state: BloodValuesState, onEvent: (BloodValuesEvent) -> U
                     }
                 }
             } else {
-                // TODO Recompose on startdate/enddate change of DatePicker
                 state.bloodValuesList.forEach { blutwert ->
-                    if (blutwert.timestamp in (System.currentTimeMillis() - 604800000L)..(System.currentTimeMillis()))
+                    if (blutwert.timestamp in (dateRangePickerState.selectedStartDateMillis
+                            ?: 0)..(dateRangePickerState.selectedEndDateMillis ?: 0)
+                    )
                         Text(
                             text = blutwert.blutwerteID.toString() + " " +
                                     blutwert.systolisch + " Sys " +
@@ -237,5 +231,30 @@ fun ContentBloodValues(state: BloodValuesState, onEvent: (BloodValuesEvent) -> U
         onEvent(BloodValuesEvent.SaveBloodValues)
     }) {
         Text(text = "TestButton")
+    }
+
+    if ((state.bloodValuesList.isNotEmpty()) and (state.bloodValuesList.size > 1)) {
+        Text("Blutwerte Chart")
+
+        Card(modifier = Modifier.fillMaxWidth()) {
+
+            fun getRandomEntries() =
+                List(state.bloodValuesList.size) {
+                    entryOf(
+                        it,
+                        state.bloodValuesList[it].systolisch
+                    )
+                }
+
+            val chartEntryModelProducer = ChartEntryModelProducer(getRandomEntries())
+
+            Chart(
+                chart = lineChart(),
+                chartModelProducer = chartEntryModelProducer,
+                startAxis = rememberStartAxis(),
+                bottomAxis = rememberBottomAxis(),
+                modifier = Modifier.padding(cardPadding)
+            )
+        }
     }
 }
