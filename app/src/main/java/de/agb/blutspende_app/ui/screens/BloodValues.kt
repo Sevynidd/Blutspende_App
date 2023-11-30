@@ -29,6 +29,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
@@ -42,6 +43,7 @@ import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
+import com.patrykandpatrick.vico.core.chart.decoration.ThresholdLine
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.entryOf
 import de.agb.blutspende_app.model.roomDatabase.BloodValuesEvent
@@ -49,6 +51,7 @@ import de.agb.blutspende_app.model.roomDatabase.BloodValuesState
 import de.agb.blutspende_app.ui.theme.BlooddonationAppTheme
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
 import de.agb.blutspende_app.viewmodel.screens.VMBloodValues
+import java.text.DateFormat
 import java.util.Date
 
 @Composable
@@ -114,6 +117,9 @@ fun BloodValueFilter(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Uni
     val sheetState = rememberModalBottomSheetState()
     val dateRangePickerState = rememberDateRangePickerState()
 
+    val dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM)
+    val timeFormat = DateFormat.getTimeInstance(DateFormat.MEDIUM)
+
     LaunchedEffect(key1 = LocalLifecycleOwner.current) {
         if ((dateRangePickerState.selectedStartDateMillis == null) or (dateRangePickerState.selectedEndDateMillis == null)) {
             dateRangePickerState.setSelection(
@@ -127,14 +133,14 @@ fun BloodValueFilter(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Uni
     if (selectedOptionText == vmBloodValues.getFilterOptions[1]) {
         ClickableText(text = AnnotatedString(
 
-            globalFunctions.mediumDateFormat.format(
+            dateFormat.format(
                 globalFunctions.millisToDate(
                     dateRangePickerState.selectedStartDateMillis
                         ?: (System.currentTimeMillis() - 604800000L)
 
 
                 )
-            ) + "  bis  " + globalFunctions.mediumDateFormat.format(
+            ) + "  bis  " + dateFormat.format(
                 globalFunctions.millisToDate(
                     dateRangePickerState.selectedEndDateMillis ?: (System.currentTimeMillis())
                 )
@@ -232,67 +238,87 @@ fun BloodValueFilter(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Uni
     }
 
     AnimatedVisibility((state.bloodValuesList.isNotEmpty()) and (state.bloodValuesList.size > 1)) {
-        Text("Blutwerte Chart")
+        Column(Modifier.fillMaxWidth()) {
+            Text("Blutwerte Chart")
 
-        Card(modifier = Modifier.fillMaxWidth()) {
+            Card(modifier = Modifier.fillMaxWidth()) {
 
-            val datesForXAxis = ArrayList<Long>()
+                val datesForXAxis = ArrayList<Long>()
+                var averageSysValue = 0f
 
-            fun bloodvaluesChartEntries() =
-                if (vmBloodValues.getSelectedFilterText.value == vmBloodValues.getFilterOptions[0]) {
-                    val size = if (state.bloodValuesList.size > 3) {
-                        3
+                fun bloodvaluesChartEntries() =
+                    if (vmBloodValues.getSelectedFilterText.value == vmBloodValues.getFilterOptions[0]) {
+                        val size = if (state.bloodValuesList.size > 3) {
+                            3
+                        } else {
+                            state.bloodValuesList.size
+                        }
+
+                        averageSysValue = 0f
+
+                        for (i in 0..<size) {
+                            datesForXAxis.add(state.bloodValuesList[i].timestamp)
+                            averageSysValue += state.bloodValuesList[i].systolisch
+                        }
+
+                        averageSysValue /= size
+
+                        List(size) {
+                            entryOf(
+                                it,
+                                state.bloodValuesList[it].systolisch
+                            )
+                        }
                     } else {
-                        state.bloodValuesList.size
-                    }
+                        val idList = ArrayList<Int>()
 
-                    for (i in 0..<size) {
-                        datesForXAxis.add(state.bloodValuesList[i].timestamp)
-                    }
+                        state.bloodValuesList.forEachIndexed { index, bloodValues ->
+                            if (bloodValues.timestamp in (dateRangePickerState.selectedStartDateMillis
+                                    ?: 0)..(dateRangePickerState.selectedEndDateMillis ?: 0)
+                            ) {
+                                idList.add(index)
+                            }
+                        }
 
-                    List(size) {
-                        entryOf(
-                            it,
-                            state.bloodValuesList[it].systolisch
-                        )
-                    }
-                } else {
-                    val idList = ArrayList<Int>()
+                        averageSysValue = 0f
 
-                    state.bloodValuesList.forEachIndexed { index, bloodValues ->
-                        if (bloodValues.timestamp in (dateRangePickerState.selectedStartDateMillis
-                                ?: 0)..(dateRangePickerState.selectedEndDateMillis ?: 0)
-                        ) {
-                            idList.add(index)
+                        for (i in 0..<idList.size) {
+                            datesForXAxis.add(state.bloodValuesList[idList[i]].timestamp)
+                            averageSysValue += state.bloodValuesList[idList[i]].systolisch
+                        }
+
+                        averageSysValue /= idList.size
+
+                        List(idList.size) {
+                            entryOf(
+                                it,
+                                state.bloodValuesList[idList[it]].systolisch
+                            )
                         }
                     }
 
-                    for (i in 0..<idList.size) {
-                        datesForXAxis.add(state.bloodValuesList[idList[i]].timestamp)
-                    }
+                val chartEntryModelProducer = ChartEntryModelProducer(bloodvaluesChartEntries())
 
-                    List(idList.size) {
-                        entryOf(
-                            it,
-                            state.bloodValuesList[idList[it]].systolisch
-                        )
-                    }
-                }
+                val thresholdLine = remember { ThresholdLine(thresholdValue = averageSysValue) }
 
-
-            val chartEntryModelProducer = ChartEntryModelProducer(bloodvaluesChartEntries())
-
-            Chart(
-                chart = lineChart(),
-                chartModelProducer = chartEntryModelProducer,
-                startAxis = rememberStartAxis(),
-                bottomAxis = rememberBottomAxis(
-                    valueFormatter = { value, _ ->
-                        globalFunctions.mediumDateFormat.format(datesForXAxis[value.toInt()])
-                    }
-                ),
-                modifier = Modifier.padding(cardPadding)
-            )
+                Chart(
+                    chart = lineChart(
+                        decorations = listOf(thresholdLine)
+                    ),
+                    chartModelProducer = chartEntryModelProducer,
+                    startAxis = rememberStartAxis(),
+                    bottomAxis = rememberBottomAxis(
+                        valueFormatter = { value, _ ->
+                            if (datesForXAxis.size > 0) {
+                                dateFormat.format(datesForXAxis[value.toInt()])
+                            } else {
+                                "Kein Inhalt"
+                            }
+                        }
+                    ),
+                    modifier = Modifier.padding(cardPadding)
+                )
+            }
         }
     }
 }

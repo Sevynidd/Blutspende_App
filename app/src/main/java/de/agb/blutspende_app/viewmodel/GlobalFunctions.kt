@@ -138,9 +138,6 @@ class GlobalFunctions : ViewModel() {
         }
     }
 
-    val mediumDateFormat: DateFormat = getDateInstance(MEDIUM)
-    val mediumTimeFormat: DateFormat = getTimeInstance(MEDIUM)
-
     /**
      * Milliseconds to Date in UTF Format
      * @param millis Milliseconds
