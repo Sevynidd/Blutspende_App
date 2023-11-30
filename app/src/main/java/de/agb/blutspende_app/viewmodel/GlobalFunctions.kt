@@ -9,7 +9,12 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.lifecycle.ViewModel
 import de.agb.blutspende_app.R
 import de.agb.blutspende_app.model.ScreenDefinition
+import java.text.DateFormat
+import java.text.DateFormat.MEDIUM
+import java.text.DateFormat.getDateInstance
+import java.text.DateFormat.getTimeInstance
 import java.util.Date
+
 
 class GlobalFunctions : ViewModel() {
 
@@ -133,11 +138,21 @@ class GlobalFunctions : ViewModel() {
         }
     }
 
+    val mediumDateFormat: DateFormat = getDateInstance(MEDIUM)
+    val mediumTimeFormat: DateFormat = getTimeInstance(MEDIUM)
 
+    /**
+     * Milliseconds to Date in UTF Format
+     * @param millis Milliseconds
+     */
     fun millisToDate(millis: Long): Date {
         return Date(millis)
     }
 
+    /**
+     * Date in UTF Format to Milliseconds
+     * @param date Date in UTF Format
+     */
     fun dateToMillis(date: Date): Long {
         return date.time
     }

@@ -43,16 +43,12 @@ import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
-import com.patrykandpatrick.vico.core.entry.entryModelOf
 import com.patrykandpatrick.vico.core.entry.entryOf
 import de.agb.blutspende_app.model.roomDatabase.BloodValuesEvent
 import de.agb.blutspende_app.model.roomDatabase.BloodValuesState
 import de.agb.blutspende_app.ui.theme.BlooddonationAppTheme
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
 import de.agb.blutspende_app.viewmodel.screens.VMBloodValues
-import java.text.DateFormat.MEDIUM
-import java.text.DateFormat.getDateInstance
-import java.text.DateFormat.getTimeInstance
 import java.util.Date
 
 @Composable
@@ -118,13 +114,12 @@ fun BloodValueFilter(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Uni
     val sheetState = rememberModalBottomSheetState()
     val dateRangePickerState = rememberDateRangePickerState()
 
-    val dateFormat = getDateInstance(MEDIUM)
-
     LaunchedEffect(key1 = LocalLifecycleOwner.current) {
         if ((dateRangePickerState.selectedStartDateMillis == null) or (dateRangePickerState.selectedEndDateMillis == null)) {
             dateRangePickerState.setSelection(
                 // 604800000L is a week
-                System.currentTimeMillis() - 604800000L, System.currentTimeMillis()
+                System.currentTimeMillis() - 604800000L,
+                System.currentTimeMillis()
             )
         }
     }
@@ -132,12 +127,14 @@ fun BloodValueFilter(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Uni
     if (selectedOptionText == vmBloodValues.getFilterOptions[1]) {
         ClickableText(text = AnnotatedString(
 
-            dateFormat.format(
+            globalFunctions.mediumDateFormat.format(
                 globalFunctions.millisToDate(
                     dateRangePickerState.selectedStartDateMillis
                         ?: (System.currentTimeMillis() - 604800000L)
+
+
                 )
-            ) + "  bis  " + dateFormat.format(
+            ) + "  bis  " + globalFunctions.mediumDateFormat.format(
                 globalFunctions.millisToDate(
                     dateRangePickerState.selectedEndDateMillis ?: (System.currentTimeMillis())
                 )
@@ -181,8 +178,6 @@ fun BloodValueFilter(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Uni
         Card(
             modifier = Modifier.fillMaxWidth()
         ) {
-            val dateFormat = getDateInstance(MEDIUM)
-            val timeFormat = getTimeInstance(MEDIUM)
 
             if (vmBloodValues.getSelectedFilterText.value == vmBloodValues.getFilterOptions[0]) {
 
@@ -240,13 +235,19 @@ fun BloodValueFilter(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Uni
         Text("Blutwerte Chart")
 
         Card(modifier = Modifier.fillMaxWidth()) {
-            
+
+            val datesForXAxis = ArrayList<Long>()
+
             fun bloodvaluesChartEntries() =
                 if (vmBloodValues.getSelectedFilterText.value == vmBloodValues.getFilterOptions[0]) {
                     val size = if (state.bloodValuesList.size > 3) {
                         3
                     } else {
                         state.bloodValuesList.size
+                    }
+
+                    for (i in 0..<size) {
+                        datesForXAxis.add(state.bloodValuesList[i].timestamp)
                     }
 
                     List(size) {
@@ -266,6 +267,10 @@ fun BloodValueFilter(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Uni
                         }
                     }
 
+                    for (i in 0..<idList.size) {
+                        datesForXAxis.add(state.bloodValuesList[idList[i]].timestamp)
+                    }
+
                     List(idList.size) {
                         entryOf(
                             it,
@@ -274,13 +279,18 @@ fun BloodValueFilter(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Uni
                     }
                 }
 
+
             val chartEntryModelProducer = ChartEntryModelProducer(bloodvaluesChartEntries())
 
             Chart(
                 chart = lineChart(),
                 chartModelProducer = chartEntryModelProducer,
                 startAxis = rememberStartAxis(),
-                bottomAxis = rememberBottomAxis(),
+                bottomAxis = rememberBottomAxis(
+                    valueFormatter = { value, _ ->
+                        globalFunctions.mediumDateFormat.format(datesForXAxis[value.toInt()])
+                    }
+                ),
                 modifier = Modifier.padding(cardPadding)
             )
         }
