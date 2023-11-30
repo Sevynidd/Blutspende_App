@@ -1,5 +1,6 @@
 package de.agb.blutspende_app.ui.screens
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -42,6 +43,7 @@ import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
+import com.patrykandpatrick.vico.core.entry.entryModelOf
 import com.patrykandpatrick.vico.core.entry.entryOf
 import de.agb.blutspende_app.model.roomDatabase.BloodValuesEvent
 import de.agb.blutspende_app.model.roomDatabase.BloodValuesState
@@ -203,7 +205,7 @@ fun BloodValueFilter(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Uni
                 state.bloodValuesList.forEach { blutwert ->
                     if (blutwert.timestamp in (dateRangePickerState.selectedStartDateMillis
                             ?: 0)..(dateRangePickerState.selectedEndDateMillis ?: 0)
-                    )
+                    ) {
                         Text(
                             text = blutwert.blutwerteID.toString() + " " +
                                     blutwert.systolisch + " Sys " +
@@ -215,6 +217,7 @@ fun BloodValueFilter(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Uni
                                     Date(blutwert.timestamp),
                             modifier = Modifier.padding(cardPadding)
                         )
+                    }
                 }
             }
         }
@@ -233,20 +236,45 @@ fun BloodValueFilter(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Uni
         Text(text = "TestButton")
     }
 
-    if ((state.bloodValuesList.isNotEmpty()) and (state.bloodValuesList.size > 1)) {
+    AnimatedVisibility((state.bloodValuesList.isNotEmpty()) and (state.bloodValuesList.size > 1)) {
         Text("Blutwerte Chart")
 
         Card(modifier = Modifier.fillMaxWidth()) {
+            
+            fun bloodvaluesChartEntries() =
+                if (vmBloodValues.getSelectedFilterText.value == vmBloodValues.getFilterOptions[0]) {
+                    val size = if (state.bloodValuesList.size > 3) {
+                        3
+                    } else {
+                        state.bloodValuesList.size
+                    }
 
-            fun getRandomEntries() =
-                List(state.bloodValuesList.size) {
-                    entryOf(
-                        it,
-                        state.bloodValuesList[it].systolisch
-                    )
+                    List(size) {
+                        entryOf(
+                            it,
+                            state.bloodValuesList[it].systolisch
+                        )
+                    }
+                } else {
+                    val idList = ArrayList<Int>()
+
+                    state.bloodValuesList.forEachIndexed { index, bloodValues ->
+                        if (bloodValues.timestamp in (dateRangePickerState.selectedStartDateMillis
+                                ?: 0)..(dateRangePickerState.selectedEndDateMillis ?: 0)
+                        ) {
+                            idList.add(index)
+                        }
+                    }
+
+                    List(idList.size) {
+                        entryOf(
+                            it,
+                            state.bloodValuesList[idList[it]].systolisch
+                        )
+                    }
                 }
 
-            val chartEntryModelProducer = ChartEntryModelProducer(getRandomEntries())
+            val chartEntryModelProducer = ChartEntryModelProducer(bloodvaluesChartEntries())
 
             Chart(
                 chart = lineChart(),
