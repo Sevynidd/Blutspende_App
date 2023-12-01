@@ -23,8 +23,8 @@ interface BloodValuesDao {
     @Delete
     suspend fun deleteBloodValue(bloodValue: BloodValues)
 
-    @Query("SELECT * FROM BloodValues WHERE fArmID = :armID AND fTypID = :typID ORDER BY timestamp ASC, blutwerteID ASC")
-    fun getBloodValues(armID: Int, typID: Int): Flow<List<BloodValues>>
+    @Query("SELECT * FROM BloodValues INNER JOIN Arm ON BloodValues.fArmID == Arm.armID INNER JOIN Type ON BloodValues.fTypID == Type.typID ORDER BY timestamp ASC, blutwerteID ASC")
+    fun getBloodValues(): Flow<List<BloodValues>>
 
     @Query("SELECT * FROM Type ORDER BY typID ASC")
     fun getTypes(): Flow<List<Type>>

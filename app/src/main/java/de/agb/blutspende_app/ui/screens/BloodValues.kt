@@ -46,6 +46,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
@@ -62,7 +65,20 @@ import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
+import com.patrykandpatrick.vico.compose.component.shape.shader.fromBrush
+import com.patrykandpatrick.vico.compose.component.shapeComponent
+import com.patrykandpatrick.vico.compose.component.textComponent
+import com.patrykandpatrick.vico.compose.legend.legendItem
+import com.patrykandpatrick.vico.compose.legend.verticalLegend
+import com.patrykandpatrick.vico.compose.style.ChartStyle
+import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
+import com.patrykandpatrick.vico.core.DefaultDimens
 import com.patrykandpatrick.vico.core.chart.decoration.ThresholdLine
+import com.patrykandpatrick.vico.core.chart.line.LineChart
+import com.patrykandpatrick.vico.core.component.shape.LineComponent
+import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
+import com.patrykandpatrick.vico.core.component.shape.Shapes
+import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.entryOf
 import de.agb.blutspende_app.R
@@ -413,8 +429,8 @@ fun BloodValueFilter(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Uni
                     onEvent(BloodValuesEvent.SetHaemoglobin(13.5f))
                     onEvent(BloodValuesEvent.SetPulse(textPuls.text.toInt()))
                     onEvent(BloodValuesEvent.SetTimestamp(System.currentTimeMillis()))
-                    onEvent(BloodValuesEvent.FArmID(idArm))
-                    onEvent(BloodValuesEvent.FTypID(idDonationType))
+                    onEvent(BloodValuesEvent.SetFArmID(idArm))
+                    onEvent(BloodValuesEvent.SetFTypID(idDonationType))
                     onEvent(BloodValuesEvent.SaveBloodValues)
 
                     alertDialogAddValueVisible = false
@@ -477,8 +493,8 @@ fun BloodValueFilter(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Uni
         onEvent(BloodValuesEvent.SetHaemoglobin(13.5f))
         onEvent(BloodValuesEvent.SetPulse(70))
         onEvent(BloodValuesEvent.SetTimestamp(System.currentTimeMillis()))
-        onEvent(BloodValuesEvent.FArmID(0))
-        onEvent(BloodValuesEvent.FTypID(0))
+        onEvent(BloodValuesEvent.SetFArmID(0))
+        onEvent(BloodValuesEvent.SetFTypID(0))
         onEvent(BloodValuesEvent.SaveBloodValues)
     }) {
         Text(text = "TestButton")
@@ -486,7 +502,7 @@ fun BloodValueFilter(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Uni
 
     AnimatedVisibility((state.bloodValuesList.isNotEmpty()) and (state.bloodValuesList.size > 1)) {
         Column(Modifier.fillMaxWidth()) {
-            Text("Blutwerte Liniendiagramm")
+            Text("Blutwerte Diagram")
 
             Card(modifier = Modifier.fillMaxWidth()) {
 
@@ -546,25 +562,77 @@ fun BloodValueFilter(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Uni
 
                 val chartEntryModelProducer = ChartEntryModelProducer(bloodvaluesChartEntries())
 
-                val thresholdLine = remember { ThresholdLine(thresholdValue = averageSysValue) }
+                val thresholdLine = remember {
+                    ThresholdLine(
+                        thresholdValue = averageSysValue,
+                        lineComponent = ShapeComponent(color = R.color.darkBlue)
+                    )
+                }
 
-                Chart(
-                    chart = lineChart(
-                        decorations = listOf(thresholdLine)
-                    ),
-                    chartModelProducer = chartEntryModelProducer,
-                    startAxis = rememberStartAxis(),
-                    bottomAxis = rememberBottomAxis(
-                        valueFormatter = { value, _ ->
-                            if (datesForXAxis.size > 0) {
-                                vmBloodValues.dateFormat.format(datesForXAxis[value.toInt()])
-                            } else {
-                                "Kein Inhalt"
+                ProvideChartStyle(
+                    chartStyle = ChartStyle(
+                        axis = ChartStyle.Axis(
+                            axisLabelColor = Color(0xFF9C4238),
+                            axisGuidelineColor = Color(0xFF9C4238),
+                            axisLineColor = Color(0xFF9C4238),
+                        ),
+                        columnChart = ChartStyle.ColumnChart(
+                            listOf(
+                                LineComponent(
+                                    Color(0xFF9C4238).toArgb(),
+                                    DefaultDimens.COLUMN_WIDTH,
+                                    Shapes.roundedCornerShape(DefaultDimens.COLUMN_ROUNDNESS_PERCENT),
+                                )
+                            )
+                        ),
+                        marker = ChartStyle.Marker(),
+                        elevationOverlayColor = Color(0xFF9C4238),
+                        lineChart = ChartStyle.LineChart(
+                            lines = listOf(
+                                LineChart.LineSpec(
+                                    lineColor = Color(0xFF9C4238).toArgb(),
+                                    lineBackgroundShader = DynamicShaders.fromBrush(
+                                        Brush.verticalGradient(
+                                            listOf(
+                                                Color(0xFF9C4238).copy(com.patrykandpatrick.vico.core.DefaultAlpha.LINE_BACKGROUND_SHADER_START),
+                                                Color(0xFF9C4238).copy(com.patrykandpatrick.vico.core.DefaultAlpha.LINE_BACKGROUND_SHADER_END)
+                                            )
+                                        )
+                                    )
+                                )
+                            )
+                        ),
+                    )
+                ) {
+                    Chart(
+                        chart = lineChart(
+                            decorations = listOf(thresholdLine)
+                        ),
+                        chartModelProducer = chartEntryModelProducer,
+                        startAxis = rememberStartAxis(),
+                        bottomAxis = rememberBottomAxis(
+                            valueFormatter = { value, _ ->
+                                if (datesForXAxis.size > 0) {
+                                    vmBloodValues.dateFormat.format(datesForXAxis[value.toInt()])
+                                } else {
+                                    "Kein Inhalt"
+                                }
                             }
-                        }
-                    ),
-                    modifier = Modifier.padding(cardPadding)
-                )
+                        ),
+                        legend = verticalLegend(
+                            items = listOf(
+                                legendItem(
+                                    icon = shapeComponent(Shapes.pillShape),
+                                    label = textComponent(),
+                                    labelText = "Systolisch"
+                                )
+                            ),
+                            iconSize = 8.dp,
+                            iconPadding = 10.dp
+                        ),
+                        modifier = Modifier.padding(cardPadding)
+                    )
+                }
             }
         }
     }

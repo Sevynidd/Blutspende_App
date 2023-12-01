@@ -18,7 +18,7 @@ class VMDatabase(
 ) : ViewModel() {
     private val _state = MutableStateFlow(BloodValuesState())
     private val _bloodvalues =
-        bloodValuesDao.getBloodValues(_state.value.fArmID, _state.value.fTypID)
+        bloodValuesDao.getBloodValues()
             .stateIn(viewModelScope, SharingStarted.WhileSubscribed(), emptyList())
 
     private val _type = bloodValuesDao.getTypes()
@@ -121,7 +121,7 @@ class VMDatabase(
                 }
             }
 
-            is BloodValuesEvent.FArmID -> {
+            is BloodValuesEvent.SetFArmID -> {
                 _state.update {
                     it.copy(
                         fArmID = event.armID
@@ -129,7 +129,7 @@ class VMDatabase(
                 }
             }
 
-            is BloodValuesEvent.FTypID -> {
+            is BloodValuesEvent.SetFTypID -> {
                 _state.update {
                     it.copy(
                         fTypID = event.typID

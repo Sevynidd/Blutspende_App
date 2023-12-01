@@ -9,7 +9,7 @@ sealed interface BloodValuesEvent {
     data class SetPulse(val pulse: Int) : BloodValuesEvent
     data class SetHaemoglobin(val haemoglobin: Float) : BloodValuesEvent
     data class SetTimestamp(val timestamp: Long) : BloodValuesEvent
-    data class FArmID(val armID: Int) : BloodValuesEvent
-    data class FTypID(val typID: Int) : BloodValuesEvent
+    data class SetFArmID(val armID: Int) : BloodValuesEvent
+    data class SetFTypID(val typID: Int) : BloodValuesEvent
 
 }
