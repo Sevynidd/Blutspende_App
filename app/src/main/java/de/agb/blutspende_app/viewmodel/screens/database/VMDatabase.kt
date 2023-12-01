@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
-class VMBloodValues(
+class VMDatabase(
     private val bloodValuesDao: BloodValuesDao
 ) : ViewModel() {
     private val _state = MutableStateFlow(BloodValuesState())

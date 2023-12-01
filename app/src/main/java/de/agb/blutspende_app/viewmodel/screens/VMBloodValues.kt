@@ -1,10 +1,9 @@
 package de.agb.blutspende_app.viewmodel.screens
 
-import androidx.compose.runtime.MutableLongState
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
+import java.text.DateFormat
 
 class VMBloodValues : ViewModel() {
     // Filter
@@ -18,9 +17,20 @@ class VMBloodValues : ViewModel() {
         get() = _selectedFilterText
 
     // Bottom Sheet
+    // Datepicker
+    private var _bottomSheetDatepickerVisible = mutableStateOf(false)
 
-    private var _bottomSheetVisible = mutableStateOf(false)
+    val getBottomSheetDatepickerVisible: MutableState<Boolean>
+        get() = _bottomSheetDatepickerVisible
 
-    val getBottomSheetVisible: MutableState<Boolean>
-        get() = _bottomSheetVisible
+    // Add Value
+    private var _alertDialogAddValueVisible = mutableStateOf(false)
+
+    val getAlertDialogAddValueVisible: MutableState<Boolean>
+        get() = _alertDialogAddValueVisible
+
+    val dateFormat: DateFormat
+        get() = DateFormat.getDateInstance(DateFormat.MEDIUM)
+
+
 }

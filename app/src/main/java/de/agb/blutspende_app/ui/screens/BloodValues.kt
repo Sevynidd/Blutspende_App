@@ -13,29 +13,39 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.ClickableText
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.DatePickerFormatter
 import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLifecycleOwner
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -46,12 +56,12 @@ import com.patrykandpatrick.vico.compose.chart.line.lineChart
 import com.patrykandpatrick.vico.core.chart.decoration.ThresholdLine
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.entryOf
+import de.agb.blutspende_app.R
 import de.agb.blutspende_app.model.roomDatabase.BloodValuesEvent
 import de.agb.blutspende_app.model.roomDatabase.BloodValuesState
 import de.agb.blutspende_app.ui.theme.BlooddonationAppTheme
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
 import de.agb.blutspende_app.viewmodel.screens.VMBloodValues
-import java.text.DateFormat
 import java.util.Date
 
 @Composable
@@ -113,12 +123,9 @@ fun BloodValueFilter(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Uni
 
     Spacer(modifier = Modifier.size(18.dp))
 
-    var bottomSheetVisible by remember { vmBloodValues.getBottomSheetVisible }
-    val sheetState = rememberModalBottomSheetState()
+    var bottomSheetDatepickerVisible by remember { vmBloodValues.getBottomSheetDatepickerVisible }
+    val sheetStateDatepicker = rememberModalBottomSheetState()
     val dateRangePickerState = rememberDateRangePickerState()
-
-    val dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM)
-    val timeFormat = DateFormat.getTimeInstance(DateFormat.MEDIUM)
 
     LaunchedEffect(key1 = LocalLifecycleOwner.current) {
         if ((dateRangePickerState.selectedStartDateMillis == null) or (dateRangePickerState.selectedEndDateMillis == null)) {
@@ -133,28 +140,28 @@ fun BloodValueFilter(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Uni
     if (selectedOptionText == vmBloodValues.getFilterOptions[1]) {
         ClickableText(text = AnnotatedString(
 
-            dateFormat.format(
+            vmBloodValues.dateFormat.format(
                 globalFunctions.millisToDate(
                     dateRangePickerState.selectedStartDateMillis
                         ?: (System.currentTimeMillis() - 604800000L)
 
 
                 )
-            ) + "  bis  " + dateFormat.format(
+            ) + "  bis  " + vmBloodValues.dateFormat.format(
                 globalFunctions.millisToDate(
                     dateRangePickerState.selectedEndDateMillis ?: (System.currentTimeMillis())
                 )
             )
         ),
             style = TextStyle(color = MaterialTheme.colorScheme.onBackground, fontSize = 15.sp),
-            onClick = { bottomSheetVisible = bottomSheetVisible.not() })
+            onClick = { bottomSheetDatepickerVisible = bottomSheetDatepickerVisible.not() })
     }
 
-    if (bottomSheetVisible) {
+    if (bottomSheetDatepickerVisible) {
 
         ModalBottomSheet(
-            sheetState = sheetState,
-            onDismissRequest = { bottomSheetVisible = false }) {
+            sheetState = sheetStateDatepicker,
+            onDismissRequest = { bottomSheetDatepickerVisible = false }) {
 
             Column(
                 modifier = Modifier
@@ -172,12 +179,76 @@ fun BloodValueFilter(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Uni
 
     }
 
-    Text(
-        text = vmBloodValues.getSelectedFilterText.value,
-        style = MaterialTheme.typography.titleMedium
-    )
+    var alertDialogAddValueVisible by remember { vmBloodValues.getAlertDialogAddValueVisible }
+
+    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+        Text(
+            text = vmBloodValues.getSelectedFilterText.value,
+            style = MaterialTheme.typography.titleMedium,
+            modifier = Modifier.weight(1f)
+        )
+
+        IconButton(modifier = Modifier.size(28.dp),
+            onClick = {
+                alertDialogAddValueVisible = true
+            }) {
+            Icon(
+                painter = painterResource(id = R.drawable.plus),
+                contentDescription = "Add Value"
+            )
+        }
+    }
+
+    if (alertDialogAddValueVisible) {
+
+        var textSystolic by remember { mutableStateOf(TextFieldValue("")) }
+
+        AlertDialog(
+            onDismissRequest = { alertDialogAddValueVisible.not() },
+            title = { Text("Neuen Blutwert hinzufügen") },
+            text = {
+                Column(Modifier.fillMaxWidth()) {
+                    Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                        Text("Systolisch: ", modifier = Modifier.weight(1f))
+
+                        val patternOnlyNumbers = remember { Regex("\\d+\$") }
+                        TextField(
+                            value = textSystolic, onValueChange = {
+                                if (!((it.text == "0") and
+                                            (textSystolic.text == "0") and
+                                            (textSystolic.text.length == 1))) {
+                                    if (it.text.isEmpty() || it.text.matches(patternOnlyNumbers)) {
+
+                                        textSystolic = it
+
+                                        if (textSystolic.text != "") {
+                                            if (textSystolic.text.toInt() > 300) {
+                                                textSystolic = TextFieldValue("300")
+                                            }
+                                        }
+                                    }
+                                }
+                            }, modifier = Modifier.weight(2f),
+                            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number)
+                        )
+                    }
+                }
+            },
+            confirmButton = {
+                TextButton(onClick = { alertDialogAddValueVisible = false }) {
+                    Text("Speichern")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { alertDialogAddValueVisible = false }) {
+                    Text("Abbrechen")
+                }
+            })
+
+    }
 
     Spacer(modifier = Modifier.size(14.dp))
+
     val cardPadding = 12.dp
 
     if (state.bloodValuesList.isNotEmpty()) {
@@ -310,7 +381,7 @@ fun BloodValueFilter(state: BloodValuesState, onEvent: (BloodValuesEvent) -> Uni
                     bottomAxis = rememberBottomAxis(
                         valueFormatter = { value, _ ->
                             if (datesForXAxis.size > 0) {
-                                dateFormat.format(datesForXAxis[value.toInt()])
+                                vmBloodValues.dateFormat.format(datesForXAxis[value.toInt()])
                             } else {
                                 "Kein Inhalt"
                             }

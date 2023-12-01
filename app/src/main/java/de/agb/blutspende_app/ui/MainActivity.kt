@@ -51,16 +51,16 @@ import de.agb.blutspende_app.ui.navigation.SetupNavbarGraph
 import de.agb.blutspende_app.ui.theme.BlooddonationAppTheme
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
 import de.agb.blutspende_app.viewmodel.VMMainActivity
-import de.agb.blutspende_app.viewmodel.screens.database.VMBloodValues
+import de.agb.blutspende_app.viewmodel.screens.database.VMDatabase
 import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
-    private val vmDatabase by viewModels<VMBloodValues>(
+    private val vmDatabase by viewModels<VMDatabase>(
         factoryProducer = {
             object : ViewModelProvider.Factory {
                 override fun <T : ViewModel> create(modelClass: Class<T>): T {
-                    return VMBloodValues(
+                    return VMDatabase(
                         BloodValuesDatabase.getInstance(applicationContext).bloodValuesDao()
                     ) as T
                 }
