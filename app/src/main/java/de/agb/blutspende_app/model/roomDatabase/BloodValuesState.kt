@@ -2,6 +2,7 @@ package de.agb.blutspende_app.model.roomDatabase
 
 data class BloodValuesState(
     val bloodValuesList: List<BloodValues> = emptyList(),
+    val id: Int = 0,
     val systolic: Int = 0,
     val diastolic: Int = 0,
     val pulse: Int = 0,

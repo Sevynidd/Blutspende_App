@@ -41,6 +41,7 @@ class VMDatabase(
         when (event) {
 
             BloodValuesEvent.SaveBloodValues -> {
+                val id = _state.value.id
                 val sys = _state.value.systolic
                 val dia = _state.value.diastolic
                 val puls = _state.value.pulse
@@ -57,14 +58,16 @@ class VMDatabase(
                 }
 
                 val bloodValue = BloodValues(
-                    systolisch = sys,
-                    diastolisch = dia,
-                    puls = puls,
-                    haemoglobin = haemoglobin,
-                    fArmID = fArmID,
-                    fTypID = fTypID,
-                    timestamp = timestamp
-                )
+                        blutwerteID = id,
+                        systolisch = sys,
+                        diastolisch = dia,
+                        puls = puls,
+                        haemoglobin = haemoglobin,
+                        fArmID = fArmID,
+                        fTypID = fTypID,
+                        timestamp = timestamp
+                    )
+
 
                 viewModelScope.launch {
                     bloodValuesDao.addBloodValue(bloodValue)
@@ -72,6 +75,7 @@ class VMDatabase(
 
                 _state.update {
                     it.copy(
+                        id = 0,
                         systolic = 0,
                         diastolic = 0,
                         pulse = 0,
@@ -86,6 +90,14 @@ class VMDatabase(
             is BloodValuesEvent.DeleteBloodValues -> {
                 viewModelScope.launch {
                     bloodValuesDao.deleteBloodValue(event.bloodValue)
+                }
+            }
+
+            is BloodValuesEvent.SetID -> {
+                _state.update {
+                    it.copy(
+                        id = event.id
+                    )
                 }
             }
 

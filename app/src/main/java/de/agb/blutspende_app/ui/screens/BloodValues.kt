@@ -62,7 +62,6 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.DialogProperties
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
@@ -77,6 +76,7 @@ import com.patrykandpatrick.vico.core.component.text.textComponent
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.entryOf
 import de.agb.blutspende_app.R
+import de.agb.blutspende_app.model.roomDatabase.BloodValues
 import de.agb.blutspende_app.model.roomDatabase.BloodValuesEvent
 import de.agb.blutspende_app.model.roomDatabase.BloodValuesState
 import de.agb.blutspende_app.ui.theme.BlooddonationAppTheme
@@ -234,23 +234,25 @@ fun CardWithBloodValues(
     Spacer(modifier = Modifier.size(10.dp))
 
     if (alertDialogAddValueVisible.value) {
-        AlertDialogForAddingValues(alertDialogAddValueVisible, onEvent)
+        AlertDialogForAddingOrEditingValues(alertDialogAddValueVisible, onEvent, false, null)
     }
 
     if (state.bloodValuesList.isNotEmpty()) {
         Card(
             modifier = Modifier.fillMaxWidth()
         ) {
-            AddBloodValuesToCard(state, dateRangePickerState)
+            AddBloodValuesToCard(state, onEvent, dateRangePickerState)
         }
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AlertDialogForAddingValues(
-    alertDialogAddValueVisible: MutableState<Boolean>,
-    onEvent: (BloodValuesEvent) -> Unit
+fun AlertDialogForAddingOrEditingValues(
+    alertDialogVisible: MutableState<Boolean>,
+    onEvent: (BloodValuesEvent) -> Unit,
+    editMode: Boolean,
+    prefillValues: List<String>?
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -260,13 +262,20 @@ fun AlertDialogForAddingValues(
     var idArm by remember { mutableIntStateOf(0) }
     var idDonationType by remember { mutableIntStateOf(0) }
 
+    if (editMode and !prefillValues.isNullOrEmpty()) {
+        LaunchedEffect(key1 = LocalLifecycleOwner.current) {
+            textSystolic = TextFieldValue(prefillValues?.get(1) ?: "")
+            textDiastolic = TextFieldValue(prefillValues?.get(2) ?: "")
+            textPuls = TextFieldValue(prefillValues?.get(3) ?: "")
+            idArm = prefillValues?.get(4)?.toInt() ?: 0
+            idDonationType = prefillValues?.get(5)?.toInt() ?: 0
+        }
+    }
+
     val patternOnlyNumbers = remember { Regex("\\d+\$") }
 
     AlertDialog(
-        onDismissRequest = { alertDialogAddValueVisible.value.not() },
-        properties = DialogProperties(
-            dismissOnClickOutside = true
-        ),
+        onDismissRequest = { alertDialogVisible.value = false },
         title = { Text("Neuen Blutwert hinzufügen") },
         text = {
             Column(Modifier.fillMaxWidth()) {
@@ -450,6 +459,7 @@ fun AlertDialogForAddingValues(
         },
         confirmButton = {
             TextButton(onClick = {
+
                 onEvent(BloodValuesEvent.SetSystolic(textSystolic.text.toInt()))
                 onEvent(BloodValuesEvent.SetDiastolic(textDiastolic.text.toInt()))
                 onEvent(BloodValuesEvent.SetHaemoglobin(13.5f))
@@ -457,15 +467,22 @@ fun AlertDialogForAddingValues(
                 onEvent(BloodValuesEvent.SetTimestamp(System.currentTimeMillis()))
                 onEvent(BloodValuesEvent.SetFArmID(idArm))
                 onEvent(BloodValuesEvent.SetFTypID(idDonationType))
+
+                if (editMode) {
+                    if (prefillValues != null) {
+                        onEvent(BloodValuesEvent.SetID(prefillValues[0].toInt()))
+                    }
+                }
+
                 onEvent(BloodValuesEvent.SaveBloodValues)
 
-                alertDialogAddValueVisible.value = false
+                alertDialogVisible.value = false
             }) {
                 Text("Speichern")
             }
         },
         dismissButton = {
-            TextButton(onClick = { alertDialogAddValueVisible.value = false }) {
+            TextButton(onClick = { alertDialogVisible.value = false }) {
                 Text("Abbrechen")
             }
         })
@@ -473,22 +490,125 @@ fun AlertDialogForAddingValues(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AddBloodValuesToCard(state: BloodValuesState, dateRangePickerState: DateRangePickerState) {
+fun AddBloodValuesToCard(
+    state: BloodValuesState,
+    onEvent: (BloodValuesEvent) -> Unit,
+    dateRangePickerState: DateRangePickerState
+) {
     val vmBloodValues: VMBloodValues = viewModel()
+    val alertDialogDeleteValueVisible = remember { vmBloodValues.getAlertDialogDeleteValueVisible }
     val cardPadding = 12.dp
 
     if (vmBloodValues.getSelectedFilterText.value == vmBloodValues.getFilterOptions[0]) {
 
         state.bloodValuesList.forEachIndexed { index, bloodValues ->
             if (index < 3) {
-                Text(
-                    text = vmBloodValues.dateFormat.format(bloodValues.timestamp) + ": " +
-                            bloodValues.systolisch + " zu " + bloodValues.diastolisch + " mit " +
-                            bloodValues.puls + "er Puls\n" +
-                            "Typ: " + state.typesList[bloodValues.fTypID].blutspendeTyp + "\n" +
-                            "Arm: " + state.armsList[bloodValues.fArmID].bezeichnung,
-                    modifier = Modifier.padding(cardPadding)
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = vmBloodValues.dateFormat.format(bloodValues.timestamp) + ": " +
+                                bloodValues.systolisch + " zu " + bloodValues.diastolisch + " mit " +
+                                bloodValues.puls + "er Puls\n" +
+                                "Arm: " + state.armsList[bloodValues.fArmID].bezeichnung + "\n" +
+                                "Typ: " + state.typesList[bloodValues.fTypID].blutspendeTyp,
+                        modifier = Modifier
+                            .padding(cardPadding)
+                            .weight(3f)
+                    )
+
+                    Column(
+                        Modifier
+                            .weight(0.5f), horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        val alertDialogVisible = remember { mutableStateOf(false) }
+
+                        IconButton(modifier = Modifier
+                            .size(22.dp),
+                            onClick = {
+                                alertDialogVisible.value = true
+                            }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.edit),
+                                contentDescription = "Edit Value"
+                            )
+                        }
+
+                        if (alertDialogVisible.value) {
+                            AlertDialogForAddingOrEditingValues(
+                                alertDialogVisible = alertDialogVisible,
+                                onEvent = onEvent,
+                                editMode = true,
+                                prefillValues = listOf(
+                                    bloodValues.blutwerteID.toString(),
+                                    bloodValues.systolisch.toString(),
+                                    bloodValues.diastolisch.toString(),
+                                    bloodValues.puls.toString(),
+                                    bloodValues.fArmID.toString(),
+                                    bloodValues.fTypID.toString()
+                                )
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.size(16.dp))
+
+                        IconButton(modifier = Modifier
+                            .size(24.dp),
+                            onClick = {
+                                alertDialogDeleteValueVisible.value = true
+                            }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.minus),
+                                contentDescription = "Delete Value"
+                            )
+                        }
+
+                        if (alertDialogDeleteValueVisible.value) {
+                            AlertDialog(
+                                onDismissRequest = { alertDialogDeleteValueVisible.value = false },
+                                title = { Text("Willst du den folgenden Datensatz wirklich löschen?") },
+                                text = {
+                                    Text(
+                                        text = "Datum: " + vmBloodValues.dateFormat.format(
+                                            bloodValues.timestamp
+                                        ) + "\n" +
+                                                "Systolisch: " + bloodValues.systolisch + "\n" +
+                                                "Diastolisch: " + bloodValues.diastolisch + "\n" +
+                                                "Puls: " + bloodValues.puls + "\n" +
+                                                "Typ: " + state.typesList[bloodValues.fTypID].blutspendeTyp + "\n" +
+                                                "Arm: " + state.armsList[bloodValues.fArmID].bezeichnung
+                                    )
+                                },
+                                confirmButton = {
+                                    TextButton(onClick = {
+                                        onEvent(
+                                            BloodValuesEvent.DeleteBloodValues(
+                                                BloodValues(
+                                                    blutwerteID = bloodValues.blutwerteID,
+                                                    systolisch = bloodValues.systolisch,
+                                                    diastolisch = bloodValues.diastolisch,
+                                                    puls = bloodValues.puls,
+                                                    haemoglobin = bloodValues.haemoglobin,
+                                                    fArmID = bloodValues.fArmID,
+                                                    fTypID = bloodValues.fTypID,
+                                                    timestamp = bloodValues.timestamp
+                                                )
+                                            )
+                                        )
+                                        alertDialogDeleteValueVisible.value = false
+                                    }) {
+                                        Text("Ja")
+                                    }
+                                },
+                                dismissButton = {
+                                    TextButton(onClick = {
+                                        alertDialogDeleteValueVisible.value = false
+                                    }) {
+                                        Text("Nein")
+                                    }
+                                })
+                        }
+                    }
+                }
+
             }
         }
     } else {
@@ -496,14 +616,111 @@ fun AddBloodValuesToCard(state: BloodValuesState, dateRangePickerState: DateRang
             if (bloodValues.timestamp in (dateRangePickerState.selectedStartDateMillis
                     ?: 0)..(dateRangePickerState.selectedEndDateMillis ?: 0)
             ) {
-                Text(
-                    text = vmBloodValues.dateFormat.format(bloodValues.timestamp) + ": " +
-                            bloodValues.systolisch + " zu " + bloodValues.diastolisch + " mit " +
-                            bloodValues.puls + "er Puls\n" +
-                            "Typ: " + state.typesList[bloodValues.fTypID].blutspendeTyp + "\n" +
-                            "Arm: " + state.armsList[bloodValues.fArmID].bezeichnung,
-                    modifier = Modifier.padding(cardPadding)
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = vmBloodValues.dateFormat.format(bloodValues.timestamp) + ": " +
+                                bloodValues.systolisch + " zu " + bloodValues.diastolisch + " mit " +
+                                bloodValues.puls + "er Puls\n" +
+                                "Arm: " + state.armsList[bloodValues.fArmID].bezeichnung + "\n" +
+                                "Typ: " + state.typesList[bloodValues.fTypID].blutspendeTyp,
+                        modifier = Modifier
+                            .padding(cardPadding)
+                            .weight(3f)
+                    )
+
+                    Column(
+                        Modifier
+                            .weight(0.5f), horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        val alertDialogVisible = remember { mutableStateOf(false) }
+
+                        IconButton(modifier = Modifier
+                            .size(22.dp),
+                            onClick = {
+                                alertDialogVisible.value = true
+                            }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.edit),
+                                contentDescription = "Edit Value"
+                            )
+                        }
+
+                        if (alertDialogVisible.value) {
+                            AlertDialogForAddingOrEditingValues(
+                                alertDialogVisible = alertDialogVisible,
+                                onEvent = onEvent,
+                                editMode = true,
+                                prefillValues = listOf(
+                                    bloodValues.blutwerteID.toString(),
+                                    bloodValues.systolisch.toString(),
+                                    bloodValues.diastolisch.toString(),
+                                    bloodValues.puls.toString(),
+                                    bloodValues.fArmID.toString(),
+                                    bloodValues.fTypID.toString()
+                                )
+                            )
+                        }
+
+                        Spacer(modifier = Modifier.size(16.dp))
+
+                        IconButton(modifier = Modifier
+                            .size(24.dp),
+                            onClick = {
+                                alertDialogDeleteValueVisible.value = true
+                            }) {
+                            Icon(
+                                painter = painterResource(id = R.drawable.minus),
+                                contentDescription = "Delete Value"
+                            )
+                        }
+
+                        if (alertDialogDeleteValueVisible.value) {
+                            AlertDialog(
+                                onDismissRequest = { alertDialogDeleteValueVisible.value = false },
+                                title = { Text("Willst du den folgenden Datensatz wirklich löschen?") },
+                                text = {
+                                    Text(
+                                        text = "Datum: " + vmBloodValues.dateFormat.format(
+                                            bloodValues.timestamp
+                                        ) + "\n" +
+                                                "Systolisch: " + bloodValues.systolisch + "\n" +
+                                                "Diastolisch: " + bloodValues.diastolisch + "\n" +
+                                                "Puls: " + bloodValues.puls + "\n" +
+                                                "Typ: " + state.typesList[bloodValues.fTypID].blutspendeTyp + "\n" +
+                                                "Arm: " + state.armsList[bloodValues.fArmID].bezeichnung
+                                    )
+                                },
+                                confirmButton = {
+                                    TextButton(onClick = {
+                                        onEvent(
+                                            BloodValuesEvent.DeleteBloodValues(
+                                                BloodValues(
+                                                    blutwerteID = bloodValues.blutwerteID,
+                                                    systolisch = bloodValues.systolisch,
+                                                    diastolisch = bloodValues.diastolisch,
+                                                    puls = bloodValues.puls,
+                                                    haemoglobin = bloodValues.haemoglobin,
+                                                    fArmID = bloodValues.fArmID,
+                                                    fTypID = bloodValues.fTypID,
+                                                    timestamp = bloodValues.timestamp
+                                                )
+                                            )
+                                        )
+                                        alertDialogDeleteValueVisible.value = false
+                                    }) {
+                                        Text("Ja")
+                                    }
+                                },
+                                dismissButton = {
+                                    TextButton(onClick = {
+                                        alertDialogDeleteValueVisible.value = false
+                                    }) {
+                                        Text("Nein")
+                                    }
+                                })
+                        }
+                    }
+                }
             }
         }
     }

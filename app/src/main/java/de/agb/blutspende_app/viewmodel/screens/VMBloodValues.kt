@@ -19,6 +19,8 @@ import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
 import com.patrykandpatrick.vico.core.component.text.textComponent
 import de.agb.blutspende_app.ui.theme.md_theme_dark_background
 import de.agb.blutspende_app.ui.theme.md_theme_dark_secondary
+import de.agb.blutspende_app.ui.theme.md_theme_light_background
+import de.agb.blutspende_app.ui.theme.md_theme_light_secondary
 import java.text.DateFormat
 
 class VMBloodValues : ViewModel() {
@@ -35,8 +37,7 @@ class VMBloodValues : ViewModel() {
     val getSelectedFilterText: MutableState<String>
         get() = _selectedFilterText
 
-    // Bottom Sheet
-    // Datepicker
+    // Bottom Sheet Datepicker
     private var _bottomSheetDatepickerVisible = mutableStateOf(false)
 
     val getBottomSheetDatepickerVisible: MutableState<Boolean>
@@ -48,6 +49,12 @@ class VMBloodValues : ViewModel() {
     val getAlertDialogAddValueVisible: MutableState<Boolean>
         get() = _alertDialogAddValueVisible
 
+    // Alert Dialog for deleting Values
+    private var _alertDialogDeleteValueVisible = mutableStateOf(false)
+
+    val getAlertDialogDeleteValueVisible: MutableState<Boolean>
+        get() = _alertDialogDeleteValueVisible
+
 
     fun thresholdLineStyle(
         averageSysValue: Float,
@@ -58,22 +65,22 @@ class VMBloodValues : ViewModel() {
             thresholdValue = averageSysValue,
             lineComponent = ShapeComponent(
                 color = when (themeMode.value) {
-                    1 -> md_theme_dark_secondary.toArgb()
+                    1 -> md_theme_light_secondary.toArgb()
                     2 -> md_theme_dark_secondary.toArgb()
                     else -> when {
                         systemInDarkTheme -> md_theme_dark_secondary.toArgb()
-                        else -> md_theme_dark_secondary.toArgb()
+                        else -> md_theme_light_secondary.toArgb()
                     }
 
                 }
             ),
             labelComponent = textComponent {
                 color = when (themeMode.value) {
-                    1 -> md_theme_dark_secondary.toArgb()
+                    1 -> md_theme_light_secondary.toArgb()
                     2 -> md_theme_dark_secondary.toArgb()
                     else -> when {
                         systemInDarkTheme -> md_theme_dark_secondary.toArgb()
-                        else -> md_theme_dark_secondary.toArgb()
+                        else -> md_theme_light_secondary.toArgb()
                     }
 
                 }
@@ -86,29 +93,29 @@ class VMBloodValues : ViewModel() {
         return ChartStyle(
             axis = ChartStyle.Axis(
                 axisLabelColor = when (themeMode.value) {
-                    1 -> md_theme_dark_secondary
+                    1 -> md_theme_light_secondary
                     2 -> md_theme_dark_secondary
                     else -> when {
                         systemInDarkTheme -> md_theme_dark_secondary
-                        else -> md_theme_dark_secondary
+                        else -> md_theme_light_secondary
                     }
 
                 },
                 axisGuidelineColor = when (themeMode.value) {
-                    1 -> md_theme_dark_background
+                    1 -> md_theme_light_background
                     2 -> md_theme_dark_background
                     else -> when {
                         systemInDarkTheme -> md_theme_dark_background
-                        else -> md_theme_dark_background
+                        else -> md_theme_light_background
                     }
 
                 },
                 axisLineColor = when (themeMode.value) {
-                    1 -> md_theme_dark_secondary
+                    1 -> md_theme_light_secondary
                     2 -> md_theme_dark_secondary
                     else -> when {
                         systemInDarkTheme -> md_theme_dark_secondary
-                        else -> md_theme_dark_secondary
+                        else -> md_theme_light_secondary
                     }
 
                 },
