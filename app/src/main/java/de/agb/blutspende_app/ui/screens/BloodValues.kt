@@ -2,6 +2,7 @@ package de.agb.blutspende_app.ui.screens
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -40,6 +41,7 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -48,7 +50,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalFocusManager
@@ -67,20 +68,12 @@ import com.patrykandpatrick.vico.compose.axis.horizontal.rememberBottomAxis
 import com.patrykandpatrick.vico.compose.axis.vertical.rememberStartAxis
 import com.patrykandpatrick.vico.compose.chart.Chart
 import com.patrykandpatrick.vico.compose.chart.line.lineChart
-import com.patrykandpatrick.vico.compose.component.shape.shader.fromBrush
 import com.patrykandpatrick.vico.compose.component.shapeComponent
-import com.patrykandpatrick.vico.compose.component.textComponent
 import com.patrykandpatrick.vico.compose.legend.legendItem
 import com.patrykandpatrick.vico.compose.legend.verticalLegend
-import com.patrykandpatrick.vico.compose.style.ChartStyle
 import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
-import com.patrykandpatrick.vico.core.DefaultDimens
-import com.patrykandpatrick.vico.core.chart.decoration.ThresholdLine
-import com.patrykandpatrick.vico.core.chart.line.LineChart
-import com.patrykandpatrick.vico.core.component.shape.LineComponent
-import com.patrykandpatrick.vico.core.component.shape.ShapeComponent
 import com.patrykandpatrick.vico.core.component.shape.Shapes
-import com.patrykandpatrick.vico.core.component.shape.shader.DynamicShaders
+import com.patrykandpatrick.vico.core.component.text.textComponent
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.entryOf
 import de.agb.blutspende_app.R
@@ -88,6 +81,7 @@ import de.agb.blutspende_app.model.roomDatabase.BloodValuesEvent
 import de.agb.blutspende_app.model.roomDatabase.BloodValuesState
 import de.agb.blutspende_app.ui.theme.BlooddonationAppTheme
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
+import de.agb.blutspende_app.viewmodel.VMDatastore
 import de.agb.blutspende_app.viewmodel.screens.VMBloodValues
 
 
@@ -240,7 +234,7 @@ fun CardWithBloodValues(
     Spacer(modifier = Modifier.size(10.dp))
 
     if (alertDialogAddValueVisible.value) {
-        AlertDialogAddValues(alertDialogAddValueVisible, onEvent)
+        AlertDialogForAddingValues(alertDialogAddValueVisible, onEvent)
     }
 
     if (state.bloodValuesList.isNotEmpty()) {
@@ -254,7 +248,7 @@ fun CardWithBloodValues(
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun AlertDialogAddValues(
+fun AlertDialogForAddingValues(
     alertDialogAddValueVisible: MutableState<Boolean>,
     onEvent: (BloodValuesEvent) -> Unit
 ) {
@@ -265,6 +259,8 @@ fun AlertDialogAddValues(
     var textPuls by remember { mutableStateOf(TextFieldValue("")) }
     var idArm by remember { mutableIntStateOf(0) }
     var idDonationType by remember { mutableIntStateOf(0) }
+
+    val patternOnlyNumbers = remember { Regex("\\d+\$") }
 
     AlertDialog(
         onDismissRequest = { alertDialogAddValueVisible.value.not() },
@@ -277,7 +273,6 @@ fun AlertDialogAddValues(
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     Text("Systolisch: ", modifier = Modifier.weight(1f))
 
-                    val patternOnlyNumbers = remember { Regex("\\d+\$") }
                     TextField(
                         value = textSystolic, onValueChange = {
                             if (!((it.text == "00") and
@@ -311,7 +306,6 @@ fun AlertDialogAddValues(
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     Text("Diastolisch: ", modifier = Modifier.weight(1f))
 
-                    val patternOnlyNumbers = remember { Regex("\\d+\$") }
                     TextField(
                         value = textDiastolic, onValueChange = {
                             if (!((it.text == "00") and
@@ -345,7 +339,6 @@ fun AlertDialogAddValues(
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     Text("Puls: ", modifier = Modifier.weight(1f))
 
-                    val patternOnlyNumbers = remember { Regex("\\d+\$") }
                     TextField(
                         value = textPuls, onValueChange = {
                             if (!((it.text == "00") and
@@ -588,47 +581,21 @@ fun BloodValuesDiagram(state: BloodValuesState, dateRangePickerState: DateRangeP
                     val chartEntryModelProducer =
                         ChartEntryModelProducer(bloodvaluesChartEntries())
 
+                    val vmDatastore: VMDatastore = viewModel()
+
+                    val themeMode = vmDatastore.getThemeMode.collectAsState(0)
+                    val systemInDarkTheme = isSystemInDarkTheme()
+
                     val thresholdLine = remember {
-                        ThresholdLine(
-                            thresholdValue = averageSysValue,
-                            lineComponent = ShapeComponent(color = R.color.darkBlue)
+                        vmBloodValues.thresholdLineStyle(
+                            averageSysValue,
+                            systemInDarkTheme,
+                            themeMode
                         )
                     }
 
                     ProvideChartStyle(
-                        chartStyle = ChartStyle(
-                            axis = ChartStyle.Axis(
-                                axisLabelColor = Color(0xFF9C4238),
-                                axisGuidelineColor = Color(0xFF9C4238),
-                                axisLineColor = Color(0xFF9C4238),
-                            ),
-                            columnChart = ChartStyle.ColumnChart(
-                                listOf(
-                                    LineComponent(
-                                        Color(0xFF9C4238).toArgb(),
-                                        DefaultDimens.COLUMN_WIDTH,
-                                        Shapes.roundedCornerShape(DefaultDimens.COLUMN_ROUNDNESS_PERCENT),
-                                    )
-                                )
-                            ),
-                            marker = ChartStyle.Marker(),
-                            elevationOverlayColor = Color(0xFF9C4238),
-                            lineChart = ChartStyle.LineChart(
-                                lines = listOf(
-                                    LineChart.LineSpec(
-                                        lineColor = Color(0xFF9C4238).toArgb(),
-                                        lineBackgroundShader = DynamicShaders.fromBrush(
-                                            Brush.verticalGradient(
-                                                listOf(
-                                                    Color(0xFF9C4238).copy(com.patrykandpatrick.vico.core.DefaultAlpha.LINE_BACKGROUND_SHADER_START),
-                                                    Color(0xFF9C4238).copy(com.patrykandpatrick.vico.core.DefaultAlpha.LINE_BACKGROUND_SHADER_END)
-                                                )
-                                            )
-                                        )
-                                    )
-                                )
-                            ),
-                        )
+                        chartStyle = vmBloodValues.chartStyle(systemInDarkTheme, themeMode)
                     ) {
                         val cardPadding = 12.dp
                         Chart(
@@ -649,8 +616,13 @@ fun BloodValuesDiagram(state: BloodValuesState, dateRangePickerState: DateRangeP
                             legend = verticalLegend(
                                 items = listOf(
                                     legendItem(
-                                        icon = shapeComponent(Shapes.pillShape),
-                                        label = textComponent(),
+                                        icon = shapeComponent(
+                                            shape = Shapes.pillShape,
+                                            color = Color(0xFFC13020)
+                                        ),
+                                        label = textComponent {
+                                            color = Color(0xFFC13020).toArgb()
+                                        },
                                         labelText = "Systolisch"
                                     )
                                 ),
