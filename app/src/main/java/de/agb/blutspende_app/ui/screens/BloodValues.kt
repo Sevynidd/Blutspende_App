@@ -237,6 +237,8 @@ fun CardWithBloodValues(
         }
     }
 
+    Spacer(modifier = Modifier.size(10.dp))
+
     if (alertDialogAddValueVisible.value) {
         AlertDialogAddValues(alertDialogAddValueVisible, onEvent)
     }
@@ -521,9 +523,7 @@ fun BloodValuesDiagram(state: BloodValuesState, dateRangePickerState: DateRangeP
 
     if (state.bloodValuesList.isNotEmpty()) {
 
-        Spacer(modifier = Modifier.size(20.dp))
-
-        AnimatedVisibility((state.bloodValuesList.isNotEmpty()) and (state.bloodValuesList.size > 1)) {
+        AnimatedVisibility(state.bloodValuesList.size > 1) {
             Column(Modifier.fillMaxWidth()) {
                 Text("Blutwerte Diagram")
 
