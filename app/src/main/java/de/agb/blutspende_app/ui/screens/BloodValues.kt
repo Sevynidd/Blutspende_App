@@ -17,10 +17,14 @@ import androidx.compose.foundation.text.ClickableText
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
+import androidx.compose.material3.DatePicker
+import androidx.compose.material3.DatePickerDialog
 import androidx.compose.material3.DatePickerFormatter
 import androidx.compose.material3.DateRangePicker
 import androidx.compose.material3.DateRangePickerState
@@ -36,6 +40,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.rememberDatePickerState
 import androidx.compose.material3.rememberDateRangePickerState
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
@@ -83,6 +88,7 @@ import de.agb.blutspende_app.ui.theme.BlooddonationAppTheme
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
 import de.agb.blutspende_app.viewmodel.VMDatastore
 import de.agb.blutspende_app.viewmodel.screens.VMBloodValues
+import java.util.Date
 
 
 @Composable
@@ -150,7 +156,7 @@ fun BloodValueFilter(dateRangePickerState: DateRangePickerState) {
         }
     }
 
-    var bottomSheetDatepickerVisible by remember { vmBloodValues.getBottomSheetDatepickerVisible }
+    var bottomSheetDateRangepickerVisible by remember { vmBloodValues.getBottomSheetDateRangepickerVisible }
     val sheetStateDatepicker = rememberModalBottomSheetState()
 
     LaunchedEffect(key1 = LocalLifecycleOwner.current) {
@@ -179,13 +185,15 @@ fun BloodValueFilter(dateRangePickerState: DateRangePickerState) {
             )
         ),
             style = TextStyle(color = MaterialTheme.colorScheme.onBackground, fontSize = 15.sp),
-            onClick = { bottomSheetDatepickerVisible = bottomSheetDatepickerVisible.not() })
+            onClick = {
+                bottomSheetDateRangepickerVisible = bottomSheetDateRangepickerVisible.not()
+            })
     }
 
-    if (bottomSheetDatepickerVisible) {
+    if (bottomSheetDateRangepickerVisible) {
         ModalBottomSheet(
             sheetState = sheetStateDatepicker,
-            onDismissRequest = { bottomSheetDatepickerVisible = false }) {
+            onDismissRequest = { bottomSheetDateRangepickerVisible = false }) {
 
             Column(
                 modifier = Modifier
@@ -254,6 +262,7 @@ fun AlertDialogForAddingOrEditingValues(
     editMode: Boolean,
     prefillValues: List<String>?
 ) {
+    val vmBloodValues: VMBloodValues = viewModel()
     val focusManager = LocalFocusManager.current
 
     var textSystolic by remember { mutableStateOf(TextFieldValue("")) }
@@ -280,7 +289,7 @@ fun AlertDialogForAddingOrEditingValues(
         text = {
             Column(Modifier.fillMaxWidth()) {
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    Text("Systolisch: ", modifier = Modifier.weight(1f))
+                    Text("Sys: ", modifier = Modifier.weight(1f))
 
                     TextField(
                         value = textSystolic, onValueChange = {
@@ -308,12 +317,10 @@ fun AlertDialogForAddingOrEditingValues(
                             onNext = { focusManager.moveFocus(FocusDirection.Down) }
                         )
                     )
-                }
 
-                Spacer(modifier = Modifier.size(20.dp))
+                    Spacer(modifier = Modifier.size(12.dp))
 
-                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    Text("Diastolisch: ", modifier = Modifier.weight(1f))
+                    Text("Dia: ", modifier = Modifier.weight(1f))
 
                     TextField(
                         value = textDiastolic, onValueChange = {
@@ -341,6 +348,7 @@ fun AlertDialogForAddingOrEditingValues(
                             onNext = { focusManager.moveFocus(FocusDirection.Down) }
                         )
                     )
+
                 }
 
                 Spacer(modifier = Modifier.size(20.dp))
@@ -374,6 +382,48 @@ fun AlertDialogForAddingOrEditingValues(
                             onNext = { focusManager.moveFocus(FocusDirection.Down) }
                         )
                     )
+                }
+
+                Spacer(modifier = Modifier.size(20.dp))
+
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Text("Datum: ", modifier = Modifier.weight(1f))
+
+                    val datePickerState = rememberDatePickerState()
+                    val showDatePickerDialog = remember { mutableStateOf(false) }
+
+                    TextField(
+                        readOnly = true,
+                        value = TextFieldValue(
+                            vmBloodValues.dateFormat.format(
+                                Date(
+                                    datePickerState.selectedDateMillis ?: System.currentTimeMillis()
+                                )
+                            )
+                        ),
+                        onValueChange = {},
+                        trailingIcon = {
+                            IconButton(onClick = {
+                                showDatePickerDialog.value = true
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Default.DateRange,
+                                    contentDescription = "Date"
+                                )
+                            }
+                        },
+                        modifier = Modifier.weight(2f)
+                    )
+
+                    if (showDatePickerDialog.value) {
+                        DatePickerDialog(
+                            onDismissRequest = { showDatePickerDialog.value = false },
+                            confirmButton = { TextButton(onClick = { showDatePickerDialog.value = false }) {
+                                Text("ok")
+                            } }) {
+                            DatePicker(state = datePickerState)
+                        }
+                    }
                 }
 
                 Spacer(modifier = Modifier.size(20.dp))

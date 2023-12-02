@@ -37,11 +37,11 @@ class VMBloodValues : ViewModel() {
     val getSelectedFilterText: MutableState<String>
         get() = _selectedFilterText
 
-    // Bottom Sheet Datepicker
-    private var _bottomSheetDatepickerVisible = mutableStateOf(false)
+    // Bottom Sheet DateRangepicker
+    private var _bottomSheetDateRangepickerVisible = mutableStateOf(false)
 
-    val getBottomSheetDatepickerVisible: MutableState<Boolean>
-        get() = _bottomSheetDatepickerVisible
+    val getBottomSheetDateRangepickerVisible: MutableState<Boolean>
+        get() = _bottomSheetDateRangepickerVisible
 
     // Alert Dialog for adding Values
     private var _alertDialogAddValueVisible = mutableStateOf(false)
@@ -54,6 +54,12 @@ class VMBloodValues : ViewModel() {
 
     val getAlertDialogDeleteValueVisible: MutableState<Boolean>
         get() = _alertDialogDeleteValueVisible
+
+    // Bottom Sheet Datepicker
+    private var _bottomSheetDatepickerVisible = mutableStateOf(false)
+
+    val getBottomSheetDatepickerVisible: MutableState<Boolean>
+        get() = _bottomSheetDatepickerVisible
 
 
     fun thresholdLineStyle(
