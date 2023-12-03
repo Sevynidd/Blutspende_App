@@ -2,7 +2,6 @@ package de.agb.blutspende_app.ui.screens
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -46,7 +45,6 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -75,10 +73,10 @@ import com.patrykandpatrick.vico.compose.chart.line.lineChart
 import com.patrykandpatrick.vico.compose.component.shapeComponent
 import com.patrykandpatrick.vico.compose.legend.legendItem
 import com.patrykandpatrick.vico.compose.legend.verticalLegend
-import com.patrykandpatrick.vico.compose.style.ProvideChartStyle
+import com.patrykandpatrick.vico.core.chart.composed.plus
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.text.textComponent
-import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
+import com.patrykandpatrick.vico.core.entry.composed.ComposedChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.entryOf
 import de.agb.blutspende_app.R
 import de.agb.blutspende_app.model.roomDatabase.BloodValues
@@ -86,7 +84,6 @@ import de.agb.blutspende_app.model.roomDatabase.BloodValuesEvent
 import de.agb.blutspende_app.model.roomDatabase.BloodValuesState
 import de.agb.blutspende_app.ui.theme.BlooddonationAppTheme
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
-import de.agb.blutspende_app.viewmodel.VMDatastore
 import de.agb.blutspende_app.viewmodel.screens.VMBloodValues
 import java.util.Date
 
@@ -262,26 +259,42 @@ fun AlertDialogForAddingOrEditingValues(
     editMode: Boolean,
     prefillValues: List<String>?
 ) {
-    val vmBloodValues: VMBloodValues = viewModel()
-    val focusManager = LocalFocusManager.current
+    val patternOnlyNumbers = remember { Regex("\\d+\$") }
 
-    var textSystolic by remember { mutableStateOf(TextFieldValue("")) }
-    var textDiastolic by remember { mutableStateOf(TextFieldValue("")) }
-    var textPuls by remember { mutableStateOf(TextFieldValue("")) }
-    var idArm by remember { mutableIntStateOf(0) }
-    var idDonationType by remember { mutableIntStateOf(0) }
-
-    if (editMode and !prefillValues.isNullOrEmpty()) {
-        LaunchedEffect(key1 = LocalLifecycleOwner.current) {
-            textSystolic = TextFieldValue(prefillValues?.get(1) ?: "")
-            textDiastolic = TextFieldValue(prefillValues?.get(2) ?: "")
-            textPuls = TextFieldValue(prefillValues?.get(3) ?: "")
-            idArm = prefillValues?.get(4)?.toInt() ?: 0
-            idDonationType = prefillValues?.get(5)?.toInt() ?: 0
+    fun validateInt(text: String, mutableIsError: MutableState<Boolean>) {
+        when {
+            text == "00" -> mutableIsError.value = true
+            text == "" -> mutableIsError.value = true
+            text.matches(patternOnlyNumbers) -> mutableIsError.value = false
         }
     }
 
-    val patternOnlyNumbers = remember { Regex("\\d+\$") }
+
+    val vmBloodValues: VMBloodValues = viewModel()
+    val focusManager = LocalFocusManager.current
+
+    var textSystolic by remember { mutableStateOf("") }
+    val systolicIsError = remember { mutableStateOf(false) }
+    var textDiastolic by remember { mutableStateOf("") }
+    var textPuls by remember { mutableStateOf("") }
+    var textHaemoglobin by remember { mutableStateOf("") }
+    var idArm by remember { mutableIntStateOf(0) }
+    var idDonationType by remember { mutableIntStateOf(0) }
+    val datePickerState = rememberDatePickerState()
+
+    if (editMode and !prefillValues.isNullOrEmpty()) {
+        LaunchedEffect(key1 = LocalLifecycleOwner.current) {
+            textSystolic = prefillValues?.get(1) ?: ""
+            textDiastolic = prefillValues?.get(2) ?: ""
+            textPuls = prefillValues?.get(3) ?: ""
+            idArm = prefillValues?.get(4)?.toInt() ?: 0
+            idDonationType = prefillValues?.get(5)?.toInt() ?: 0
+            datePickerState.setSelection(
+                prefillValues?.get(6)?.toLong() ?: System.currentTimeMillis()
+            )
+            textHaemoglobin = prefillValues?.get(7) ?: "0"
+        }
+    }
 
     AlertDialog(
         onDismissRequest = { alertDialogVisible.value = false },
@@ -293,17 +306,18 @@ fun AlertDialogForAddingOrEditingValues(
 
                     TextField(
                         value = textSystolic, onValueChange = {
-                            if (!((it.text == "00") and
-                                        (textSystolic.text == "0") and
-                                        (textSystolic.text.length == 1))
+                            validateInt(it, systolicIsError)
+                            if (!((it == "00") and
+                                        (textSystolic == "0") and
+                                        (textSystolic.length == 1))
                             ) {
-                                if (it.text.isEmpty() || it.text.matches(patternOnlyNumbers)) {
+                                if (it.isEmpty() || it.matches(patternOnlyNumbers)) {
 
                                     textSystolic = it
 
-                                    if (textSystolic.text != "") {
-                                        if (textSystolic.text.toInt() > 300) {
-                                            textSystolic = TextFieldValue("300")
+                                    if (textSystolic != "") {
+                                        if (textSystolic.toInt() > 300) {
+                                            textSystolic = "300"
                                         }
                                     }
                                 }
@@ -313,6 +327,8 @@ fun AlertDialogForAddingOrEditingValues(
                             keyboardType = KeyboardType.NumberPassword,
                             imeAction = ImeAction.Next
                         ),
+                        isError = systolicIsError.value,
+                        singleLine = true,
                         keyboardActions = KeyboardActions(
                             onNext = { focusManager.moveFocus(FocusDirection.Down) }
                         )
@@ -324,17 +340,17 @@ fun AlertDialogForAddingOrEditingValues(
 
                     TextField(
                         value = textDiastolic, onValueChange = {
-                            if (!((it.text == "00") and
-                                        (textDiastolic.text == "0") and
-                                        (textDiastolic.text.length == 1))
+                            if (!((it == "00") and
+                                        (textDiastolic == "0") and
+                                        (textDiastolic.length == 1))
                             ) {
-                                if (it.text.isEmpty() || it.text.matches(patternOnlyNumbers)) {
+                                if (it.isEmpty() || it.matches(patternOnlyNumbers)) {
 
                                     textDiastolic = it
 
-                                    if (textDiastolic.text != "") {
-                                        if (textDiastolic.text.toInt() > 250) {
-                                            textDiastolic = TextFieldValue("250")
+                                    if (textDiastolic != "") {
+                                        if (textDiastolic.toInt() > 250) {
+                                            textDiastolic = "250"
                                         }
                                     }
                                 }
@@ -358,17 +374,17 @@ fun AlertDialogForAddingOrEditingValues(
 
                     TextField(
                         value = textPuls, onValueChange = {
-                            if (!((it.text == "00") and
-                                        (textPuls.text == "0") and
-                                        (textPuls.text.length == 1))
+                            if (!((it == "00") and
+                                        (textPuls == "0") and
+                                        (textPuls.length == 1))
                             ) {
-                                if (it.text.isEmpty() || it.text.matches(patternOnlyNumbers)) {
+                                if (it.isEmpty() || it.matches(patternOnlyNumbers)) {
 
                                     textPuls = it
 
-                                    if (textPuls.text != "") {
-                                        if (textPuls.text.toInt() > 200) {
-                                            textPuls = TextFieldValue("200")
+                                    if (textPuls != "") {
+                                        if (textPuls.toInt() > 200) {
+                                            textPuls = "200"
                                         }
                                     }
                                 }
@@ -382,6 +398,43 @@ fun AlertDialogForAddingOrEditingValues(
                             onNext = { focusManager.moveFocus(FocusDirection.Down) }
                         )
                     )
+
+                    Spacer(modifier = Modifier.size(14.dp))
+
+                    Text(
+                        "Haemoglobin: ",
+                        modifier = Modifier.weight(1f),
+                        fontSize = 12.sp
+                    )
+
+                    Spacer(modifier = Modifier.size(4.dp))
+
+                    TextField(
+                        value = textHaemoglobin.trim(), onValueChange = {
+                            if (!((it == "00") and
+                                        (textHaemoglobin == "0") and
+                                        (textHaemoglobin.length == 1))
+                            ) {
+                                if (it.isEmpty() || it.matches(patternOnlyNumbers)) {
+
+                                    textHaemoglobin = it
+
+                                    if (textHaemoglobin != "") {
+                                        if (textHaemoglobin.toFloat() > 20.0f) {
+                                            textHaemoglobin = "20.0"
+                                        }
+                                    }
+                                }
+                            }
+                        }, modifier = Modifier.weight(2f),
+                        keyboardOptions = KeyboardOptions(
+                            keyboardType = KeyboardType.Number,
+                            imeAction = ImeAction.Next
+                        ),
+                        keyboardActions = KeyboardActions(
+                            onNext = { focusManager.moveFocus(FocusDirection.Down) }
+                        )
+                    )
                 }
 
                 Spacer(modifier = Modifier.size(20.dp))
@@ -389,7 +442,6 @@ fun AlertDialogForAddingOrEditingValues(
                 Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     Text("Datum: ", modifier = Modifier.weight(1f))
 
-                    val datePickerState = rememberDatePickerState()
                     val showDatePickerDialog = remember { mutableStateOf(false) }
 
                     TextField(
@@ -418,9 +470,11 @@ fun AlertDialogForAddingOrEditingValues(
                     if (showDatePickerDialog.value) {
                         DatePickerDialog(
                             onDismissRequest = { showDatePickerDialog.value = false },
-                            confirmButton = { TextButton(onClick = { showDatePickerDialog.value = false }) {
-                                Text("ok")
-                            } }) {
+                            confirmButton = {
+                                TextButton(onClick = { showDatePickerDialog.value = false }) {
+                                    Text("ok")
+                                }
+                            }) {
                             DatePicker(state = datePickerState)
                         }
                     }
@@ -510,11 +564,15 @@ fun AlertDialogForAddingOrEditingValues(
         confirmButton = {
             TextButton(onClick = {
 
-                onEvent(BloodValuesEvent.SetSystolic(textSystolic.text.toInt()))
-                onEvent(BloodValuesEvent.SetDiastolic(textDiastolic.text.toInt()))
-                onEvent(BloodValuesEvent.SetHaemoglobin(13.5f))
-                onEvent(BloodValuesEvent.SetPulse(textPuls.text.toInt()))
-                onEvent(BloodValuesEvent.SetTimestamp(System.currentTimeMillis()))
+                onEvent(BloodValuesEvent.SetSystolic(textSystolic.toInt()))
+                onEvent(BloodValuesEvent.SetDiastolic(textDiastolic.toInt()))
+                onEvent(BloodValuesEvent.SetHaemoglobin(textHaemoglobin.toFloat()))
+                onEvent(BloodValuesEvent.SetPulse(textPuls.toInt()))
+                onEvent(
+                    BloodValuesEvent.SetTimestamp(
+                        datePickerState.selectedDateMillis ?: System.currentTimeMillis()
+                    )
+                )
                 onEvent(BloodValuesEvent.SetFArmID(idArm))
                 onEvent(BloodValuesEvent.SetFTypID(idDonationType))
 
@@ -593,7 +651,9 @@ fun AddBloodValuesToCard(
                                     bloodValues.diastolisch.toString(),
                                     bloodValues.puls.toString(),
                                     bloodValues.fArmID.toString(),
-                                    bloodValues.fTypID.toString()
+                                    bloodValues.fTypID.toString(),
+                                    bloodValues.timestamp.toString(),
+                                    bloodValues.haemoglobin.toString()
                                 )
                             )
                         }
@@ -706,7 +766,9 @@ fun AddBloodValuesToCard(
                                     bloodValues.diastolisch.toString(),
                                     bloodValues.puls.toString(),
                                     bloodValues.fArmID.toString(),
-                                    bloodValues.fTypID.toString()
+                                    bloodValues.fTypID.toString(),
+                                    bloodValues.timestamp.toString(),
+                                    bloodValues.haemoglobin.toString()
                                 )
                             )
                         }
@@ -784,17 +846,17 @@ fun BloodValuesDiagram(state: BloodValuesState, dateRangePickerState: DateRangeP
     if (state.bloodValuesList.isNotEmpty()) {
 
         AnimatedVisibility(state.bloodValuesList.size > 1) {
+
             Column(Modifier.fillMaxWidth()) {
-                Text("Blutwerte Diagram")
+                Text("Systolisch/Diastolisch")
 
                 Spacer(modifier = Modifier.size(12.dp))
 
                 Card(modifier = Modifier.fillMaxWidth()) {
 
                     val datesForXAxis = ArrayList<Long>()
-                    var averageSysValue = 0f
 
-                    fun bloodvaluesChartEntries() =
+                    fun bloodvaluesChartEntries(isSystolic: Boolean) =
                         if (vmBloodValues.getSelectedFilterText.value == vmBloodValues.getFilterOptions[0]) {
                             val size = if (state.bloodValuesList.size > 3) {
                                 3
@@ -802,21 +864,21 @@ fun BloodValuesDiagram(state: BloodValuesState, dateRangePickerState: DateRangeP
                                 state.bloodValuesList.size
                             }
 
-                            averageSysValue = 0f
-
                             for (i in 0..<size) {
                                 datesForXAxis.add(state.bloodValuesList[i].timestamp)
-                                averageSysValue += state.bloodValuesList[i].systolisch
                             }
-
-                            averageSysValue /= size
 
                             List(size) {
                                 entryOf(
                                     it,
-                                    state.bloodValuesList[it].systolisch
+                                    when (isSystolic) {
+                                        true -> state.bloodValuesList[it].systolisch
+                                        false -> state.bloodValuesList[it].diastolisch
+                                    }
                                 )
                             }
+
+
                         } else {
                             val idList = ArrayList<Int>()
 
@@ -828,77 +890,84 @@ fun BloodValuesDiagram(state: BloodValuesState, dateRangePickerState: DateRangeP
                                 }
                             }
 
-                            averageSysValue = 0f
-
                             for (i in 0..<idList.size) {
                                 datesForXAxis.add(state.bloodValuesList[idList[i]].timestamp)
-                                averageSysValue += state.bloodValuesList[idList[i]].systolisch
                             }
-
-                            averageSysValue /= idList.size
 
                             List(idList.size) {
                                 entryOf(
                                     it,
-                                    state.bloodValuesList[idList[it]].systolisch
+                                    when (isSystolic) {
+                                        true -> state.bloodValuesList[it].systolisch
+                                        false -> state.bloodValuesList[it].diastolisch
+                                    }
                                 )
                             }
+
                         }
 
-                    val chartEntryModelProducer =
-                        ChartEntryModelProducer(bloodvaluesChartEntries())
+                    val composedChartEntryModelProducer =
+                        ComposedChartEntryModelProducer.build {
+                            add(
+                                bloodvaluesChartEntries(true)
+                            )
+                            add(
+                                bloodvaluesChartEntries(false)
+                            )
+                        }
 
-                    val vmDatastore: VMDatastore = viewModel()
+                    val lineChartSys = lineChart(
+                        lines = vmBloodValues.lineChartColors(Color(0xFFC13020))
+                    )
+                    val lineChartDia = lineChart(
+                        lines = vmBloodValues.lineChartColors(Color(0xFF6B1B12))
+                    )
 
-                    val themeMode = vmDatastore.getThemeMode.collectAsState(0)
-                    val systemInDarkTheme = isSystemInDarkTheme()
-
-                    val thresholdLine = remember {
-                        vmBloodValues.thresholdLineStyle(
-                            averageSysValue,
-                            systemInDarkTheme,
-                            themeMode
-                        )
-                    }
-
-                    ProvideChartStyle(
-                        chartStyle = vmBloodValues.chartStyle(systemInDarkTheme, themeMode)
-                    ) {
-                        val cardPadding = 12.dp
-                        Chart(
-                            chart = lineChart(
-                                decorations = listOf(thresholdLine)
-                            ),
-                            chartModelProducer = chartEntryModelProducer,
-                            startAxis = rememberStartAxis(),
-                            bottomAxis = rememberBottomAxis(
-                                valueFormatter = { value, _ ->
-                                    if (datesForXAxis.size > 0) {
-                                        vmBloodValues.dateFormat.format(datesForXAxis[value.toInt()])
-                                    } else {
-                                        "Kein Inhalt"
-                                    }
+                    val cardPadding = 12.dp
+                    Chart(
+                        chart = remember(
+                            lineChartSys,
+                            lineChartDia
+                        ) { lineChartSys + lineChartDia },
+                        chartModelProducer = composedChartEntryModelProducer,
+                        startAxis = rememberStartAxis(),
+                        bottomAxis = rememberBottomAxis(
+                            valueFormatter = { value, _ ->
+                                if (datesForXAxis.size > 0) {
+                                    vmBloodValues.dateFormat.format(datesForXAxis[value.toInt()])
+                                } else {
+                                    "Kein Inhalt"
                                 }
-                            ),
-                            legend = verticalLegend(
-                                items = listOf(
-                                    legendItem(
-                                        icon = shapeComponent(
-                                            shape = Shapes.pillShape,
-                                            color = Color(0xFFC13020)
-                                        ),
-                                        label = textComponent {
-                                            color = Color(0xFFC13020).toArgb()
-                                        },
-                                        labelText = "Systolisch"
-                                    )
+                            }
+                        ),
+                        legend = verticalLegend(
+                            items = listOf(
+                                legendItem(
+                                    icon = shapeComponent(
+                                        shape = Shapes.pillShape,
+                                        color = Color(0xFFC13020)
+                                    ),
+                                    label = textComponent {
+                                        color = Color(0xFFC13020).toArgb()
+                                    },
+                                    labelText = "Systolisch"
                                 ),
-                                iconSize = 8.dp,
-                                iconPadding = 10.dp
+                                legendItem(
+                                    icon = shapeComponent(
+                                        shape = Shapes.pillShape,
+                                        color = Color(0xFF6B1B12)
+                                    ),
+                                    label = textComponent {
+                                        color = Color(0xFF6B1B12).toArgb()
+                                    },
+                                    labelText = "Diastolisch"
+                                )
                             ),
-                            modifier = Modifier.padding(cardPadding)
-                        )
-                    }
+                            iconSize = 8.dp,
+                            iconPadding = 10.dp
+                        ),
+                        modifier = Modifier.padding(cardPadding)
+                    )
                 }
             }
         }
