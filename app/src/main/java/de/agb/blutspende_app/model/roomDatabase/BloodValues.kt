@@ -23,7 +23,7 @@ data class BloodValues(
     val blutwerteID: Int = 0,
     val systolisch: Int,
     val diastolisch: Int,
-    val haemoglobin: Float?,
+    val haemoglobin: Float,
     val puls: Int,
     val timestamp: Long,
     val fArmID: Int,

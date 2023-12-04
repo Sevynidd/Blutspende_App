@@ -46,6 +46,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -75,6 +76,7 @@ import com.patrykandpatrick.vico.compose.legend.legendItem
 import com.patrykandpatrick.vico.compose.legend.verticalLegend
 import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.chart.composed.plus
+import com.patrykandpatrick.vico.core.chart.decoration.ThresholdLine
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.text.textComponent
 import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
@@ -932,18 +934,26 @@ fun BloodValuesDiagram(state: BloodValuesState, dateRangePickerState: DateRangeP
 
                     val datesForXAxis = ArrayList<Long>()
 
+                    val pulseThresholdLineValue = remember { mutableFloatStateOf(0f) }
+
+                    val pulseThresholdLine = ThresholdLine(
+                        thresholdValue = pulseThresholdLineValue.floatValue
+                    )
+
                     val chartEntryModelProducer =
                         ChartEntryModelProducer(
                             vmBloodValues.bloodvaluesChartEntries(
                                 2,
                                 state,
                                 datesForXAxis,
-                                dateRangePickerState
+                                dateRangePickerState,
+                                pulseThresholdLineValue
                             )
                         )
 
                     val lineChartPulse = lineChart(
-                        lines = vmBloodValues.lineChartColors(Color(0xFFA42315))
+                        lines = vmBloodValues.lineChartColors(Color(0xFFA42315)),
+                        decorations = listOf(pulseThresholdLine)
                     )
 
                     val cardPadding = 12.dp
@@ -968,6 +978,63 @@ fun BloodValuesDiagram(state: BloodValuesState, dateRangePickerState: DateRangeP
                         modifier = Modifier.padding(cardPadding)
                     )
                 }
+
+                Spacer(modifier = Modifier.size(12.dp))
+
+                Text("Hämoglobin")
+
+                Spacer(modifier = Modifier.size(12.dp))
+
+                Card(modifier = Modifier.fillMaxWidth()) {
+
+                    val datesForXAxis = ArrayList<Long>()
+
+                    val haemoglobinThresholdLineValue = remember { mutableFloatStateOf(0f) }
+
+                    val haemoglobinThresholdLine = ThresholdLine(
+                        thresholdValue = haemoglobinThresholdLineValue.floatValue
+                    )
+
+                    val chartEntryModelProducer =
+                        ChartEntryModelProducer(
+                            vmBloodValues.bloodvaluesChartEntries(
+                                3,
+                                state,
+                                datesForXAxis,
+                                dateRangePickerState,
+                                haemoglobinThresholdLineValue
+                            )
+                        )
+
+                    val lineChartHaemoglobin = lineChart(
+                        lines = vmBloodValues.lineChartColors(Color(0xFFA42315)),
+                        decorations = listOf(haemoglobinThresholdLine)
+                    )
+
+                    val cardPadding = 12.dp
+                    Chart(
+                        chart = lineChartHaemoglobin,
+                        chartModelProducer = chartEntryModelProducer,
+                        startAxis = rememberStartAxis(
+                            itemPlacer = AxisItemPlacer.Vertical.default(
+                                maxItemCount = 4,
+                                shiftTopLines = false
+                            )
+                        ),
+                        bottomAxis = rememberBottomAxis(
+                            valueFormatter = { value, _ ->
+                                if (datesForXAxis.size > 0) {
+                                    vmBloodValues.dateFormat.format(datesForXAxis[value.toInt()])
+                                } else {
+                                    "Kein Inhalt"
+                                }
+                            }
+                        ),
+                        modifier = Modifier.padding(cardPadding)
+                    )
+                }
+
+                Spacer(Modifier.size(28.dp))
             }
         }
     }

@@ -2,6 +2,7 @@ package de.agb.blutspende_app.viewmodel.screens
 
 import androidx.compose.material3.DateRangePickerState
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.graphics.Brush
@@ -76,8 +77,11 @@ class VMBloodValues : ViewModel() {
         displayType: Int,
         state: BloodValuesState,
         datesForXAxis: ArrayList<Long>,
-        dateRangePickerState: DateRangePickerState
+        dateRangePickerState: DateRangePickerState,
+        thresholdLineMutable: MutableFloatState? = null
     ): List<ChartEntry> {
+        var averageValue = 0f
+
         return if (_selectedFilterText.value == _filterOptions[0]) {
             val size = if (state.bloodValuesList.size > 3) {
                 3
@@ -87,6 +91,16 @@ class VMBloodValues : ViewModel() {
 
             for (i in 0..<size) {
                 datesForXAxis.add(state.bloodValuesList[i].timestamp)
+                averageValue += when (displayType) {
+                    2 -> state.bloodValuesList[i].puls.toFloat()
+                    3 -> state.bloodValuesList[i].haemoglobin
+                    else -> 0f
+                }
+            }
+
+            averageValue /= size
+            if (thresholdLineMutable != null) {
+                thresholdLineMutable.floatValue = averageValue
             }
 
             List(size) {
@@ -96,6 +110,7 @@ class VMBloodValues : ViewModel() {
                         0 -> state.bloodValuesList[it].systolisch
                         1 -> state.bloodValuesList[it].diastolisch
                         2 -> state.bloodValuesList[it].puls
+                        3 -> state.bloodValuesList[it].haemoglobin
                         else -> 0
                     }
                 )
@@ -114,6 +129,16 @@ class VMBloodValues : ViewModel() {
 
             for (i in 0..<idList.size) {
                 datesForXAxis.add(state.bloodValuesList[idList[i]].timestamp)
+                averageValue += when (displayType) {
+                    2 -> state.bloodValuesList[i].puls.toFloat()
+                    3 -> state.bloodValuesList[i].haemoglobin
+                    else -> 0f
+                }
+            }
+
+            averageValue /= idList.size
+            if (thresholdLineMutable != null) {
+                thresholdLineMutable.floatValue = averageValue
             }
 
             List(idList.size) {
@@ -123,6 +148,7 @@ class VMBloodValues : ViewModel() {
                         0 -> state.bloodValuesList[it].systolisch
                         1 -> state.bloodValuesList[it].diastolisch
                         2 -> state.bloodValuesList[it].puls
+                        3 -> state.bloodValuesList[it].haemoglobin
                         else -> 0
                     }
                 )
