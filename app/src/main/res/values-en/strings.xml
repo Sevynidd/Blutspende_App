@@ -26,7 +26,7 @@
     <string name="female">Female</string>
     <string name="male">Male</string>
     <string name="gender_subtitle">These options do not refer to the gender but to the sex with which you were born. (I.e. biological attributes such as external characteristics, chromosomes, hormones, etc.) These are used to determine the next time to donate blood.</string>
-    <string name="youCanDonate">You can donate %1$s again!</string>
+    <string name="youCanDonate">You can donate whole Blood again!</string>
     <string name="wholeBlood">whole Blood</string>
     <string name="thrombozyten">Platelets</string>
     <string name="supplyTitle">Our current blood supply</string>

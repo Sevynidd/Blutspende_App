@@ -27,7 +27,7 @@
     <string name="female">Weiblich</string>
     <string name="male">Männlich</string>
     <string name="gender_subtitle">Diese Optionen beziehen sich nicht auf das Geschlecht, mit welchem man sich identifiziert sondern auf das Geschlecht, mit welchem man geboren wurde. (D.h. biologische Attribute wie bspw. äußerliche Merkmale, Chromosome, Hormone etc.) Diese dienen zur Bestimmung des nächsten Blutspendezeitpunkts.</string>
-    <string name="youCanDonate">Du darfst wieder %1$s spenden!</string>
+    <string name="youCanDonate">Du darfst wieder Vollblut spenden!</string>
     <string name="wholeBlood">Vollblut</string>
     <string name="plasma" translatable="false">Plasma</string>
     <string name="thrombozyten">Thrombozyten</string>

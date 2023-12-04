@@ -174,14 +174,10 @@ fun BloodValueFilter(dateRangePickerState: DateRangePickerState) {
     if (selectedFilterOptionText == vmBloodValues.getFilterOptions[1]) {
         ClickableText(text = AnnotatedString(
             vmBloodValues.dateFormat.format(
-                globalFunctions.millisToDate(
-                    dateRangePickerState.selectedStartDateMillis
-                        ?: (System.currentTimeMillis() - 604800000L)
-                )
+                dateRangePickerState.selectedStartDateMillis
+                    ?: (System.currentTimeMillis() - 604800000L)
             ) + "  bis  " + vmBloodValues.dateFormat.format(
-                globalFunctions.millisToDate(
-                    dateRangePickerState.selectedEndDateMillis ?: (System.currentTimeMillis())
-                )
+                dateRangePickerState.selectedEndDateMillis ?: (System.currentTimeMillis())
             )
         ),
             style = TextStyle(color = MaterialTheme.colorScheme.onBackground, fontSize = 15.sp),
@@ -264,20 +260,10 @@ fun AlertDialogForAddingOrEditingValues(
 ) {
     val patternOnlyNumbers = remember { Regex("\\d+\$") }
 
-    fun validateInt(text: String, mutableIsError: MutableState<Boolean>) {
-        when {
-            text == "00" -> mutableIsError.value = true
-            text == "" -> mutableIsError.value = true
-            text.matches(patternOnlyNumbers) -> mutableIsError.value = false
-        }
-    }
-
-
     val vmBloodValues: VMBloodValues = viewModel()
     val focusManager = LocalFocusManager.current
 
     var textSystolic by remember { mutableStateOf("") }
-    val systolicIsError = remember { mutableStateOf(false) }
     var textDiastolic by remember { mutableStateOf("") }
     var textPuls by remember { mutableStateOf("") }
     var textHaemoglobin by remember { mutableStateOf("") }
@@ -309,7 +295,6 @@ fun AlertDialogForAddingOrEditingValues(
 
                     TextField(
                         value = textSystolic, onValueChange = {
-                            validateInt(it, systolicIsError)
                             if (!((it == "00") and
                                         (textSystolic == "0") and
                                         (textSystolic.length == 1))
@@ -330,7 +315,6 @@ fun AlertDialogForAddingOrEditingValues(
                             keyboardType = KeyboardType.NumberPassword,
                             imeAction = ImeAction.Next
                         ),
-                        isError = systolicIsError.value,
                         singleLine = true,
                         keyboardActions = KeyboardActions(
                             onNext = { focusManager.moveFocus(FocusDirection.Down) }

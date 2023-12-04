@@ -43,7 +43,7 @@ fun SetupNavbarGraph(
             )
         }) {
         composable(route = ScreenDefinition.Dashboard.route) {
-            Home()
+            Home(databaseState)
         }
         composable(route = ScreenDefinition.BloodValues.route) {
             BloodValues(databaseState, databaseOnEvent)

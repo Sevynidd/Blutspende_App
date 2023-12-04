@@ -12,11 +12,12 @@ import de.agb.blutspende_app.model.ScreenDefinition
 import java.text.DateFormat
 import java.text.DateFormat.MEDIUM
 import java.text.DateFormat.getDateInstance
-import java.text.DateFormat.getTimeInstance
-import java.util.Date
 
 
 class GlobalFunctions : ViewModel() {
+
+    val dateFormat: DateFormat
+        get() = getDateInstance(MEDIUM)
 
     /**
      * @param url URL, from which the BaseURL should be taken
@@ -136,21 +137,5 @@ class GlobalFunctions : ViewModel() {
             3 -> R.drawable.blood_ab
             else -> R.drawable.blood_bag_default
         }
-    }
-
-    /**
-     * Milliseconds to Date in UTF Format
-     * @param millis Milliseconds
-     */
-    fun millisToDate(millis: Long): Date {
-        return Date(millis)
-    }
-
-    /**
-     * Date in UTF Format to Milliseconds
-     * @param date Date in UTF Format
-     */
-    fun dateToMillis(date: Date): Long {
-        return date.time
     }
 }

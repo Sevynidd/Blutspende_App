@@ -31,12 +31,14 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.lifecycle.viewmodel.compose.viewModel
 import de.agb.blutspende_app.R
+import de.agb.blutspende_app.model.roomDatabase.BloodValues
+import de.agb.blutspende_app.model.roomDatabase.BloodValuesState
 import de.agb.blutspende_app.ui.theme.BlooddonationAppTheme
 import de.agb.blutspende_app.viewmodel.GlobalFunctions
 import de.agb.blutspende_app.viewmodel.VMDatastore
 
 @Composable
-fun Home() {
+fun Home(state: BloodValuesState) {
     BlooddonationAppTheme {
         Surface {
             Column(
@@ -51,11 +53,40 @@ fun Home() {
                 ConstraintLayout(modifier = Modifier.fillMaxSize()) {
                     val (textBlooddonation, userImage, bloodBag, containerBlooddonationDetails) = createRefs()
 
+                    val gender = dataStore.getGender.collectAsState(false)
+                    var newestDonation = BloodValues(
+                        0,
+                        0,
+                        0,
+                        0f,
+                        0,
+                        0L,
+                        0,
+                        0
+                    )
+
+                    state.bloodValuesList.forEachIndexed { index, bloodValues ->
+                        if (state.bloodValuesList[index].fTypID == 0) {
+                            newestDonation = bloodValues
+                        }
+                    }
+
+                    // Period in milliseconds -> https://www.blutspendedienst-owl.de/blutspende/vollblutspende.html
+                    // women -> 13 weeks
+                    // men -> 9 weeks
+                    val donationPeriod = when (gender.value) {
+                        true -> 7862400000L
+                        false -> 5443200000L
+                    }
+
                     Text(
-                        text = stringResource(
-                            id = R.string.youCanDonate,
-                            stringResource(id = R.string.wholeBlood)
-                        ),
+                        text = if ((System.currentTimeMillis() - donationPeriod) > newestDonation.timestamp) {
+                            stringResource(id = R.string.youCanDonate)
+                        } else {
+                            "Du darfst erst wieder am " + (globalFunctions.dateFormat.format(
+                                newestDonation.timestamp + donationPeriod
+                            )) + " Vollblut spenden!"
+                        },
                         fontSize = 24.sp,
                         textAlign = TextAlign.Center,
                         modifier = Modifier
