@@ -73,11 +73,12 @@ import com.patrykandpatrick.vico.compose.chart.line.lineChart
 import com.patrykandpatrick.vico.compose.component.shapeComponent
 import com.patrykandpatrick.vico.compose.legend.legendItem
 import com.patrykandpatrick.vico.compose.legend.verticalLegend
+import com.patrykandpatrick.vico.core.axis.AxisItemPlacer
 import com.patrykandpatrick.vico.core.chart.composed.plus
 import com.patrykandpatrick.vico.core.component.shape.Shapes
 import com.patrykandpatrick.vico.core.component.text.textComponent
+import com.patrykandpatrick.vico.core.entry.ChartEntryModelProducer
 import com.patrykandpatrick.vico.core.entry.composed.ComposedChartEntryModelProducer
-import com.patrykandpatrick.vico.core.entry.entryOf
 import de.agb.blutspende_app.R
 import de.agb.blutspende_app.model.roomDatabase.BloodValues
 import de.agb.blutspende_app.model.roomDatabase.BloodValuesEvent
@@ -410,22 +411,8 @@ fun AlertDialogForAddingOrEditingValues(
                     Spacer(modifier = Modifier.size(4.dp))
 
                     TextField(
-                        value = textHaemoglobin.trim(), onValueChange = {
-                            if (!((it == "00") and
-                                        (textHaemoglobin == "0") and
-                                        (textHaemoglobin.length == 1))
-                            ) {
-                                if (it.isEmpty() || it.matches(patternOnlyNumbers)) {
-
-                                    textHaemoglobin = it
-
-                                    if (textHaemoglobin != "") {
-                                        if (textHaemoglobin.toFloat() > 20.0f) {
-                                            textHaemoglobin = "20.0"
-                                        }
-                                    }
-                                }
-                            }
+                        value = textHaemoglobin, onValueChange = {
+                            textHaemoglobin = it.trim()
                         }, modifier = Modifier.weight(2f),
                         keyboardOptions = KeyboardOptions(
                             keyboardType = KeyboardType.Number,
@@ -856,71 +843,31 @@ fun BloodValuesDiagram(state: BloodValuesState, dateRangePickerState: DateRangeP
 
                     val datesForXAxis = ArrayList<Long>()
 
-                    fun bloodvaluesChartEntries(isSystolic: Boolean) =
-                        if (vmBloodValues.getSelectedFilterText.value == vmBloodValues.getFilterOptions[0]) {
-                            val size = if (state.bloodValuesList.size > 3) {
-                                3
-                            } else {
-                                state.bloodValuesList.size
-                            }
-
-                            for (i in 0..<size) {
-                                datesForXAxis.add(state.bloodValuesList[i].timestamp)
-                            }
-
-                            List(size) {
-                                entryOf(
-                                    it,
-                                    when (isSystolic) {
-                                        true -> state.bloodValuesList[it].systolisch
-                                        false -> state.bloodValuesList[it].diastolisch
-                                    }
-                                )
-                            }
-
-
-                        } else {
-                            val idList = ArrayList<Int>()
-
-                            state.bloodValuesList.forEachIndexed { index, bloodValues ->
-                                if (bloodValues.timestamp in (dateRangePickerState.selectedStartDateMillis
-                                        ?: 0)..(dateRangePickerState.selectedEndDateMillis ?: 0)
-                                ) {
-                                    idList.add(index)
-                                }
-                            }
-
-                            for (i in 0..<idList.size) {
-                                datesForXAxis.add(state.bloodValuesList[idList[i]].timestamp)
-                            }
-
-                            List(idList.size) {
-                                entryOf(
-                                    it,
-                                    when (isSystolic) {
-                                        true -> state.bloodValuesList[it].systolisch
-                                        false -> state.bloodValuesList[it].diastolisch
-                                    }
-                                )
-                            }
-
-                        }
-
                     val composedChartEntryModelProducer =
                         ComposedChartEntryModelProducer.build {
                             add(
-                                bloodvaluesChartEntries(true)
+                                vmBloodValues.bloodvaluesChartEntries(
+                                    0,
+                                    state,
+                                    datesForXAxis,
+                                    dateRangePickerState
+                                )
                             )
                             add(
-                                bloodvaluesChartEntries(false)
+                                vmBloodValues.bloodvaluesChartEntries(
+                                    1,
+                                    state,
+                                    datesForXAxis,
+                                    dateRangePickerState
+                                )
                             )
                         }
 
                     val lineChartSys = lineChart(
-                        lines = vmBloodValues.lineChartColors(Color(0xFFC13020))
+                        lines = vmBloodValues.lineChartColors(Color(0xFFA42315))
                     )
                     val lineChartDia = lineChart(
-                        lines = vmBloodValues.lineChartColors(Color(0xFF6B1B12))
+                        lines = vmBloodValues.lineChartColors(Color(0xFF0C2B7E))
                     )
 
                     val cardPadding = 12.dp
@@ -930,7 +877,12 @@ fun BloodValuesDiagram(state: BloodValuesState, dateRangePickerState: DateRangeP
                             lineChartDia
                         ) { lineChartSys + lineChartDia },
                         chartModelProducer = composedChartEntryModelProducer,
-                        startAxis = rememberStartAxis(),
+                        startAxis = rememberStartAxis(
+                            itemPlacer = AxisItemPlacer.Vertical.default(
+                                maxItemCount = 4,
+                                shiftTopLines = false
+                            )
+                        ),
                         bottomAxis = rememberBottomAxis(
                             valueFormatter = { value, _ ->
                                 if (datesForXAxis.size > 0) {
@@ -945,26 +897,73 @@ fun BloodValuesDiagram(state: BloodValuesState, dateRangePickerState: DateRangeP
                                 legendItem(
                                     icon = shapeComponent(
                                         shape = Shapes.pillShape,
-                                        color = Color(0xFFC13020)
+                                        color = Color(0xFFA42315)
                                     ),
                                     label = textComponent {
-                                        color = Color(0xFFC13020).toArgb()
+                                        color = Color(0xFFC65B50).toArgb()
                                     },
                                     labelText = "Systolisch"
                                 ),
                                 legendItem(
                                     icon = shapeComponent(
                                         shape = Shapes.pillShape,
-                                        color = Color(0xFF6B1B12)
+                                        color = Color(0xFF0C2B7E)
                                     ),
                                     label = textComponent {
-                                        color = Color(0xFF6B1B12).toArgb()
+                                        color = Color(0xFF6086EB).toArgb()
                                     },
                                     labelText = "Diastolisch"
                                 )
                             ),
                             iconSize = 8.dp,
                             iconPadding = 10.dp
+                        ),
+                        modifier = Modifier.padding(cardPadding)
+                    )
+                }
+
+                Spacer(modifier = Modifier.size(12.dp))
+
+                Text("Puls")
+
+                Spacer(modifier = Modifier.size(12.dp))
+
+                Card(modifier = Modifier.fillMaxWidth()) {
+
+                    val datesForXAxis = ArrayList<Long>()
+
+                    val chartEntryModelProducer =
+                        ChartEntryModelProducer(
+                            vmBloodValues.bloodvaluesChartEntries(
+                                2,
+                                state,
+                                datesForXAxis,
+                                dateRangePickerState
+                            )
+                        )
+
+                    val lineChartPulse = lineChart(
+                        lines = vmBloodValues.lineChartColors(Color(0xFFA42315))
+                    )
+
+                    val cardPadding = 12.dp
+                    Chart(
+                        chart = lineChartPulse,
+                        chartModelProducer = chartEntryModelProducer,
+                        startAxis = rememberStartAxis(
+                            itemPlacer = AxisItemPlacer.Vertical.default(
+                                maxItemCount = 4,
+                                shiftTopLines = false
+                            )
+                        ),
+                        bottomAxis = rememberBottomAxis(
+                            valueFormatter = { value, _ ->
+                                if (datesForXAxis.size > 0) {
+                                    vmBloodValues.dateFormat.format(datesForXAxis[value.toInt()])
+                                } else {
+                                    "Kein Inhalt"
+                                }
+                            }
                         ),
                         modifier = Modifier.padding(cardPadding)
                     )
