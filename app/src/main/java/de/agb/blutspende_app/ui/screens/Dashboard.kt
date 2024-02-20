@@ -108,7 +108,7 @@ fun Home(state: BloodValuesState) {
                     ), contentDescription = "user",
                         modifier = Modifier
                             .size(180.dp)
-                            .background(MaterialTheme.colorScheme.onPrimaryContainer, CircleShape)
+                            .background(MaterialTheme.colorScheme.onBackground, CircleShape)
                             .constrainAs(userImage) {
                                 top.linkTo(textBlooddonation.bottom, margin = 60.dp)
                                 start.linkTo(parent.start)
@@ -128,7 +128,7 @@ fun Home(state: BloodValuesState) {
                         modifier = Modifier
                             .size(100.dp)
                             .background(
-                                MaterialTheme.colorScheme.onPrimaryContainer,
+                                MaterialTheme.colorScheme.onBackground,
                                 CircleShape
                             )
                             .constrainAs(bloodBag) {
